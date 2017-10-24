@@ -30,7 +30,7 @@ public class Melter {
     @ZenMethod
     public static void add(ILiquidStack output, IItemStack input) {
         ItemStack stack = InputHelper.toStack(input);
-        ItemMeltingRecipe recipe = new ItemMeltingRecipe(stack,InputHelper.toFluid(output),stack.getMetadata() == OreDictionary.WILDCARD_VALUE,stack.hasTagCompound());
+        ItemMeltingRecipe recipe = new ItemMeltingRecipe(stack,InputHelper.toFluid(output),stack.getMetadata() != OreDictionary.WILDCARD_VALUE,stack.hasTagCompound());
         CraftTweakerAPI.apply(new Add(recipe));
     }
 

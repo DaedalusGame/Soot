@@ -11,6 +11,8 @@ import crafttweaker.api.liquid.ILiquidStack;
 import crafttweaker.api.oredict.IOreDictEntry;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+import stanhebben.zenscript.annotations.NotNull;
+import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 import teamroots.embers.item.EnumStampType;
@@ -28,7 +30,7 @@ public class Stamper {
     public static final String clazz = "mods.embers.Stamper";
 
     @ZenMethod
-    public static void add(IItemStack output, ILiquidStack liquid, IItemStack stamp, IItemStack input) {
+    public static void add(IItemStack output, ILiquidStack liquid, @NotNull IItemStack stamp, @Optional IItemStack input) {
         ItemStack stack = InputHelper.toStack(input);
         ItemStack stampStack = InputHelper.toStack(stamp); //This is pointless but also the easiest way.
         ItemStampingRecipe recipe = new ItemStampingRecipe(stack,InputHelper.toFluid(liquid), EnumStampType.getType(stampStack),InputHelper.toStack(output),stack.getMetadata() != OreDictionary.WILDCARD_VALUE,stack.hasTagCompound());
@@ -36,7 +38,7 @@ public class Stamper {
     }
 
     @ZenMethod
-    public static void add(IItemStack output, ILiquidStack liquid, IItemStack stamp, IOreDictEntry ore) {
+    public static void add(IItemStack output, ILiquidStack liquid, @NotNull IItemStack stamp, @NotNull IOreDictEntry ore) {
         ItemStack stampStack = InputHelper.toStack(stamp); //This is pointless but also the easiest way.
         ItemStampingOreRecipe recipe = new ItemStampingOreRecipe(ore.getName(),InputHelper.toFluid(liquid), EnumStampType.getType(stampStack),InputHelper.toStack(output),true,true);
         CraftTweakerAPI.apply(new AddOre(recipe));
