@@ -1,0 +1,73 @@
+
+// For those who want the bleeding edge
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+    }
+}
+apply plugin: 'net.minecraftforge.gradle.forge'
+
+
+version = "0.1"
+group= "soot" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "Soot"
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+minecraft {
+    version = "1.12.2-14.23.0.2512"
+    runDir = "run"
+    mappings = "snapshot_20170627"
+    useDepAts = true
+}
+
+repositories {
+    maven { url 'http://dvs1.progwml6.com/files/maven' }
+    maven { url "http://blamejared.com/maven" }
+	maven { url "http://www.ryanliptak.com/maven/" }
+}
+
+dependencies {
+	deobfCompile "mezz.jei:jei_1.12:4.7.2.77"
+    deobfCompile "com.blamejared:MTLib:3.+"
+	compile files('libs/')
+}
+
+task deobfJar(type: Jar) {
+    from sourceSets.main.output
+    classifier "dev"
+}
+
+artifacts {
+    archives deobfJar
+}
+
+processResources
+{
+    // this will ensure that this task is redone when the versions change.
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    // replace stuff in mcmod.info, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+                
+        // replace version and mcversion
+        expand 'version':project.version, 'mcversion':project.minecraft.version
+    }
+        
+    // copy everything else, thats not the mcmod.info
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
+
+idea { module { inheritOutputDirs = true } }

@@ -1,0 +1,16 @@
+[
+{
+  "modid": "soot",
+  "name": "Soot",
+  "description": "An Embers addon.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["BordListian"],
+  "credits": "Forge, Elucent",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
