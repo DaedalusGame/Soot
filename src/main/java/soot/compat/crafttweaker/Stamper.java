@@ -8,6 +8,7 @@ import crafttweaker.CraftTweakerAPI;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.item.IItemStack;
 import crafttweaker.api.liquid.ILiquidStack;
+import crafttweaker.api.oredict.IOreDictEntry;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 import stanhebben.zenscript.annotations.ZenClass;
@@ -35,9 +36,9 @@ public class Stamper {
     }
 
     @ZenMethod
-    public static void add(IItemStack output, ILiquidStack liquid, IItemStack stamp, String ore) {
+    public static void add(IItemStack output, ILiquidStack liquid, IItemStack stamp, IOreDictEntry ore) {
         ItemStack stampStack = InputHelper.toStack(stamp); //This is pointless but also the easiest way.
-        ItemStampingOreRecipe recipe = new ItemStampingOreRecipe(ore,InputHelper.toFluid(liquid), EnumStampType.getType(stampStack),InputHelper.toStack(output),true,true);
+        ItemStampingOreRecipe recipe = new ItemStampingOreRecipe(ore.getName(),InputHelper.toFluid(liquid), EnumStampType.getType(stampStack),InputHelper.toStack(output),true,true);
         CraftTweakerAPI.apply(new AddOre(recipe));
     }
 

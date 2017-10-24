@@ -8,6 +8,7 @@ import crafttweaker.CraftTweakerAPI;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.item.IItemStack;
 import crafttweaker.api.liquid.ILiquidStack;
+import crafttweaker.api.oredict.IOreDictEntry;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
@@ -34,8 +35,8 @@ public class Melter {
     }
 
     @ZenMethod
-    public static void add(ILiquidStack output, String input) {
-        ItemMeltingOreRecipe recipe = new ItemMeltingOreRecipe(input,InputHelper.toFluid(output));
+    public static void add(ILiquidStack output, IOreDictEntry input) {
+        ItemMeltingOreRecipe recipe = new ItemMeltingOreRecipe(input.getName(),InputHelper.toFluid(output));
         CraftTweakerAPI.apply(new AddOre(recipe));
     }
 
@@ -52,9 +53,9 @@ public class Melter {
     }
 
     @ZenMethod
-    public static void remove(String input)
+    public static void remove(IOreDictEntry input)
     {
-        CraftTweakerAPI.apply(new RemoveByOre(input));
+        CraftTweakerAPI.apply(new RemoveByOre(input.getName()));
     }
 
     private static List<ItemMeltingRecipe> getRecipesByOutput(FluidStack stack)
