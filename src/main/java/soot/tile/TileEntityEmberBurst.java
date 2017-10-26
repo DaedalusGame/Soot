@@ -104,7 +104,7 @@ public class TileEntityEmberBurst extends TileEntity implements ITileEntityBase,
             if(!tag.hasKey(key))
                 continue;
             NBTTagCompound targetCompound = tag.getCompoundTag(key);
-            BlockPos target = new BlockPos(targetCompound.getInteger("x"), tag.getInteger("y"), tag.getInteger("z"));
+            BlockPos target = new BlockPos(targetCompound.getInteger("x"), targetCompound.getInteger("y"), targetCompound.getInteger("z"));
             targets[i] = target;
         }
         capability.readFromNBT(tag);

@@ -12,9 +12,11 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import soot.block.BlockEmberBurst;
 import soot.block.BlockEmberFunnel;
+import soot.block.BlockMixerImproved;
 import soot.tile.TileEntityEmberBurst;
 import soot.tile.TileEntityEmberBurstRenderer;
 import soot.tile.TileEntityEmberFunnel;
+import soot.tile.TileEntityMixerBottomImproved;
 
 import java.util.ArrayList;
 
@@ -35,6 +37,10 @@ public class Registry {
         BlockEmberFunnel emberFunnel = new BlockEmberFunnel(Material.ROCK);
         registerBlock("ember_burst", emberBurst, new ItemBlock(emberBurst));
         registerBlock("ember_funnel", emberFunnel, new ItemBlock(emberFunnel));
+
+        BlockMixerImproved mixerImproved = new BlockMixerImproved(Material.ROCK,"mixer",true);
+        registerBlock(mixerImproved);
+        registerItem(mixerImproved.getItemBlock());
     }
 
     public static void registerBlockModels()
@@ -59,6 +65,11 @@ public class Registry {
         registerItem(id,itemBlock);
     }
 
+    public static void registerBlock(Block block)
+    {
+        BLOCKS.add(block);
+    }
+
     public static void registerItem(String id,Item item)
     {
         item.setRegistryName(Soot.MODID,id);
@@ -66,10 +77,17 @@ public class Registry {
         ITEMS.add(item);
     }
 
+    public static void registerItem(Item item)
+    {
+        ITEMS.add(item);
+    }
+
     public static void registerTileEntities()
     {
         registerTileEntity(TileEntityEmberBurst.class);
         registerTileEntity(TileEntityEmberFunnel.class);
+
+        registerTileEntity(TileEntityMixerBottomImproved.class);
     }
 
     public static void registerTESRs()
@@ -90,7 +108,6 @@ public class Registry {
             event.getRegistry().register(item);
         }
     }
-
 
     private static void registerTileEntity(Class<? extends TileEntity> tile)
     {
