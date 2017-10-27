@@ -14,6 +14,7 @@ import soot.capability.CapabilityMixerOutput;
 public class Soot
 {
     public static final String MODID = "soot";
+    public static final String NAME = "Soot";
     public static final String VERSION = "0.1";
 
     @SidedProxy(clientSide = "soot.ClientProxy",serverSide = "soot.ServerProxy")
