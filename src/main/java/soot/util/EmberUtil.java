@@ -6,8 +6,12 @@ import net.minecraft.block.BlockLever;
 import net.minecraft.block.BlockRedstoneTorch;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.registries.IForgeRegistryEntry;
+import soot.Soot;
 import teamroots.embers.RegistryManager;
 import teamroots.embers.block.BlockCaminiteLever;
 import teamroots.embers.util.Misc;
@@ -34,5 +38,13 @@ public class EmberUtil {
             return face == Misc.getOppositeVerticalFace(side);
         }
         return false;
+    }
+
+    public static void overrideRegistryLocation(IForgeRegistryEntry.Impl forgeRegistryEntry, String name) {
+        try {
+            ReflectionHelper.findField(IForgeRegistryEntry.Impl.class,"registryName").set(forgeRegistryEntry,new ResourceLocation(Soot.MODID,name));
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 }

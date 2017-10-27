@@ -16,6 +16,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import soot.block.IBlockVariants;
 import soot.util.IBlockColored;
 import soot.util.IItemColored;
+import teamroots.embers.block.IBlock;
 
 import java.util.ArrayList;
 

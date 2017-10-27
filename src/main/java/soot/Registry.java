@@ -13,14 +13,19 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import soot.block.BlockEmberBurst;
 import soot.block.BlockEmberFunnel;
 import soot.block.BlockMixerImproved;
+import soot.item.ItemBlockMeta;
 import soot.tile.TileEntityEmberBurst;
 import soot.tile.TileEntityEmberBurstRenderer;
 import soot.tile.TileEntityEmberFunnel;
 import soot.tile.TileEntityMixerBottomImproved;
+import teamroots.embers.RegistryManager;
+import teamroots.embers.block.BlockSeed;
 
 import java.util.ArrayList;
 
 public class Registry {
+    private static ArrayList<Block> MODELLED_BLOCKS = new ArrayList<>();
+    private static ArrayList<Item> MODELLED_ITEMS = new ArrayList<>();
     private static ArrayList<Block> BLOCKS = new ArrayList<>();
     private static ArrayList<Item> ITEMS = new ArrayList<>();
 
@@ -38,21 +43,25 @@ public class Registry {
         registerBlock("ember_burst", emberBurst, new ItemBlock(emberBurst));
         registerBlock("ember_funnel", emberFunnel, new ItemBlock(emberFunnel));
 
-        BlockMixerImproved mixerImproved = new BlockMixerImproved(Material.ROCK,"mixer",true);
-        registerBlock(mixerImproved);
-        registerItem(mixerImproved.getItemBlock());
+        BlockMixerImproved mixerImproved = (BlockMixerImproved) new BlockMixerImproved(Material.ROCK,"mixer",true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.0F);
+        BlockSeed seed = (BlockSeed) RegistryManager.seed;
+        Item seedImprovedItem = new ItemBlockMeta(seed).setRegistryName(seed.getRegistryName());
+        seed.itemBlock = seedImprovedItem;
+        registerBlock(mixerImproved,false);
+        registerItem(mixerImproved.getItemBlock(),false);
+        registerItem(seedImprovedItem,false);
     }
 
     public static void registerBlockModels()
     {
-        for (Block block : BLOCKS) {
+        for (Block block : MODELLED_BLOCKS) {
             Soot.proxy.registerBlockModel(block);
         }
     }
 
     public static void registerItemModels()
     {
-        for (Item item : ITEMS) {
+        for (Item item : MODELLED_ITEMS) {
             Soot.proxy.registerItemModel(item);
         }
     }
@@ -61,25 +70,29 @@ public class Registry {
     {
         block.setRegistryName(Soot.MODID,id);
         block.setUnlocalizedName(id);
-        BLOCKS.add(block);
+        registerBlock(block,true);
         registerItem(id,itemBlock);
     }
 
-    public static void registerBlock(Block block)
+    public static void registerBlock(Block block, boolean hasmodel)
     {
         BLOCKS.add(block);
+        if(hasmodel)
+            MODELLED_BLOCKS.add(block);
     }
 
     public static void registerItem(String id,Item item)
     {
         item.setRegistryName(Soot.MODID,id);
         item.setUnlocalizedName(id);
-        ITEMS.add(item);
+        registerItem(item,true);
     }
 
-    public static void registerItem(Item item)
+    public static void registerItem(Item item, boolean hasmodel)
     {
         ITEMS.add(item);
+        if(hasmodel)
+            MODELLED_ITEMS.add(item);
     }
 
     public static void registerTileEntities()

@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import soot.capability.CapabilityMixerOutput;
 
-@Mod(modid = Soot.MODID, version = Soot.VERSION, dependencies = "required-after:embers")
+@Mod(modid = Soot.MODID, version = Soot.VERSION, acceptedMinecraftVersions = "[1.12, 1.13)", dependencies = "required-after:embers")
 @Mod.EventBusSubscriber
 public class Soot
 {
