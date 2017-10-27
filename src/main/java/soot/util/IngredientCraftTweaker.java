@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class IngredientCraftTweaker extends Ingredient {
@@ -19,12 +20,14 @@ public class IngredientCraftTweaker extends Ingredient {
 
     @Override
     public ItemStack[] getMatchingStacks() {
-        List<IItemStack> stacks = predicate.getItems();
+        List<IItemStack> stacks = predicate != null ? predicate.getItems() : new ArrayList<>();
         return InputHelper.toStacks(stacks.toArray(new IItemStack[stacks.size()]));
     }
 
     @Override
     public boolean apply(@Nullable ItemStack stack) {
+        if(predicate == null)
+            return stack.isEmpty();
         return predicate.matches(InputHelper.toIItemStack(stack));
     }
 }

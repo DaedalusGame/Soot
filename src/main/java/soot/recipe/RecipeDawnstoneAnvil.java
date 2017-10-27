@@ -25,7 +25,10 @@ public class RecipeDawnstoneAnvil {
 
     public ItemStack[] getResult(ItemStack input1, ItemStack input2) //For when you need your own handling
     {
-        return result;
+        ItemStack[] copy = new ItemStack[result.length];
+        for (int i = 0; i < copy.length; i++)
+            copy[i] = result[i].copy();
+        return copy;
     }
 
     public List<ItemStack> getJEIResult()
