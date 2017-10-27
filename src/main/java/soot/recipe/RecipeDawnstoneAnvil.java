@@ -2,13 +2,16 @@ package soot.recipe;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
+import scala.actors.threadpool.Arrays;
+
+import java.util.List;
 
 public class RecipeDawnstoneAnvil {
     public Ingredient bottom;
     public Ingredient top;
-    public ItemStack result;
+    public ItemStack[] result;
 
-    public RecipeDawnstoneAnvil(ItemStack result, Ingredient bottom, Ingredient top)
+    public RecipeDawnstoneAnvil(ItemStack[] result, Ingredient bottom, Ingredient top)
     {
         this.result = result;
         this.bottom = bottom;
@@ -20,13 +23,13 @@ public class RecipeDawnstoneAnvil {
         return bottom.apply(input1) && (top == null || top.apply(input2));
     }
 
-    public ItemStack getResult(ItemStack input1, ItemStack input2) //For when you need your own handling
+    public ItemStack[] getResult(ItemStack input1, ItemStack input2) //For when you need your own handling
     {
         return result;
     }
 
-    public ItemStack getJEIResult()
+    public List<ItemStack> getJEIResult()
     {
-        return result;
+        return Arrays.asList(result);
     }
 }

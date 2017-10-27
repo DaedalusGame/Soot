@@ -8,6 +8,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import soot.capability.CapabilityMixerOutput;
+import soot.recipe.RecipeRegistry;
 
 @Mod(modid = Soot.MODID, version = Soot.VERSION, acceptedMinecraftVersions = "[1.12, 1.13)", dependencies = "required-after:embers")
 @Mod.EventBusSubscriber
@@ -23,6 +24,7 @@ public class Soot
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
+        RecipeRegistry.preInit();
         Registry.preInit();
         proxy.preInit();
     }

@@ -10,14 +10,12 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import soot.block.BlockDawnstoneAnvilImproved;
 import soot.block.BlockEmberBurst;
 import soot.block.BlockEmberFunnel;
 import soot.block.BlockMixerImproved;
 import soot.item.ItemBlockMeta;
-import soot.tile.TileEntityEmberBurst;
-import soot.tile.TileEntityEmberBurstRenderer;
-import soot.tile.TileEntityEmberFunnel;
-import soot.tile.TileEntityMixerBottomImproved;
+import soot.tile.*;
 import teamroots.embers.RegistryManager;
 import teamroots.embers.block.BlockSeed;
 
@@ -44,11 +42,14 @@ public class Registry {
         registerBlock("ember_funnel", emberFunnel, new ItemBlock(emberFunnel));
 
         BlockMixerImproved mixerImproved = (BlockMixerImproved) new BlockMixerImproved(Material.ROCK,"mixer",true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.0F);
+        BlockDawnstoneAnvilImproved dawnstoneAnvilImproved = (BlockDawnstoneAnvilImproved) new BlockDawnstoneAnvilImproved(Material.ROCK,"dawnstone_anvil",true).setHarvestProperties("pickaxe", 1).setIsFullCube(false).setIsOpaqueCube(false).setHardness(1.6f).setLightOpacity(0);
         BlockSeed seed = (BlockSeed) RegistryManager.seed;
         Item seedImprovedItem = new ItemBlockMeta(seed).setRegistryName(seed.getRegistryName());
         seed.itemBlock = seedImprovedItem;
         registerBlock(mixerImproved,false);
+        registerBlock(dawnstoneAnvilImproved,false);
         registerItem(mixerImproved.getItemBlock(),false);
+        registerItem(dawnstoneAnvilImproved.getItemBlock(),false);
         registerItem(seedImprovedItem,false);
     }
 
@@ -101,6 +102,7 @@ public class Registry {
         registerTileEntity(TileEntityEmberFunnel.class);
 
         registerTileEntity(TileEntityMixerBottomImproved.class);
+        registerTileEntity(TileEntityDawnstoneAnvilImproved.class);
     }
 
     public static void registerTESRs()

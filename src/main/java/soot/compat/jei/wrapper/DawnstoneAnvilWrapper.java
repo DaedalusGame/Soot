@@ -17,6 +17,6 @@ public class DawnstoneAnvilWrapper implements IRecipeWrapper {
     @Override
     public void getIngredients(IIngredients ingredients) {
         ingredients.setInputLists(ItemStack.class, Arrays.asList(Arrays.asList(recipe.top.getMatchingStacks()), Arrays.asList(recipe.bottom.getMatchingStacks())));
-        ingredients.setOutput(ItemStack.class, recipe.result);
+        ingredients.setOutputs(ItemStack.class, Arrays.asList(recipe.result));
     }
 }

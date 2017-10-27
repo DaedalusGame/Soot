@@ -12,6 +12,7 @@ import net.minecraft.item.crafting.Ingredient;
 import soot.compat.jei.category.DawnstoneAnvilCategory;
 import soot.compat.jei.wrapper.DawnstoneAnvilWrapper;
 import soot.recipe.RecipeDawnstoneAnvil;
+import soot.recipe.RecipeRegistry;
 import teamroots.embers.RegistryManager;
 import teamroots.embers.util.Misc;
 
@@ -30,11 +31,12 @@ public class JEI implements IModPlugin {
 
     @Override
     public void register(IModRegistry registry) {
-        registry.addRecipes(generateDawnstoneAnvilRecipes(),DawnstoneAnvilCategory.UID);
+        registry.addRecipes(RecipeRegistry.dawnstoneAnvilRecipes, DawnstoneAnvilCategory.UID);
+        registry.addRecipes(generateDawnstoneAnvilRecipes(), DawnstoneAnvilCategory.UID);
         
         registry.handleRecipes(RecipeDawnstoneAnvil.class, DawnstoneAnvilWrapper::new, DawnstoneAnvilCategory.UID);
         
-        registry.addRecipeCatalyst(new ItemStack(RegistryManager.dawnstone_anvil),DawnstoneAnvilCategory.UID);
+        registry.addRecipeCatalyst(new ItemStack(RegistryManager.dawnstone_anvil), DawnstoneAnvilCategory.UID);
     }
     
     private List<RecipeDawnstoneAnvil> generateDawnstoneAnvilRecipes()
@@ -54,11 +56,11 @@ public class JEI implements IModPlugin {
                 if(materiaAllowed)
                     repairMaterials.add(new ItemStack(RegistryManager.isolated_materia));
                 ItemStack[] repairMaterialsArray = repairMaterials.toArray(new ItemStack[repairMaterials.size()]);
-                repairRecipes.add(new RecipeDawnstoneAnvil(stack.copy(), Ingredient.fromStacks(makeDamaged(stack)),Ingredient.fromStacks(repairMaterialsArray)));
+                repairRecipes.add(new RecipeDawnstoneAnvil(new ItemStack[]{stack.copy()}, Ingredient.fromStacks(makeDamaged(stack)),Ingredient.fromStacks(repairMaterialsArray)));
                 if(Misc.getResourceCount(stack) != -1) {
                     ItemStack material = Misc.getRepairItem(stack).copy();
                     material.setCount(Misc.getResourceCount(stack));
-                    destroyRecipes.add(new RecipeDawnstoneAnvil(material, Ingredient.fromStacks(makeDamaged(stack)), Ingredient.EMPTY));
+                    destroyRecipes.add(new RecipeDawnstoneAnvil(new ItemStack[]{material}, Ingredient.fromStacks(makeDamaged(stack)), Ingredient.EMPTY));
                 }
             }
         }
