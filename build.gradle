@@ -15,7 +15,7 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle.forge'
 
 
-version = "0.1"
+version = "0.2"
 group= "soot" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Soot"
 
@@ -25,7 +25,7 @@ targetCompatibility = JavaVersion.VERSION_1_8
 minecraft {
     version = "1.12.2-14.23.0.2512"
     runDir = "run"
-    mappings = "snapshot_20170627"
+    mappings = "snapshot_20171003"
     useDepAts = true
 }
 

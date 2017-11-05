@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.potion.Potion;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -15,6 +16,7 @@ import soot.block.BlockEmberBurst;
 import soot.block.BlockEmberFunnel;
 import soot.block.BlockMixerImproved;
 import soot.item.ItemBlockMeta;
+import soot.potion.PotionAle;
 import soot.tile.*;
 import teamroots.embers.RegistryManager;
 import teamroots.embers.block.BlockSeed;
@@ -27,11 +29,17 @@ public class Registry {
     private static ArrayList<Block> BLOCKS = new ArrayList<>();
     private static ArrayList<Item> ITEMS = new ArrayList<>();
 
+    @GameRegistry.ObjectHolder("soot:signet_antimony")
+    public static Item SIGNET_ANTIMONY;
+
+    public static Potion POTION_ALE;
+
     public static void preInit()
     {
         MinecraftForge.EVENT_BUS.register(Registry.class);
         registerBlocks();
         registerTileEntities();
+        registerPotions();
     }
 
     public static void registerBlocks()
@@ -43,14 +51,12 @@ public class Registry {
 
         BlockMixerImproved mixerImproved = (BlockMixerImproved) new BlockMixerImproved(Material.ROCK,"mixer",true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.0F);
         BlockDawnstoneAnvilImproved dawnstoneAnvilImproved = (BlockDawnstoneAnvilImproved) new BlockDawnstoneAnvilImproved(Material.ROCK,"dawnstone_anvil",true).setHarvestProperties("pickaxe", 1).setIsFullCube(false).setIsOpaqueCube(false).setHardness(1.6f).setLightOpacity(0);
-        BlockSeed seed = (BlockSeed) RegistryManager.seed;
-        Item seedImprovedItem = new ItemBlockMeta(seed).setRegistryName(seed.getRegistryName());
-        seed.itemBlock = seedImprovedItem;
         registerBlock(mixerImproved,false);
         registerBlock(dawnstoneAnvilImproved,false);
         registerItem(mixerImproved.getItemBlock(),false);
         registerItem(dawnstoneAnvilImproved.getItemBlock(),false);
-        registerItem(seedImprovedItem,false);
+
+        registerItem("signet_antimony",new Item());
     }
 
     public static void registerBlockModels()
@@ -96,6 +102,11 @@ public class Registry {
             MODELLED_ITEMS.add(item);
     }
 
+    public static void registerPotions()
+    {
+        POTION_ALE = new PotionAle().setRegistryName(Soot.MODID,"ale");
+    }
+
     public static void registerTileEntities()
     {
         registerTileEntity(TileEntityEmberBurst.class);
@@ -122,6 +133,11 @@ public class Registry {
         for (Item item : ITEMS) {
             event.getRegistry().register(item);
         }
+    }
+
+    @SubscribeEvent
+    public static void registerPotions(RegistryEvent.Register<Potion> event) {
+        event.getRegistry().register(POTION_ALE);
     }
 
     private static void registerTileEntity(Class<? extends TileEntity> tile)

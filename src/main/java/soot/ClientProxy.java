@@ -85,5 +85,8 @@ public class ClientProxy implements IProxy {
             else
                 ModelLoader.setCustomModelResourceLocation(item,0,new ModelResourceLocation(resloc, "inventory"));
         }
+        else
+            ModelLoader.setCustomModelResourceLocation(item,0,new ModelResourceLocation(item.getRegistryName(), "inventory"));
+
     }
 }

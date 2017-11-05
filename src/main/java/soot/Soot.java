@@ -8,7 +8,9 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import soot.capability.CapabilityMixerOutput;
+import soot.handler.VillagerAntimonyHandler;
 import soot.recipe.RecipeRegistry;
+import soot.util.Attributes;
 
 @Mod(modid = Soot.MODID, version = Soot.VERSION, acceptedMinecraftVersions = "[1.12, 1.13)", dependencies = "required-after:embers")
 @Mod.EventBusSubscriber
@@ -27,6 +29,8 @@ public class Soot
         RecipeRegistry.preInit();
         Registry.preInit();
         proxy.preInit();
+        MinecraftForge.EVENT_BUS.register(Attributes.class);
+        MinecraftForge.EVENT_BUS.register(VillagerAntimonyHandler.class);
     }
 
     @EventHandler

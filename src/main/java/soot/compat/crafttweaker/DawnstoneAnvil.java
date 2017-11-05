@@ -27,7 +27,7 @@ public class DawnstoneAnvil {
     public static class Add extends BaseListAddition<RecipeDawnstoneAnvil>
     {
         public Add(RecipeDawnstoneAnvil recipe) {
-            super("Melter", RecipeRegistry.dawnstoneAnvilRecipes, Lists.newArrayList(recipe));
+            super("DawnstoneAnvil", RecipeRegistry.dawnstoneAnvilRecipes, Lists.newArrayList(recipe));
         }
 
         @Override

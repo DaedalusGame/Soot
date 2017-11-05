@@ -2,3 +2,11 @@ embers.jei.recipe.dawnstone_anvil=Dawnstone Anvil Recipe
 
 tile.ember_burst.name=Ember Spread Burst
 tile.ember_funnel.name=Ember Funnel
+
+item.signet_antimony.name=Signet of Antimony
+
+potion.potency.2=III
+potion.potency.3=IV
+potion.potency.4=V
+
+attribute.name.generic.physicalDamageRate=Physical Damage Taken
