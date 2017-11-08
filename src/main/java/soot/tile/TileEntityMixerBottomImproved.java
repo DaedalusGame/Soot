@@ -1,76 +1,105 @@
 package soot.tile;
 
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import soot.capability.CapabilityMixerOutput;
-import soot.util.ResettingFluidTank;
+import soot.capability.IUpgradeProvider;
+import soot.util.UpgradeUtil;
 import teamroots.embers.recipe.FluidMixingRecipe;
 import teamroots.embers.recipe.RecipeRegistry;
 import teamroots.embers.tileentity.TileEntityMixerBottom;
 import teamroots.embers.tileentity.TileEntityMixerTop;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TileEntityMixerBottomImproved extends TileEntityMixerBottom {
     CapabilityMixerOutput mixerOutput;
+    FluidTank[] tanks;
 
     public TileEntityMixerBottomImproved()
     {
         super();
         mixerOutput = new CapabilityMixerOutput(this);
-        north = new ResettingFluidTank(8000);
-        east = new ResettingFluidTank(8000);
-        south = new ResettingFluidTank(8000);
-        west = new ResettingFluidTank(8000);
+        //north = new ResettingFluidTank(8000);
+        //east = new ResettingFluidTank(8000);
+        //south = new ResettingFluidTank(8000);
+        //west = new ResettingFluidTank(8000);
+        tanks = new FluidTank[] {north,east,south,west};
     }
 
     //Unfortunately I have to do this, the interfaces are all out of whack in the deobf jar
     @Override
     public void update() {
-        TileEntityMixerTop top = (TileEntityMixerTop) getWorld().getTileEntity(getPos().up());
+        World world = getWorld();
+        BlockPos pos = getPos();
+        TileEntityMixerTop top = (TileEntityMixerTop) world.getTileEntity(pos.up());
         if (top != null) {
-            if (top.capability.getEmber() >= 2.0) {
-                ArrayList<FluidStack> fluids = new ArrayList<FluidStack>();
-                if (north.getFluid() != null) {
-                    fluids.add(north.getFluid());
-                }
-                if (south.getFluid() != null) {
-                    fluids.add(south.getFluid());
-                }
-                if (east.getFluid() != null) {
-                    fluids.add(east.getFluid());
-                }
-                if (west.getFluid() != null) {
-                    fluids.add(west.getFluid());
-                }
+            List<IUpgradeProvider> upgrades = UpgradeUtil.getUpgrades(world,pos.up(),EnumFacing.values()); //TODO: Cache both of these calls
+            UpgradeUtil.verifyUpgrades(this,upgrades);
+            boolean cancel = UpgradeUtil.doWork(this,upgrades);
+            if(cancel)
+                return;
+            double emberCost = 2.0 * UpgradeUtil.getTotalEmberFuelEfficiency(this,upgrades);
+            if (top.capability.getEmber() >= emberCost) {
+                ArrayList<FluidStack> fluids = getFluids();
                 FluidMixingRecipe recipe = RecipeRegistry.getMixingRecipe(fluids);
                 if (recipe != null) {
                     IFluidHandler tank = top.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
-                    int amount = tank.fill(recipe.output, false);
+                    FluidStack output = UpgradeUtil.transformOutput(this,recipe.output,upgrades);
+                    int amount = tank.fill(output, false);
                     if (amount != 0) {
-                        tank.fill(recipe.output, true);
-                        for (FluidStack fluid : fluids) {
-                            boolean doContinue = true;
-                            for (int j = 0; j < recipe.inputs.size() && doContinue; j++) {
-                                if (recipe.inputs.get(j) != null && fluid != null && recipe.inputs.get(j).getFluid() == fluid.getFluid()) {
-                                    doContinue = false;
-                                    fluid.amount -= recipe.inputs.get(j).amount;
-                                }
-                            }
-                        }
-                        top.capability.removeAmount(2.0, true);
+                        tank.fill(output, true);
+                        consumeFluids(fluids, recipe);
+                        top.capability.removeAmount(emberCost, true);
                         markDirty();
-                        IBlockState state = getWorld().getBlockState(getPos());
                         top.markDirty();
-                        IBlockState topState = getWorld().getBlockState(getPos().up());
                     }
                 }
             }
         }
+    }
+
+    public FluidTank[] getTanks()
+    {
+        return tanks;
+    }
+
+    public void consumeFluids(ArrayList<FluidStack> fluids, FluidMixingRecipe recipe) {
+        for (FluidTank tank : tanks) {
+            FluidStack tankFluid = tank.getFluid();
+            boolean doContinue = true;
+            for (int j = 0; j < recipe.inputs.size() && doContinue; j++) {
+                FluidStack recipeFluid = recipe.inputs.get(j);
+                if (recipeFluid != null && tankFluid != null && recipeFluid.getFluid() == tankFluid.getFluid()) {
+                    doContinue = false;
+                    tank.drain(recipeFluid.amount,true);
+                }
+            }
+        }
+    }
+
+    public ArrayList<FluidStack> getFluids() {
+        ArrayList<FluidStack> fluids = new ArrayList<>();
+        if (north.getFluid() != null) {
+            fluids.add(north.getFluid());
+        }
+        if (south.getFluid() != null) {
+            fluids.add(south.getFluid());
+        }
+        if (east.getFluid() != null) {
+            fluids.add(east.getFluid());
+        }
+        if (west.getFluid() != null) {
+            fluids.add(west.getFluid());
+        }
+        return fluids;
     }
 
     @Override

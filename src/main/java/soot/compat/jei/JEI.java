@@ -9,8 +9,12 @@ import mezz.jei.api.recipe.IRecipeWrapperFactory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
+import soot.Registry;
+import soot.compat.jei.category.AlchemicalMixerCategory;
 import soot.compat.jei.category.DawnstoneAnvilCategory;
+import soot.compat.jei.wrapper.AlchemicalMixerWrapper;
 import soot.compat.jei.wrapper.DawnstoneAnvilWrapper;
+import soot.recipe.RecipeAlchemicalMixer;
 import soot.recipe.RecipeDawnstoneAnvil;
 import soot.recipe.RecipeRegistry;
 import teamroots.embers.RegistryManager;
@@ -26,17 +30,21 @@ public class JEI implements IModPlugin {
     @Override
     public void registerCategories(IRecipeCategoryRegistration registry) {
         IGuiHelper guiHelper = registry.getJeiHelpers().getGuiHelper();
-        registry.addRecipeCategories(new DawnstoneAnvilCategory(guiHelper));
+        registry.addRecipeCategories(new DawnstoneAnvilCategory(guiHelper), new AlchemicalMixerCategory(guiHelper));
     }
 
     @Override
     public void register(IModRegistry registry) {
         registry.addRecipes(RecipeRegistry.dawnstoneAnvilRecipes, DawnstoneAnvilCategory.UID);
         registry.addRecipes(generateDawnstoneAnvilRecipes(), DawnstoneAnvilCategory.UID);
+        registry.addRecipes(RecipeRegistry.alchemicalMixingRecipes, AlchemicalMixerCategory.UID);
         
         registry.handleRecipes(RecipeDawnstoneAnvil.class, DawnstoneAnvilWrapper::new, DawnstoneAnvilCategory.UID);
+        registry.handleRecipes(RecipeAlchemicalMixer.class, AlchemicalMixerWrapper::new, AlchemicalMixerCategory.UID);
         
         registry.addRecipeCatalyst(new ItemStack(RegistryManager.dawnstone_anvil), DawnstoneAnvilCategory.UID);
+        registry.addRecipeCatalyst(new ItemStack(RegistryManager.mixer), AlchemicalMixerCategory.UID);
+        registry.addRecipeCatalyst(new ItemStack(Registry.ALCHEMY_GLOBE), AlchemicalMixerCategory.UID);
     }
     
     private List<RecipeDawnstoneAnvil> generateDawnstoneAnvilRecipes()
