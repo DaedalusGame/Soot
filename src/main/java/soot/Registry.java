@@ -4,10 +4,14 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.potion.Potion;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -15,6 +19,8 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import soot.block.*;
+import soot.capability.CapabilityUpgradeProvider;
+import soot.capability.IUpgradeProvider;
 import soot.fluids.FluidMolten;
 import soot.item.ItemBlockMeta;
 import soot.potion.PotionAle;
@@ -23,7 +29,9 @@ import soot.util.Nope;
 import teamroots.embers.RegistryManager;
 import teamroots.embers.block.BlockSeed;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
 
 public class Registry {
     private static ArrayList<Block> MODELLED_BLOCKS = new ArrayList<>();
@@ -56,6 +64,7 @@ public class Registry {
         registerTileEntities();
         registerPotions();
         registerFluids();
+        registerCapabilities();
     }
 
     public static void registerBlocks()
@@ -165,6 +174,24 @@ public class Registry {
     {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityEmberBurst.class, new TileEntityEmberBurstRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAlchemyGlobe.class, new TileEntityAlchemyGlobeRenderer());
+    }
+
+    public static void registerCapabilities()
+    {
+        CapabilityManager.INSTANCE.register(IUpgradeProvider.class, new Capability.IStorage<IUpgradeProvider>() {
+            @Nullable
+            @Override
+            public NBTBase writeNBT(Capability<IUpgradeProvider> capability, IUpgradeProvider instance, EnumFacing side) {
+                return null;
+            }
+
+            @Override
+            public void readNBT(Capability<IUpgradeProvider> capability, IUpgradeProvider instance, EnumFacing side, NBTBase nbt) {
+                //NOOP
+            }
+        }, () -> {
+            return new CapabilityUpgradeProvider("none",null);
+        });
     }
 
     @SubscribeEvent
