@@ -1,10 +1,8 @@
 package soot.recipe;
 
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.Ingredient;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.Fluid;
@@ -16,21 +14,18 @@ import soot.util.AspectList.AspectRangeList;
 import teamroots.embers.ConfigManager;
 import teamroots.embers.RegistryManager;
 import teamroots.embers.item.EnumStampType;
-import teamroots.embers.recipe.FluidMixingRecipe;
-import teamroots.embers.recipe.ItemMeltingOreRecipe;
 import teamroots.embers.recipe.ItemMeltingRecipe;
 import teamroots.embers.recipe.ItemStampingRecipe;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class RecipeRegistry {
+public class CraftingRegistry {
     public static ArrayList<RecipeDawnstoneAnvil> dawnstoneAnvilRecipes = new ArrayList<>();
     public static ArrayList<RecipeAlchemicalMixer> alchemicalMixingRecipes = new ArrayList<>();
 
     public static void preInit()
     {
-        MinecraftForge.EVENT_BUS.register(RecipeRegistry.class);
+        MinecraftForge.EVENT_BUS.register(CraftingRegistry.class);
     }
 
     @SubscribeEvent

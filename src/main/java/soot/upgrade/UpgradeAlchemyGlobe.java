@@ -7,7 +7,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -15,7 +14,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import soot.capability.CapabilityUpgradeProvider;
 import soot.capability.IUpgradeProvider;
 import soot.recipe.RecipeAlchemicalMixer;
-import soot.recipe.RecipeRegistry;
+import soot.recipe.CraftingRegistry;
 import soot.tile.TileEntityAlchemyGlobe;
 import soot.tile.TileEntityMixerBottomImproved;
 import soot.util.AlchemyResult;
@@ -64,7 +63,7 @@ public class UpgradeAlchemyGlobe extends CapabilityUpgradeProvider {
             double emberCost = 2.0 * UpgradeUtil.getTotalEmberFuelEfficiency(bottom,upgrades);
             if (top.capability.getEmber() >= emberCost) {
                 ArrayList<FluidStack> fluids = bottom.getFluids();
-                RecipeAlchemicalMixer recipe = RecipeRegistry.getAlchemicalMixingRecipe(fluids);
+                RecipeAlchemicalMixer recipe = CraftingRegistry.getAlchemicalMixingRecipe(fluids);
                 if (recipe != null) {
 
                     AlchemyResult result = recipe.matchAshes(globe.getAspects(), world);

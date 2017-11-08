@@ -1,5 +1,6 @@
 package soot.util;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.fluids.Fluid;
 
@@ -12,5 +13,6 @@ public class CaskManager {
         public Fluid fluid;
         public int color;
         public ArrayList<PotionEffect> effects = new ArrayList<>();
+        public IBlockState caskState;
     }
 }

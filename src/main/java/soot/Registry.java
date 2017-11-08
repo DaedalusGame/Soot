@@ -19,6 +19,7 @@ import soot.fluids.FluidMolten;
 import soot.item.ItemBlockMeta;
 import soot.potion.PotionAle;
 import soot.tile.*;
+import soot.util.Nope;
 import teamroots.embers.RegistryManager;
 import teamroots.embers.block.BlockSeed;
 
@@ -29,6 +30,8 @@ public class Registry {
     private static ArrayList<Item> MODELLED_ITEMS = new ArrayList<>();
     private static ArrayList<Block> BLOCKS = new ArrayList<>();
     private static ArrayList<Item> ITEMS = new ArrayList<>();
+    private static ArrayList<Block> OVERRIDE_BLOCKS = new ArrayList<>();
+    private static ArrayList<Item> OVERRIDE_ITEMS = new ArrayList<>();
 
     @GameRegistry.ObjectHolder("soot:alchemy_globe")
     public static BlockAlchemyGlobe ALCHEMY_GLOBE;
@@ -62,15 +65,16 @@ public class Registry {
         registerBlock("ember_burst", emberBurst, new ItemBlock(emberBurst));
         registerBlock("ember_funnel", emberFunnel, new ItemBlock(emberFunnel));
 
+        BlockMixerImproved mixerImproved = (BlockMixerImproved) new BlockMixerImproved(Material.ROCK,"mixer",true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.0F);
+        registerOverride(mixerImproved);
+        registerOverride(mixerImproved.getItemBlock());
+
+        BlockDawnstoneAnvilImproved dawnstoneAnvilImproved = (BlockDawnstoneAnvilImproved) new BlockDawnstoneAnvilImproved(Material.ROCK,"dawnstone_anvil",true).setHarvestProperties("pickaxe", 1).setIsFullCube(false).setIsOpaqueCube(false).setHardness(1.6f).setLightOpacity(0);
+        registerOverride(dawnstoneAnvilImproved);
+        registerOverride(dawnstoneAnvilImproved.getItemBlock());
+
         BlockAlchemyGlobe alchemyGlobe = new BlockAlchemyGlobe(Material.ROCK);
         registerBlock("alchemy_globe", alchemyGlobe, new ItemBlock(alchemyGlobe));
-
-        BlockMixerImproved mixerImproved = (BlockMixerImproved) new BlockMixerImproved(Material.ROCK,"mixer",true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.0F);
-        BlockDawnstoneAnvilImproved dawnstoneAnvilImproved = (BlockDawnstoneAnvilImproved) new BlockDawnstoneAnvilImproved(Material.ROCK,"dawnstone_anvil",true).setHarvestProperties("pickaxe", 1).setIsFullCube(false).setIsOpaqueCube(false).setHardness(1.6f).setLightOpacity(0);
-        registerBlock(mixerImproved,false);
-        registerBlock(dawnstoneAnvilImproved,false);
-        registerItem(mixerImproved.getItemBlock(),false);
-        registerItem(dawnstoneAnvilImproved.getItemBlock(),false);
 
         registerItem("signet_antimony",new Item());
     }
@@ -108,6 +112,16 @@ public class Registry {
         block.setUnlocalizedName(id);
         registerBlock(block,true);
         registerItem(id,itemBlock);
+    }
+
+    public static void registerOverride(Block block)
+    {
+        OVERRIDE_BLOCKS.add(block);
+    }
+
+    public static void registerOverride(Item item)
+    {
+        OVERRIDE_ITEMS.add(item);
     }
 
     public static void registerBlock(Block block, boolean hasmodel)
@@ -158,6 +172,12 @@ public class Registry {
         for (Block block : BLOCKS) {
             event.getRegistry().register(block);
         }
+
+        Nope.shutupForge(() -> {
+            for (Block block : OVERRIDE_BLOCKS) {
+                event.getRegistry().register(block);
+            }
+        });
     }
 
     @SubscribeEvent
@@ -165,6 +185,12 @@ public class Registry {
         for (Item item : ITEMS) {
             event.getRegistry().register(item);
         }
+
+        Nope.shutupForge(() -> {
+            for (Item item : OVERRIDE_ITEMS) {
+                event.getRegistry().register(item);
+            }
+        });
     }
 
     @SubscribeEvent

@@ -8,7 +8,7 @@ import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.item.IIngredient;
 import crafttweaker.api.item.IItemStack;
 import soot.recipe.RecipeDawnstoneAnvil;
-import soot.recipe.RecipeRegistry;
+import soot.recipe.CraftingRegistry;
 import soot.util.CTUtil;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
@@ -27,7 +27,7 @@ public class DawnstoneAnvil {
     public static class Add extends BaseListAddition<RecipeDawnstoneAnvil>
     {
         public Add(RecipeDawnstoneAnvil recipe) {
-            super("DawnstoneAnvil", RecipeRegistry.dawnstoneAnvilRecipes, Lists.newArrayList(recipe));
+            super("DawnstoneAnvil", CraftingRegistry.dawnstoneAnvilRecipes, Lists.newArrayList(recipe));
         }
 
         @Override
