@@ -57,5 +57,8 @@ public class TileEntityAlchemyGlobeRenderer extends TileEntitySpecialRenderer<Ti
         RenderUtil.addBox(buffer, 0.5, 0.5, 0.0, -0.5, -0.5, -0.0, BUBBLE_UV, new int[]{0,0,0,0,0,0});
         tess.draw();
         GlStateManager.popMatrix();
+        GlStateManager.depthMask(true);
+        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        GlStateManager.disableBlend();
     }
 }

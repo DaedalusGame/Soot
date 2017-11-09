@@ -1,5 +1,6 @@
 package soot.recipe;
 
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -14,8 +15,10 @@ import soot.util.AspectList.AspectRangeList;
 import teamroots.embers.ConfigManager;
 import teamroots.embers.RegistryManager;
 import teamroots.embers.item.EnumStampType;
+import teamroots.embers.recipe.AlchemyRecipe;
 import teamroots.embers.recipe.ItemMeltingRecipe;
 import teamroots.embers.recipe.ItemStampingRecipe;
+import teamroots.embers.recipe.RecipeRegistry;
 
 import java.util.ArrayList;
 
@@ -31,7 +34,8 @@ public class CraftingRegistry {
     @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event)
     {
-        teamroots.embers.recipe.RecipeRegistry.meltingRecipes.add(new ItemMeltingRecipe(new ItemStack(Items.SUGAR),new FluidStack(Registry.MOLTEN_SUGAR,100),false,false));
+        RecipeRegistry.alchemyRecipes.add(new AlchemyRecipe(0,0,16,32,0,0,0,0,32,64,new ItemStack(Blocks.GLASS),new ItemStack(RegistryManager.ingot_lead),new ItemStack(RegistryManager.aspectus_lead),new ItemStack(RegistryManager.ingot_lead),new ItemStack(RegistryManager.archaic_circuit),new ItemStack(Registry.ALCHEMY_GLOBE)));
+        RecipeRegistry.meltingRecipes.add(new ItemMeltingRecipe(new ItemStack(Items.SUGAR),new FluidStack(Registry.MOLTEN_SUGAR,16),false,false)); //Nugget size -> you can combine sugar and lead into antimony without remainder and 1000 sugar store nicely in a fluid vessel
 
         ArrayList<Fluid> leveledMetals = new ArrayList<>();
         leveledMetals.add(RegistryManager.fluid_molten_lead);
@@ -53,7 +57,7 @@ public class CraftingRegistry {
         }
 
         alchemicalMixingRecipes.add(new RecipeAlchemicalMixer(new FluidStack[]{new FluidStack(RegistryManager.fluid_molten_lead,8),new FluidStack(Registry.MOLTEN_SUGAR,4)}, new FluidStack(Registry.MOLTEN_ANTIMONY,12), new AspectRangeList(AspectList.createStandard(0, 16, 0, 16, 0), AspectList.createStandard(0, 32, 0, 24, 0))));
-        teamroots.embers.recipe.RecipeRegistry.stampingRecipes.add(new ItemStampingRecipe(new ItemStack(RegistryManager.shard_ember),new FluidStack(Registry.MOLTEN_ANTIMONY,144), EnumStampType.TYPE_BAR, new ItemStack(Registry.SIGNET_ANTIMONY), false, false));
+        RecipeRegistry.stampingRecipes.add(new ItemStampingRecipe(new ItemStack(RegistryManager.shard_ember),new FluidStack(Registry.MOLTEN_ANTIMONY,144), EnumStampType.TYPE_BAR, new ItemStack(Registry.SIGNET_ANTIMONY), false, false));
     }
 
     public static RecipeAlchemicalMixer getAlchemicalMixingRecipe(ArrayList<FluidStack> fluids)

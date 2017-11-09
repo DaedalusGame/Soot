@@ -38,8 +38,6 @@ public class Registry {
     private static ArrayList<Item> MODELLED_ITEMS = new ArrayList<>();
     private static ArrayList<Block> BLOCKS = new ArrayList<>();
     private static ArrayList<Item> ITEMS = new ArrayList<>();
-    private static ArrayList<Block> OVERRIDE_BLOCKS = new ArrayList<>();
-    private static ArrayList<Item> OVERRIDE_ITEMS = new ArrayList<>();
 
     @GameRegistry.ObjectHolder("soot:alchemy_globe")
     public static BlockAlchemyGlobe ALCHEMY_GLOBE;
@@ -69,18 +67,12 @@ public class Registry {
 
     public static void registerBlocks()
     {
+        Nope.shutupForge(Registry::registerOverrides);
+
         BlockEmberBurst emberBurst = new BlockEmberBurst(Material.ROCK);
         BlockEmberFunnel emberFunnel = new BlockEmberFunnel(Material.ROCK);
         registerBlock("ember_burst", emberBurst, new ItemBlock(emberBurst));
         registerBlock("ember_funnel", emberFunnel, new ItemBlock(emberFunnel));
-
-        BlockMixerImproved mixerImproved = (BlockMixerImproved) new BlockMixerImproved(Material.ROCK,"mixer",true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.0F);
-        registerOverride(mixerImproved);
-        registerOverride(mixerImproved.getItemBlock());
-
-        BlockDawnstoneAnvilImproved dawnstoneAnvilImproved = (BlockDawnstoneAnvilImproved) new BlockDawnstoneAnvilImproved(Material.ROCK,"dawnstone_anvil",true).setHarvestProperties("pickaxe", 1).setIsFullCube(false).setIsOpaqueCube(false).setHardness(1.6f).setLightOpacity(0);
-        registerOverride(dawnstoneAnvilImproved);
-        registerOverride(dawnstoneAnvilImproved.getItemBlock());
 
         BlockAlchemyGlobe alchemyGlobe = new BlockAlchemyGlobe(Material.ROCK);
         registerBlock("alchemy_globe", alchemyGlobe, new ItemBlock(alchemyGlobe));
@@ -88,14 +80,25 @@ public class Registry {
         registerItem("signet_antimony",new Item());
     }
 
+    public static void registerOverrides()
+    {
+        BlockMixerImproved mixerImproved = (BlockMixerImproved) new BlockMixerImproved(Material.ROCK,"mixer",true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.0F);
+        registerBlock(mixerImproved,false);
+        registerItem(mixerImproved.getItemBlock(),false);
+
+        BlockDawnstoneAnvilImproved dawnstoneAnvilImproved = (BlockDawnstoneAnvilImproved) new BlockDawnstoneAnvilImproved(Material.ROCK,"dawnstone_anvil",true).setHarvestProperties("pickaxe", 1).setIsFullCube(false).setIsOpaqueCube(false).setHardness(1.6f).setLightOpacity(0);
+        registerBlock(dawnstoneAnvilImproved,false);
+        registerItem(dawnstoneAnvilImproved.getItemBlock(),false);
+    }
+
     public static void registerFluids()
     {
         //For creating alcohol. All made in Melter, so very hot.
-        FluidRegistry.registerFluid(BOILING_WORT = new Fluid("boiling_wort",new ResourceLocation(Soot.MODID,"blocks/wort"),new ResourceLocation(Soot.MODID,"blocks/wort_flowing")).setTemperature(500));
-        FluidRegistry.registerFluid(BOILING_POTATO_JUICE = new Fluid("boiling_potato_juice",new ResourceLocation(Soot.MODID,"blocks/potato_juice"),new ResourceLocation(Soot.MODID,"blocks/potato_juice_flowing")).setTemperature(500));
+        //FluidRegistry.registerFluid(BOILING_WORT = new Fluid("boiling_wort",new ResourceLocation(Soot.MODID,"blocks/wort"),new ResourceLocation(Soot.MODID,"blocks/wort_flowing")).setTemperature(500));
+        //FluidRegistry.registerFluid(BOILING_POTATO_JUICE = new Fluid("boiling_potato_juice",new ResourceLocation(Soot.MODID,"blocks/potato_juice"),new ResourceLocation(Soot.MODID,"blocks/potato_juice_flowing")).setTemperature(500));
         //Alcohol itself. Cold.
-        FluidRegistry.registerFluid(ALE = new Fluid("ale",new ResourceLocation(Soot.MODID,"blocks/ale"),new ResourceLocation(Soot.MODID,"blocks/ale_flowing")));
-        FluidRegistry.registerFluid(VODKA = new Fluid("vodka",new ResourceLocation(Soot.MODID,"blocks/vodka"),new ResourceLocation(Soot.MODID,"blocks/vodka_flowing")));
+        //FluidRegistry.registerFluid(ALE = new Fluid("ale",new ResourceLocation(Soot.MODID,"blocks/ale"),new ResourceLocation(Soot.MODID,"blocks/ale_flowing")));
+        //FluidRegistry.registerFluid(VODKA = new Fluid("vodka",new ResourceLocation(Soot.MODID,"blocks/vodka"),new ResourceLocation(Soot.MODID,"blocks/vodka_flowing")));
         //Alchemy Fluids
         FluidRegistry.registerFluid(MOLTEN_ANTIMONY = new FluidMolten("antimony",new ResourceLocation(Soot.MODID,"blocks/molten_antimony"),new ResourceLocation(Soot.MODID,"blocks/molten_antimony_flowing")));
         FluidRegistry.registerFluid(MOLTEN_SUGAR = new FluidMolten("sugar",new ResourceLocation(Soot.MODID,"blocks/molten_sugar"),new ResourceLocation(Soot.MODID,"blocks/molten_sugar_flowing")));
@@ -121,16 +124,6 @@ public class Registry {
         block.setUnlocalizedName(id);
         registerBlock(block,true);
         registerItem(id,itemBlock);
-    }
-
-    public static void registerOverride(Block block)
-    {
-        OVERRIDE_BLOCKS.add(block);
-    }
-
-    public static void registerOverride(Item item)
-    {
-        OVERRIDE_ITEMS.add(item);
     }
 
     public static void registerBlock(Block block, boolean hasmodel)
@@ -199,12 +192,6 @@ public class Registry {
         for (Block block : BLOCKS) {
             event.getRegistry().register(block);
         }
-
-        Nope.shutupForge(() -> {
-            for (Block block : OVERRIDE_BLOCKS) {
-                event.getRegistry().register(block);
-            }
-        });
     }
 
     @SubscribeEvent
@@ -212,12 +199,6 @@ public class Registry {
         for (Item item : ITEMS) {
             event.getRegistry().register(item);
         }
-
-        Nope.shutupForge(() -> {
-            for (Item item : OVERRIDE_ITEMS) {
-                event.getRegistry().register(item);
-            }
-        });
     }
 
     @SubscribeEvent

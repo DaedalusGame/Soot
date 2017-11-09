@@ -1,0 +1,26 @@
+{
+  "result": {
+    "item": "soot:ember_funnel",
+    "data": 0
+  },
+  "pattern": [
+    "D D",
+    "CRC",
+    " D "
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "R": {
+      "item": "embers:ember_receiver",
+      "data": 0
+    },
+    "C": {
+      "type": "forge:ore_dict",
+      "ore": "ingotCopper"
+    },
+    "D": {
+      "type": "forge:ore_dict",
+      "ore": "ingotDawnstone"
+    }
+  }
+}

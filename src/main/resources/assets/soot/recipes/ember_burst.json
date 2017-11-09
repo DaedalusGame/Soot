@@ -1,0 +1,30 @@
+{
+  "result": {
+    "item": "soot:ember_burst",
+    "data": 0
+  },
+  "pattern": [
+    " C ",
+    " M ",
+    "DED"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "E": {
+      "item": "embers:ember_pulser",
+      "data": 0
+    },
+    "M": {
+      "item": "embers:archaic_circuit",
+      "data": 0
+    },
+    "C": {
+      "item": "embers:ember_cluster",
+      "data": 0
+    },
+    "D": {
+      "type": "forge:ore_dict",
+      "ore": "ingotDawnstone"
+    }
+  }
+}

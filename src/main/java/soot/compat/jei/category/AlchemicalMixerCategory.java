@@ -22,7 +22,7 @@ public class AlchemicalMixerCategory implements IRecipeCategory<AlchemicalMixerW
     public static final int WIDTH = 108;
     public static final int HEIGHT = 125;
     public static final String UID = "soot.alchemical_mixer";
-    public static final String L18N_KEY = "embers.jei.recipe.dawnstone_anvil";
+    public static final String L18N_KEY = "embers.jei.recipe.alchemical_mixer";
     @Nonnull
     private final IDrawable background;
     @Nonnull
