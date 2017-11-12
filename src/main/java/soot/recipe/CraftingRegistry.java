@@ -62,12 +62,14 @@ public class CraftingRegistry {
 
     public static RecipeAlchemicalMixer getAlchemicalMixingRecipe(ArrayList<FluidStack> fluids)
     {
+        RecipeAlchemicalMixer matchedRecipe = null;
+
         for (RecipeAlchemicalMixer recipe: alchemicalMixingRecipes) {
-            if(recipe.matches(fluids))
-                return recipe;
+            if(recipe.matches(fluids) && (matchedRecipe == null || recipe.inputs.size() > matchedRecipe.inputs.size()))
+                matchedRecipe = recipe;
         }
 
-        return null;
+        return matchedRecipe;
     }
 
     public static RecipeDawnstoneAnvil getDawnstoneAnvilRecipe(ItemStack bottom, ItemStack top)

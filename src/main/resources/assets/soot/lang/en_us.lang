@@ -5,7 +5,10 @@ tile.ember_burst.name=Ember Spread Burst
 tile.ember_funnel.name=Ember Funnel
 tile.alchemy_globe.name=Alchemical Recombulator
 
+item.mug.name=Mug of %s [WIP]
+item.mug.empty.name=Empty Mug [WIP]
 item.signet_antimony.name=Signet of Antimony
+item.ingot_antimony.name=Antimony Ingot
 
 fluid.sugar=Molten Sugar
 fluid.antimony=Molten Antimony

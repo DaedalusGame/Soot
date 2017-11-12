@@ -26,6 +26,11 @@ public class AlchemicalMixer {
     public static final String clazz = "mods.soot.AlchemicalMixer";
 
     @ZenMethod
+    public static void add(ILiquidStack output, @NotNull ILiquidStack[] inputs,  int ironMin, int ironMax, int copperMin, int copperMax, int leadMin, int leadMax, int silverMin, int silverMax, int dawnstoneMin, int dawnstoneMax) {
+        add(output, inputs, new IntRange(ironMin,ironMax),new IntRange(copperMin,copperMax),new IntRange(leadMin,leadMax),new IntRange(silverMin,silverMax),new IntRange(dawnstoneMin,dawnstoneMax));
+    }
+
+    @ZenMethod
     public static void add(ILiquidStack output, @NotNull ILiquidStack[] inputs, IntRange iron, IntRange copper, IntRange lead, IntRange silver, IntRange dawnstone) {
         RecipeAlchemicalMixer recipe = new RecipeAlchemicalMixer(InputHelper.toFluids(inputs),InputHelper.toFluid(output), CTUtil.toAspectRange(iron,copper,lead,silver,dawnstone));
         CraftTweakerAPI.apply(new Add(recipe));

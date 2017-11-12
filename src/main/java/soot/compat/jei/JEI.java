@@ -53,18 +53,25 @@ public class JEI implements IModPlugin {
 
         for (Item item : Item.REGISTRY) {
             ItemStack stack = item.getDefaultInstance();
-            boolean isRepairable = item.getIsRepairable(stack, Misc.getRepairItem(stack));
+            ItemStack repairItem = ItemStack.EMPTY;
+            try {
+                repairItem = Misc.getRepairItem(stack);
+            }
+            catch (Exception e) { //Gotta catch em all
+                e.printStackTrace();
+            }
+            boolean isRepairable = item.getIsRepairable(stack, repairItem);
             boolean materiaAllowed = item.isRepairable();
             if(isRepairable || materiaAllowed)
             {
                 ArrayList<ItemStack> repairMaterials = new ArrayList<>();
-                repairMaterials.add(Misc.getRepairItem(stack));
+                repairMaterials.add(repairItem.copy());
                 if(materiaAllowed)
                     repairMaterials.add(new ItemStack(RegistryManager.isolated_materia));
                 ItemStack[] repairMaterialsArray = repairMaterials.toArray(new ItemStack[repairMaterials.size()]);
                 repairRecipes.add(new RecipeDawnstoneAnvil(new ItemStack[]{stack.copy()}, Ingredient.fromStacks(makeDamaged(stack)),Ingredient.fromStacks(repairMaterialsArray)));
                 if(Misc.getResourceCount(stack) != -1) {
-                    ItemStack material = Misc.getRepairItem(stack).copy();
+                    ItemStack material = repairItem.copy();
                     material.setCount(Misc.getResourceCount(stack));
                     destroyRecipes.add(new RecipeDawnstoneAnvil(new ItemStack[]{material}, Ingredient.fromStacks(makeDamaged(stack)), Ingredient.EMPTY));
                 }

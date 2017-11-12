@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "soot:items/mug",
+    "layer1": "soot:items/mug_fill_liquid"
+  }
+}

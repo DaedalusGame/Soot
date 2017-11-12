@@ -1,0 +1,20 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "soot:items/mug"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "fillmodel": 1
+      },
+      "model": "soot:item/mug_liquid"
+    },
+    {
+      "predicate": {
+        "fillmodel": 2
+      },
+      "model": "soot:item/mug_ale"
+    }
+  ]
+}

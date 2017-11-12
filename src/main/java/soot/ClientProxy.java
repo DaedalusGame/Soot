@@ -12,8 +12,13 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import soot.block.IBlockVariants;
+import soot.tile.TileEntityAlchemyGlobe;
+import soot.tile.TileEntityAlchemyGlobeRenderer;
+import soot.tile.TileEntityEmberBurst;
+import soot.tile.TileEntityEmberBurstRenderer;
 import soot.util.IBlockColored;
 import soot.util.IItemColored;
 import teamroots.embers.block.IBlock;
@@ -54,12 +59,18 @@ public class ClientProxy implements IProxy {
             itemColors.registerItemColorHandler(item::getColorFromItemstack,(Item)item);
         }
 
-        Registry.registerTESRs();
+        registerTESRs();
     }
 
     @Override
     public void postInit() {
 
+    }
+
+    public static void registerTESRs()
+    {
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityEmberBurst.class, new TileEntityEmberBurstRenderer());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAlchemyGlobe.class, new TileEntityAlchemyGlobeRenderer());
     }
 
     @Override

@@ -26,15 +26,29 @@ public class Alchemy {
     public static final String clazz = "mods.embers.Alchemy";
 
     @ZenMethod
+    public static void add(IItemStack output,@NotNull IItemStack[] input, int ironMin, int ironMax, int copperMin, int copperMax, int leadMin, int leadMax, int silverMin, int silverMax, int dawnstoneMin, int dawnstoneMax) {
+        AlchemyRecipe recipe = new AlchemyRecipe(ironMin,ironMax,
+                dawnstoneMin,dawnstoneMax,
+                copperMin,copperMax,
+                silverMin,silverMax,
+                leadMin,leadMax,
+                InputHelper.toStack(input[0]),InputHelper.toStack(input[1]),InputHelper.toStack(input[2]),InputHelper.toStack(input[3]),InputHelper.toStack(input[4]),
+                InputHelper.toStack(output));
+        CraftTweakerAPI.apply(new Add(recipe));
+    }
+
+    @ZenMethod
     public static void add(IItemStack output,@NotNull IItemStack[] input, IntRange iron, IntRange copper, IntRange lead, IntRange silver, IntRange dawnstone) {
-        AlchemyRecipe recipe = new AlchemyRecipe(iron.getFrom(),iron.getTo(),
+        add(output,input,iron.getFrom(),iron.getTo(),copper.getFrom(),copper.getTo(),lead.getFrom(),lead.getTo(),silver.getFrom(),silver.getTo(),dawnstone.getFrom(),dawnstone.getTo());
+
+        /*AlchemyRecipe recipe = new AlchemyRecipe(iron.getFrom(),iron.getTo(),
                 dawnstone.getFrom(),dawnstone.getTo(),
                 copper.getFrom(),copper.getTo(),
                 silver.getFrom(),silver.getTo(),
                 lead.getFrom(),lead.getTo(),
                 InputHelper.toStack(input[0]),InputHelper.toStack(input[1]),InputHelper.toStack(input[2]),InputHelper.toStack(input[3]),InputHelper.toStack(input[4]),
                 InputHelper.toStack(output));
-        CraftTweakerAPI.apply(new Add(recipe));
+        CraftTweakerAPI.apply(new Add(recipe));*/
     }
 
     @ZenMethod

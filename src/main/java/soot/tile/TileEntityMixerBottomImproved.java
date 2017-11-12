@@ -1,5 +1,6 @@
 package soot.tile;
 
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -32,6 +33,24 @@ public class TileEntityMixerBottomImproved extends TileEntityMixerBottom {
         //south = new ResettingFluidTank(8000);
         //west = new ResettingFluidTank(8000);
         tanks = new FluidTank[] {north,east,south,west};
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound tag){
+        super.writeToNBT(tag);
+        NBTTagCompound northTank = new NBTTagCompound();
+        north.writeToNBT(northTank);
+        tag.setTag("northTank", northTank);
+        NBTTagCompound southTank = new NBTTagCompound();
+        south.writeToNBT(southTank);
+        tag.setTag("southTank", southTank);
+        NBTTagCompound eastTank = new NBTTagCompound();
+        east.writeToNBT(eastTank);
+        tag.setTag("eastTank", eastTank);
+        NBTTagCompound westTank = new NBTTagCompound();
+        west.writeToNBT(westTank);
+        tag.setTag("westTank", westTank);
+        return tag;
     }
 
     //Unfortunately I have to do this, the interfaces are all out of whack in the deobf jar
