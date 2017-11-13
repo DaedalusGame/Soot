@@ -5,7 +5,10 @@ tile.ember_burst.name=Ember Spread Burst
 tile.ember_funnel.name=灰烬漏斗
 tile.alchemy_globe.name=炼金重组器
 
+item.mug.name=%s杯[未完成]
+item.mug.empty.name=空杯[未完成]
 item.signet_antimony.name=锑纹章
+item.ingot_antimony.name=锑锭
 
 fluid.sugar=熔融糖
 fluid.antimony=熔融锑
