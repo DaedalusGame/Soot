@@ -2,7 +2,7 @@ package soot.recipe;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
-import scala.actors.threadpool.Arrays;
+import java.util.Arrays;
 
 import java.util.List;
 
