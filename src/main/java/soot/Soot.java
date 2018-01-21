@@ -9,6 +9,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import soot.handler.PedestalHandler;
 import soot.handler.VillagerAntimonyHandler;
 import soot.recipe.CraftingRegistry;
 import soot.util.Attributes;
@@ -41,6 +42,7 @@ public class Soot
         proxy.preInit();
         MinecraftForge.EVENT_BUS.register(Attributes.class);
         MinecraftForge.EVENT_BUS.register(VillagerAntimonyHandler.class);
+        MinecraftForge.EVENT_BUS.register(PedestalHandler.class);
     }
 
     @EventHandler

@@ -10,6 +10,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.oredict.OreDictionary;
 import soot.Registry;
 import soot.util.AspectList;
 import soot.util.AspectList.AspectRangeList;
@@ -61,6 +62,8 @@ public class CraftingRegistry {
         RecipeRegistry.stampingRecipes.add(new ItemStampingRecipe(new ItemStack(RegistryManager.shard_ember),FluidRegistry.getFluidStack("antimony",144), EnumStampType.TYPE_BAR, new ItemStack(Registry.SIGNET_ANTIMONY), false, false));
         RecipeRegistry.stampingRecipes.add(new ItemStampingRecipe(ItemStack.EMPTY, FluidRegistry.getFluidStack("antimony",144), EnumStampType.TYPE_BAR, new ItemStack(Registry.INGOT_ANTIMONY), false, false));
         RecipeRegistry.meltingRecipes.add(new ItemMeltingRecipe(new ItemStack(Registry.INGOT_ANTIMONY),FluidRegistry.getFluidStack("antimony",144),false,false));
+
+        OreDictionary.registerOre("ingotAntimony",new ItemStack(Registry.INGOT_ANTIMONY));
     }
 
     public static RecipeAlchemicalMixer getAlchemicalMixingRecipe(ArrayList<FluidStack> fluids)
