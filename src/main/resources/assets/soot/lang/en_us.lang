@@ -22,6 +22,8 @@ fluid.vodka=Potato Vodka
 fluid.absinthe=Absinthe
 fluid.methanol=Pyroligneous Spirit
 fluid.umber_ale=Umber Ale
+fluid.inner_fire=Inner Fire Ale
+fluid.snowpoff=Snowpoff Vodka
 
 potion.potency.2=III
 potion.potency.3=IV

@@ -7,6 +7,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import soot.Registry;
@@ -35,7 +36,7 @@ public class CraftingRegistry {
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event)
     {
         RecipeRegistry.alchemyRecipes.add(new AlchemyRecipe(0,0,16,32,0,0,0,0,32,64,new ItemStack(Blocks.GLASS),new ItemStack(RegistryManager.ingot_lead),new ItemStack(RegistryManager.aspectus_lead),new ItemStack(RegistryManager.ingot_lead),new ItemStack(RegistryManager.archaic_circuit),new ItemStack(Registry.ALCHEMY_GLOBE)));
-        RecipeRegistry.meltingRecipes.add(new ItemMeltingRecipe(new ItemStack(Items.SUGAR),new FluidStack(Registry.MOLTEN_SUGAR,16),false,false)); //Nugget size -> you can combine sugar and lead into antimony without remainder and 1000 sugar store nicely in a fluid vessel
+        RecipeRegistry.meltingRecipes.add(new ItemMeltingRecipe(new ItemStack(Items.SUGAR),FluidRegistry.getFluidStack("sugar",16),false,false)); //Nugget size -> you can combine sugar and lead into antimony without remainder and 1000 sugar store nicely in a fluid vessel
 
         ArrayList<Fluid> leveledMetals = new ArrayList<>();
         leveledMetals.add(RegistryManager.fluid_molten_lead);
@@ -56,8 +57,8 @@ public class CraftingRegistry {
             alchemicalMixingRecipes.add(new RecipeAlchemicalMixer(new FluidStack[]{currentLevel}, nextLevel, aspectRange));
         }
 
-        alchemicalMixingRecipes.add(new RecipeAlchemicalMixer(new FluidStack[]{new FluidStack(RegistryManager.fluid_molten_lead,8),new FluidStack(Registry.MOLTEN_SUGAR,4)}, new FluidStack(Registry.MOLTEN_ANTIMONY,12), new AspectRangeList(AspectList.createStandard(0, 16, 0, 16, 0), AspectList.createStandard(0, 32, 0, 24, 0))));
-        RecipeRegistry.stampingRecipes.add(new ItemStampingRecipe(new ItemStack(RegistryManager.shard_ember),new FluidStack(Registry.MOLTEN_ANTIMONY,144), EnumStampType.TYPE_BAR, new ItemStack(Registry.SIGNET_ANTIMONY), false, false));
+        alchemicalMixingRecipes.add(new RecipeAlchemicalMixer(new FluidStack[]{new FluidStack(RegistryManager.fluid_molten_lead,8),FluidRegistry.getFluidStack("sugar",4)}, FluidRegistry.getFluidStack("antimony",12), new AspectRangeList(AspectList.createStandard(0, 16, 0, 16, 0), AspectList.createStandard(0, 32, 0, 24, 0))));
+        RecipeRegistry.stampingRecipes.add(new ItemStampingRecipe(new ItemStack(RegistryManager.shard_ember),FluidRegistry.getFluidStack("antimony",144), EnumStampType.TYPE_BAR, new ItemStack(Registry.SIGNET_ANTIMONY), false, false));
     }
 
     public static RecipeAlchemicalMixer getAlchemicalMixingRecipe(ArrayList<FluidStack> fluids)

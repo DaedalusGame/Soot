@@ -99,6 +99,18 @@ public class Registry {
     }
 
     public static void registerCaskLiquids() {
+        BOILING_WORT = FluidRegistry.getFluid("boiling_wort");
+        BOILING_POTATO_JUICE = FluidRegistry.getFluid("boiling_potato_juice");
+        BOILING_WORMWOOD = FluidRegistry.getFluid("boiling_wormwood");
+        BOILING_BEETROOT_SOUP = FluidRegistry.getFluid("boiling_beetroot_soup");
+
+        ALE = FluidRegistry.getFluid("ale");
+        VODKA = FluidRegistry.getFluid("vodka");
+        INNER_FIRE = FluidRegistry.getFluid("inner_fire");
+        UMBER_ALE = FluidRegistry.getFluid("umber_ale");
+        ABSINTHE = FluidRegistry.getFluid("absinthe");
+        METHANOL = FluidRegistry.getFluid("methanol");
+
         CaskManager.register(new CaskLiquid(BOILING_WORT,1,0xFF898516));
         CaskManager.register(new CaskLiquid(BOILING_POTATO_JUICE,1,0xFFECEAA7));
         CaskManager.register(new CaskLiquid(BOILING_WORMWOOD,1,0xFFAFFF8D).addEffect(new PotionEffect(MobEffects.POISON,1200,0),2).addEffect(new PotionEffect(MobEffects.BLINDNESS,1200,0),0));
@@ -125,6 +137,7 @@ public class Registry {
         registerBlock("alchemy_globe", alchemyGlobe, new ItemBlock(alchemyGlobe));
 
         registerItem("signet_antimony",new Item().setCreativeTab(Soot.creativeTab));
+        registerItem("ingot_antimony",new Item().setCreativeTab(Soot.creativeTab));
         registerItem("mug",new ItemMug().setCreativeTab(Soot.creativeTab));
     }
 
@@ -142,20 +155,27 @@ public class Registry {
     public static void registerFluids()
     {
         //For creating alcohol. All made in Melter, so very hot.
-        FluidRegistry.registerFluid(BOILING_WORT = new Fluid("boiling_wort",new ResourceLocation(Soot.MODID,"blocks/wort"),new ResourceLocation(Soot.MODID,"blocks/wort_flowing")).setTemperature(500));
-        FluidRegistry.registerFluid(BOILING_POTATO_JUICE = new Fluid("boiling_potato_juice",new ResourceLocation(Soot.MODID,"blocks/potato_juice"),new ResourceLocation(Soot.MODID,"blocks/potato_juice_flowing")).setTemperature(500));
-        FluidRegistry.registerFluid(BOILING_WORMWOOD = new Fluid("boiling_wormwood",new ResourceLocation(Soot.MODID,"blocks/verdigris"),new ResourceLocation(Soot.MODID,"blocks/verdigris_flowing")).setTemperature(500));
-        FluidRegistry.registerFluid(BOILING_BEETROOT_SOUP = new Fluid("boiling_beetroot_soup",new ResourceLocation(Soot.MODID,"blocks/beetroot_soup"),new ResourceLocation(Soot.MODID,"blocks/beetroot_soup_flowing")).setTemperature(500));
+        FluidRegistry.registerFluid(new Fluid("boiling_wort",new ResourceLocation(Soot.MODID,"blocks/wort"),new ResourceLocation(Soot.MODID,"blocks/wort_flowing")).setTemperature(500));
+        FluidRegistry.registerFluid(new Fluid("boiling_potato_juice",new ResourceLocation(Soot.MODID,"blocks/potato_juice"),new ResourceLocation(Soot.MODID,"blocks/potato_juice_flowing")).setTemperature(500));
+        FluidRegistry.registerFluid(new Fluid("boiling_wormwood",new ResourceLocation(Soot.MODID,"blocks/verdigris"),new ResourceLocation(Soot.MODID,"blocks/verdigris_flowing")).setTemperature(500));
+        FluidRegistry.registerFluid(new Fluid("boiling_beetroot_soup",new ResourceLocation(Soot.MODID,"blocks/beetroot_soup"),new ResourceLocation(Soot.MODID,"blocks/beetroot_soup_flowing")).setTemperature(500));
         //Alcohol itself. Cold.
-        FluidRegistry.registerFluid(ALE = new Fluid("ale",new ResourceLocation(Soot.MODID,"blocks/ale"),new ResourceLocation(Soot.MODID,"blocks/ale_flowing")));
-        FluidRegistry.registerFluid(VODKA = new Fluid("vodka",new ResourceLocation(Soot.MODID,"blocks/vodka"),new ResourceLocation(Soot.MODID,"blocks/vodka_flowing")));
-        FluidRegistry.registerFluid(INNER_FIRE = new Fluid("inner_fire",new ResourceLocation(Soot.MODID,"blocks/inner_fire"),new ResourceLocation(Soot.MODID,"blocks/inner_fire_flowing")));
-        FluidRegistry.registerFluid(UMBER_ALE = new Fluid("umber_ale",new ResourceLocation(Soot.MODID,"blocks/umber_ale"),new ResourceLocation(Soot.MODID,"blocks/umber_ale_flowing")));
-        FluidRegistry.registerFluid(METHANOL = new Fluid("methanol",new ResourceLocation(Soot.MODID,"blocks/methanol"),new ResourceLocation(Soot.MODID,"blocks/methanol_flowing")));
-        FluidRegistry.registerFluid(ABSINTHE = new Fluid("absinthe",new ResourceLocation(Soot.MODID,"blocks/absinthe"),new ResourceLocation(Soot.MODID,"blocks/absinthe_flowing")));
+        FluidRegistry.registerFluid(new Fluid("ale",new ResourceLocation(Soot.MODID,"blocks/ale"),new ResourceLocation(Soot.MODID,"blocks/ale_flowing")));
+        FluidRegistry.registerFluid(new Fluid("vodka",new ResourceLocation(Soot.MODID,"blocks/vodka"),new ResourceLocation(Soot.MODID,"blocks/vodka_flowing")));
+        FluidRegistry.registerFluid(new Fluid("inner_fire",new ResourceLocation(Soot.MODID,"blocks/inner_fire"),new ResourceLocation(Soot.MODID,"blocks/inner_fire_flowing")));
+        FluidRegistry.registerFluid(new Fluid("umber_ale",new ResourceLocation(Soot.MODID,"blocks/umber_ale"),new ResourceLocation(Soot.MODID,"blocks/umber_ale_flowing")));
+        FluidRegistry.registerFluid(new Fluid("methanol",new ResourceLocation(Soot.MODID,"blocks/methanol"),new ResourceLocation(Soot.MODID,"blocks/methanol_flowing")));
+        FluidRegistry.registerFluid(new Fluid("absinthe",new ResourceLocation(Soot.MODID,"blocks/absinthe"),new ResourceLocation(Soot.MODID,"blocks/absinthe_flowing")));
         //Alchemy Fluids
-        FluidRegistry.registerFluid(MOLTEN_ANTIMONY = new FluidMolten("antimony",new ResourceLocation(Soot.MODID,"blocks/molten_antimony"),new ResourceLocation(Soot.MODID,"blocks/molten_antimony_flowing")));
-        FluidRegistry.registerFluid(MOLTEN_SUGAR = new FluidMolten("sugar",new ResourceLocation(Soot.MODID,"blocks/molten_sugar"),new ResourceLocation(Soot.MODID,"blocks/molten_sugar_flowing")));
+        registerFluid(new FluidMolten("antimony",new ResourceLocation(Soot.MODID,"blocks/molten_antimony"),new ResourceLocation(Soot.MODID,"blocks/molten_antimony_flowing")), true);
+        registerFluid(new FluidMolten("sugar",new ResourceLocation(Soot.MODID,"blocks/molten_sugar"),new ResourceLocation(Soot.MODID,"blocks/molten_sugar_flowing")), true);
+    }
+
+    private static void registerFluid(Fluid fluid, boolean withBucket)
+    {
+        FluidRegistry.registerFluid(fluid);
+        if(withBucket)
+            FluidRegistry.addBucketForFluid(fluid);
     }
 
     public static void registerBlockModels()
