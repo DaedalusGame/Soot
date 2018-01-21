@@ -11,7 +11,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import scala.actors.threadpool.Arrays;
+import java.util.Arrays;
 import soot.Soot;
 import teamroots.embers.tileentity.TileEntityMixerBottom;
 
