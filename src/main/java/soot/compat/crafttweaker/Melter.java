@@ -50,6 +50,7 @@ public class Melter {
     public static void remove(ILiquidStack output)
     {
         CraftTweakerAPI.apply(new RemoveByOutput(InputHelper.toFluid(output)));
+        CraftTweakerAPI.apply(new RemoveByOreOutput(InputHelper.toFluid(output)));
     }
 
     @ZenMethod
@@ -61,6 +62,11 @@ public class Melter {
     private static List<ItemMeltingRecipe> getRecipesByOutput(FluidStack stack)
     {
         return RecipeRegistry.meltingRecipes.stream().filter(recipe -> stack.isFluidStackIdentical(recipe.getFluid())).collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    private static List<ItemMeltingOreRecipe> getOreRecipesByOutput(FluidStack stack)
+    {
+        return RecipeRegistry.meltingOreRecipes.stream().filter(recipe -> stack.isFluidStackIdentical(recipe.getFluid())).collect(Collectors.toCollection(ArrayList::new));
     }
 
     private static List<ItemMeltingRecipe> getRecipesByInput(ItemStack stack)
@@ -100,8 +106,8 @@ public class Melter {
 
     public static class RemoveByOutput extends BaseListRemoval<ItemMeltingRecipe>
     {
-        protected RemoveByOutput(FluidStack input) {
-            super("Melter", RecipeRegistry.meltingRecipes, getRecipesByOutput(input));
+        protected RemoveByOutput(FluidStack output) {
+            super("Melter", RecipeRegistry.meltingRecipes, getRecipesByOutput(output));
         }
 
         @Override
@@ -118,6 +124,18 @@ public class Melter {
 
         @Override
         protected String getRecipeInfo(ItemMeltingRecipe recipe) {
+            return recipe.toString();
+        }
+    }
+
+    public static class RemoveByOreOutput extends BaseListRemoval<ItemMeltingOreRecipe>
+    {
+        protected RemoveByOreOutput(FluidStack output) {
+            super("Melter", RecipeRegistry.meltingOreRecipes, getOreRecipesByOutput(output));
+        }
+
+        @Override
+        protected String getRecipeInfo(ItemMeltingOreRecipe recipe) {
             return recipe.toString();
         }
     }
