@@ -64,8 +64,7 @@ public class UpgradeAlchemyGlobe extends CapabilityUpgradeProvider {
             if (top.capability.getEmber() >= emberCost) {
                 ArrayList<FluidStack> fluids = bottom.getFluids();
                 RecipeAlchemicalMixer recipe = CraftingRegistry.getAlchemicalMixingRecipe(fluids);
-                if (recipe != null) {
-
+                if (recipe != null && !world.isRemote) {
                     AlchemyResult result = recipe.matchAshes(globe.getAspects(), world);
                     if(result.getAccuracy() == 1.0) {
                         IFluidHandler tank = top.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
@@ -127,14 +126,13 @@ public class UpgradeAlchemyGlobe extends CapabilityUpgradeProvider {
         float yOff = 0.5F;
         float zOff = world.rand.nextFloat() * 0.05F + 0.475F + zEject * 0.7F;
 
-        if(world.isRemote)
+        /*if(world.isRemote) //Figure this out sometime. Embers probably has packets for this.
         {
             for (int i = 0; i < 12; i ++) {
                 float ejectSpeed = world.rand.nextFloat() * 0.1f + 0.1f;
                 ParticleUtil.spawnParticleSmoke(world, pos.getX() + xOff, pos.getY() + yOff, pos.getZ() + zOff, xEject * ejectSpeed, 0, zEject * ejectSpeed, 64, 64, 64, 0.125f, 5.0f + 3.0f * world.rand.nextFloat(), 80);
             }
-        }
-
+        }*/
         EntityItem item = new EntityItem(world, pos.getX() + xOff, pos.getY() + yOff - 0.4f, pos.getZ() + zOff, failure);
         item.motionX = xEject * 0.1f;
         item.motionY = 0.0D;
