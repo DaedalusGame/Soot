@@ -1,3 +1,5 @@
+itemGroup.soot=Soot
+
 embers.jei.recipe.dawnstone_anvil=黎明石砧合成
 embers.jei.recipe.alchemical_mixer=炼金台合成
 
@@ -22,6 +24,8 @@ fluid.vodka=马铃薯伏特加溶液
 fluid.absinthe=苦艾酒
 fluid.methanol=甲醇
 fluid.umber_ale=茶啤
+fluid.inner_fire=烈酒
+fluid.snowpoff=伏特加
 
 potion.potency.2=III
 potion.potency.3=IV
