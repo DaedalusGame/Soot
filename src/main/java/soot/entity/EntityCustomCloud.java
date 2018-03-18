@@ -5,33 +5,28 @@ import com.google.common.collect.Maps;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.init.PotionTypes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.potion.PotionType;
 import net.minecraft.potion.PotionUtils;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import teamroots.embers.particle.ParticleUtil;
 
 import javax.annotation.Nullable;
-import java.awt.*;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class EntityCloud extends Entity {
-    private static final DataParameter<Float> RADIUS = EntityDataManager.<Float>createKey(EntityCloud.class, DataSerializers.FLOAT);
-    private static final DataParameter<Integer> COLOR = EntityDataManager.<Integer>createKey(EntityCloud.class, DataSerializers.VARINT);
-    private static final DataParameter<Boolean> IGNORE_RADIUS = EntityDataManager.<Boolean>createKey(EntityCloud.class, DataSerializers.BOOLEAN);
+public class EntityCustomCloud extends Entity {
+    private static final DataParameter<Float> RADIUS = EntityDataManager.<Float>createKey(EntityCustomCloud.class, DataSerializers.FLOAT);
+    private static final DataParameter<Integer> COLOR = EntityDataManager.<Integer>createKey(EntityCustomCloud.class, DataSerializers.VARINT);
+    private static final DataParameter<Boolean> IGNORE_RADIUS = EntityDataManager.<Boolean>createKey(EntityCustomCloud.class, DataSerializers.BOOLEAN);
     private final List<PotionEffect> effects;
     private final Map<Entity, Integer> reapplicationDelayMap;
     private int duration;
@@ -44,7 +39,7 @@ public class EntityCloud extends Entity {
     private EntityLivingBase owner;
     private UUID ownerUniqueId;
 
-    public EntityCloud(World worldIn) {
+    public EntityCustomCloud(World worldIn) {
         super(worldIn);
         this.effects = Lists.<PotionEffect>newArrayList();
         this.reapplicationDelayMap = Maps.<Entity, Integer>newHashMap();
@@ -56,15 +51,15 @@ public class EntityCloud extends Entity {
         this.setRadius(3.0F);
     }
 
-    public EntityCloud(World worldIn, double x, double y, double z) {
+    public EntityCustomCloud(World worldIn, double x, double y, double z) {
         this(worldIn);
         this.setPosition(x, y, z);
     }
 
     protected void entityInit() {
-        this.getDataManager().register(COLOR, Integer.valueOf(0));
-        this.getDataManager().register(RADIUS, Float.valueOf(0.5F));
-        this.getDataManager().register(IGNORE_RADIUS, Boolean.valueOf(false));
+        this.getDataManager().register(COLOR, 0);
+        this.getDataManager().register(RADIUS, 0.5F);
+        this.getDataManager().register(IGNORE_RADIUS, false);
     }
 
     public void setRadius(float radiusIn) {
@@ -148,9 +143,9 @@ public class EntityCloud extends Entity {
                     float offsetX = MathHelper.cos(angle) * distance;
                     float offsetZ = MathHelper.sin(angle) * distance;
 
-                    float velX = (0.5f - this.rand.nextFloat()) * 0.15f;
-                    float velY = 0.01f;
-                    float velZ = (0.5f - this.rand.nextFloat()) * 0.15f;
+                    float velX = (0.5f - this.rand.nextFloat()) * 0.05f;
+                    float velY = (this.rand.nextFloat()) * 0.05f;
+                    float velZ = (0.5f - this.rand.nextFloat()) * 0.05f;
 
                     int color = this.getColor();
                     int r = color >> 16 & 255;
@@ -158,7 +153,7 @@ public class EntityCloud extends Entity {
                     int b = color & 255;
                     int a = color >> 24 & 255;
 
-                    ParticleUtil.spawnParticleGlow(world, (float) this.posX + offsetX, (float) this.posY, (float) this.posZ + offsetZ, velX, velY, velZ, r, g, b, a, 2.0f, 24);
+                    ParticleUtil.spawnParticleGlow(world, (float) this.posX + offsetX, (float) this.posY, (float) this.posZ + offsetZ, velX, velY, velZ, r, g, b, a, 5.0f, 50);
                 }
             }
         } else {
@@ -191,9 +186,9 @@ public class EntityCloud extends Entity {
             if (this.ticksExisted % 5 == 0) {
                 CheckReapply();
 
-                if (effects.isEmpty()) {
+                /*if (effects.isEmpty()) {
                     this.reapplicationDelayMap.clear();
-                } else {
+                } else {*/
                     List<EntityLivingBase> list = this.world.getEntitiesWithinAABB(EntityLivingBase.class, this.getEntityBoundingBox());
 
                     if (!list.isEmpty()) {
@@ -231,7 +226,7 @@ public class EntityCloud extends Entity {
                                 }
                             }
                         }
-                    }
+                    //}
                 }
             }
         }
@@ -322,9 +317,7 @@ public class EntityCloud extends Entity {
             for (int i = 0; i < nbttaglist.tagCount(); ++i) {
                 PotionEffect potioneffect = PotionEffect.readCustomPotionEffectFromNBT(nbttaglist.getCompoundTagAt(i));
 
-                if (potioneffect != null) {
-                    this.addEffect(potioneffect);
-                }
+                this.addEffect(potioneffect);
             }
         }
     }

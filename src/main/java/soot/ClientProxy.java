@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.ItemColors;
+import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.util.ResourceLocation;
@@ -13,8 +14,10 @@ import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import soot.block.IBlockVariants;
+import soot.entity.EntityCustomCloud;
 import soot.tile.TileEntityAlchemyGlobe;
 import soot.tile.TileEntityAlchemyGlobeRenderer;
 import soot.tile.TileEntityEmberBurst;
@@ -23,6 +26,7 @@ import soot.util.IBlockColored;
 import soot.util.IItemColored;
 import teamroots.embers.block.IBlock;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 
 public class ClientProxy implements IProxy {
@@ -44,6 +48,14 @@ public class ClientProxy implements IProxy {
     {
         Registry.registerBlockModels();
         Registry.registerItemModels();
+
+        RenderingRegistry.registerEntityRenderingHandler(EntityCustomCloud.class, manager -> new Render<EntityCustomCloud>(manager) {
+            @Nullable
+            @Override
+            protected ResourceLocation getEntityTexture(EntityCustomCloud entity) {
+                return null;
+            }
+        });
     }
 
     @Override

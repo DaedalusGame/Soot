@@ -20,6 +20,9 @@ import teamroots.embers.RegistryManager;
 @Mod.EventBusSubscriber
 public class Soot
 {
+    @Mod.Instance(Soot.MODID)
+    public static Soot instance;
+
     public static final String MODID = "soot";
     public static final String NAME = "Soot";
     public static final String VERSION = "0.1";
@@ -41,10 +44,13 @@ public class Soot
         CraftingRegistry.preInit();
         Registry.preInit();
         proxy.preInit();
+        Config.preInit(event);
         MinecraftForge.EVENT_BUS.register(Attributes.class);
-        MinecraftForge.EVENT_BUS.register(VillagerAntimonyHandler.class);
         MinecraftForge.EVENT_BUS.register(PedestalHandler.class);
-        MinecraftForge.EVENT_BUS.register(GolemHandler.class);
+        if(Config.TRADING_ANTIMONY)
+            MinecraftForge.EVENT_BUS.register(VillagerAntimonyHandler.class);
+        if(Config.GOLEMS_POISON_IMMUNE || Config.GOLEMS_TYRFING_WEAK)
+            MinecraftForge.EVENT_BUS.register(GolemHandler.class);
     }
 
     @EventHandler

@@ -55,13 +55,14 @@ public class CraftingRegistry {
             FluidStack currentLevel = new FluidStack(leveledMetals.get(i),4); //TODO: Adjust this and add alchemical slurry as an input (redstone is either arsenic, copper or mercury)
             FluidStack nextLevel = new FluidStack(leveledMetals.get(e),4);
             AspectRangeList aspectRange = new AspectRangeList(AspectList.createStandard(0, 0, 0, 0, (e*e) * 4), AspectList.createStandard(0, 0, 0, 0, (e*e) * 8)); //Recipe gets harder the higher level it is
-            alchemicalMixingRecipes.add(new RecipeAlchemicalMixer(new FluidStack[]{currentLevel}, nextLevel, aspectRange));
+            alchemicalMixingRecipes.add(new RecipeAlchemicalMixer(new FluidStack[]{currentLevel, FluidRegistry.getFluidStack("alchemical_redstone",3)}, nextLevel, aspectRange));
         }
 
         alchemicalMixingRecipes.add(new RecipeAlchemicalMixer(new FluidStack[]{new FluidStack(RegistryManager.fluid_molten_lead,8),FluidRegistry.getFluidStack("sugar",4)}, FluidRegistry.getFluidStack("antimony",12), new AspectRangeList(AspectList.createStandard(0, 16, 0, 16, 0), AspectList.createStandard(0, 32, 0, 24, 0))));
         RecipeRegistry.stampingRecipes.add(new ItemStampingRecipe(new ItemStack(RegistryManager.shard_ember),FluidRegistry.getFluidStack("antimony",144), EnumStampType.TYPE_BAR, new ItemStack(Registry.SIGNET_ANTIMONY), false, false));
         RecipeRegistry.stampingRecipes.add(new ItemStampingRecipe(ItemStack.EMPTY, FluidRegistry.getFluidStack("antimony",144), EnumStampType.TYPE_BAR, new ItemStack(Registry.INGOT_ANTIMONY), false, false));
         RecipeRegistry.meltingRecipes.add(new ItemMeltingRecipe(new ItemStack(Registry.INGOT_ANTIMONY),FluidRegistry.getFluidStack("antimony",144),false,false));
+        RecipeRegistry.meltingRecipes.add(new ItemMeltingRecipe(new ItemStack(Items.REDSTONE),FluidRegistry.getFluidStack("alchemical_redstone",144),false,false));
 
         OreDictionary.registerOre("ingotAntimony",new ItemStack(Registry.INGOT_ANTIMONY));
     }

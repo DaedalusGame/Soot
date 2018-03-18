@@ -1,6 +1,7 @@
 package soot.tile;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -36,6 +37,14 @@ public class TileEntityAlchemyGlobe extends TileEntity implements ITickable {
 
     public AspectList getAspects() {
         return aspectList;
+    }
+
+    public void consumeAsh() {
+        List<TileEntityAlchemyPedestal> pedestals = AlchemyUtil.getNearbyPedestals(getWorld(),getPos());
+        for(TileEntityAlchemyPedestal pedestal : pedestals)
+        {
+            pedestal.inventory.setStackInSlot(0, ItemStack.EMPTY);
+        }
     }
 
     public EnumFacing getFacing()

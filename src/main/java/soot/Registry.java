@@ -19,10 +19,12 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import soot.block.*;
 import soot.capability.CapabilityUpgradeProvider;
 import soot.capability.IUpgradeProvider;
+import soot.entity.EntityFireCloud;
 import soot.fluids.FluidMolten;
 import soot.item.ItemMug;
 import soot.potion.PotionAle;
@@ -33,6 +35,7 @@ import soot.tile.*;
 import soot.util.CaskManager;
 import soot.util.CaskManager.CaskLiquid;
 import soot.util.Nope;
+import teamroots.embers.Embers;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -83,12 +86,14 @@ public class Registry {
     //Alchemy
     public static Fluid MOLTEN_ANTIMONY;
     public static Fluid MOLTEN_SUGAR;
+    public static Fluid MOLTEN_REDSTONE;
 
     public static void preInit()
     {
         MinecraftForge.EVENT_BUS.register(Registry.class);
         registerBlocks();
         registerTileEntities();
+        registerEntities();
         registerFluids();
         registerCapabilities();
     }
@@ -169,6 +174,7 @@ public class Registry {
         //Alchemy Fluids
         registerFluid(new FluidMolten("antimony",new ResourceLocation(Soot.MODID,"blocks/molten_antimony"),new ResourceLocation(Soot.MODID,"blocks/molten_antimony_flowing")), true);
         registerFluid(new FluidMolten("sugar",new ResourceLocation(Soot.MODID,"blocks/molten_sugar"),new ResourceLocation(Soot.MODID,"blocks/molten_sugar_flowing")), true);
+        registerFluid(new FluidMolten("alchemical_redstone",new ResourceLocation(Embers.MODID,"blocks/alchemic_slurry_still"),new ResourceLocation(Embers.MODID,"blocks/alchemic_slurry_flowing")), true);
     }
 
     private static void registerFluid(Fluid fluid, boolean withBucket)
@@ -230,6 +236,10 @@ public class Registry {
 
         registerTileEntity(TileEntityMixerBottomImproved.class);
         registerTileEntity(TileEntityDawnstoneAnvilImproved.class);
+    }
+
+    private static void registerEntities() {
+        EntityRegistry.registerModEntity(new ResourceLocation(Soot.MODID,"fireCloud"),EntityFireCloud.class,"fireCloud",0,Soot.instance,80,1,true);
     }
 
     public static void registerCapabilities()

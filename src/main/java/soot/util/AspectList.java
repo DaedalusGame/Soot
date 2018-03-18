@@ -32,6 +32,10 @@ public class AspectList {
         return aspectList.getOrDefault(aspect,0);
     }
 
+    public boolean hasAspect(String aspect) {
+        return aspectList.containsKey(aspect);
+    }
+
     public Collection<String> getAspects()
     {
         return aspectList.keySet();

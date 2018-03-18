@@ -15,7 +15,7 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle.forge'
 
 
-version = "0.4hotfix"
+version = "0.5"
 group= "soot" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Soot"
 
@@ -32,11 +32,11 @@ minecraft {
 repositories {
     maven { url 'http://dvs1.progwml6.com/files/maven' }
     maven { url "http://blamejared.com/maven" }
-	maven { url "http://www.ryanliptak.com/maven/" }
+    maven { url "http://www.ryanliptak.com/maven/" }
 }
 
 dependencies {
-	deobfCompile "mezz.jei:jei_1.12:4.7.2.77"
+    deobfCompile "mezz.jei:jei_1.12.2:4.8.3.128"
     deobfCompile "com.blamejared:MTLib:3.+"
 	compile files('libs/')
 }

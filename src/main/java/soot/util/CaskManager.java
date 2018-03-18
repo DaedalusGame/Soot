@@ -66,8 +66,8 @@ public class CaskManager {
                 }
                 else
                 {
-                    int amplifier = currentStack.getAmplifier();
-                    int duration = currentStack.getDuration();
+                    int amplifier = potioneffect.getAmplifier();
+                    int duration = potioneffect.getDuration();
                     if(currentStack != null)
                     {
                         amplifier = Math.min(amplifier + currentStack.getAmplifier() + 1,effect.maxStack);

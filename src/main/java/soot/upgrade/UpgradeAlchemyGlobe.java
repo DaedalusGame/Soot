@@ -78,7 +78,7 @@ public class UpgradeAlchemyGlobe extends CapabilityUpgradeProvider {
                             top.markDirty();
                         }
                     }
-                    else if(result.getTotal() > 0) //That's not fair if we just void fluid without any ash
+                    else if(result.areAllPresent()) //That's not fair if we just void fluid without any ash
                     {
                         ItemStack failure = result.createFailure();
                         BlockPos topPos = top.getPos();
@@ -86,6 +86,7 @@ public class UpgradeAlchemyGlobe extends CapabilityUpgradeProvider {
                         bottom.consumeFluids(fluids, recipe);
                         top.capability.removeAmount(emberCost * UpgradeUtil.getTotalEmberFuelEfficiency(bottom, upgrades), true);
                         fail(world.rand.nextInt(100)+200);
+                        globe.consumeAsh();
                     }
                 }
             }

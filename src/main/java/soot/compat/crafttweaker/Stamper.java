@@ -5,6 +5,7 @@ import com.blamejared.mtlib.utils.BaseListAddition;
 import com.blamejared.mtlib.utils.BaseListRemoval;
 import com.google.common.collect.Lists;
 import crafttweaker.CraftTweakerAPI;
+import crafttweaker.IAction;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.item.IItemStack;
 import crafttweaker.api.liquid.ILiquidStack;

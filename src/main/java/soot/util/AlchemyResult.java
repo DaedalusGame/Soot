@@ -11,6 +11,7 @@ public class AlchemyResult {
     double accuracy;
     HashMap<String,Integer> deltas = new HashMap<>();
     int totalAsh;
+    boolean allPresent = true;
 
     public double getAccuracy()
     {
@@ -19,6 +20,8 @@ public class AlchemyResult {
 
     public double getTotal() { return totalAsh; }
 
+    public boolean areAllPresent() { return allPresent; }
+
     public static AlchemyResult create(AspectList list,AspectRangeList range,World world)
     {
         AlchemyResult result = new AlchemyResult();
@@ -26,6 +29,8 @@ public class AlchemyResult {
         double totalCompare = 0;
         for (String aspect: range.minAspects.getAspects()) {
             int amt = list.getAspect(aspect);
+            if(amt < range.getMin(aspect))
+                result.allPresent = false;
             int compareAmt = range.getExact(aspect,world);
             double delta = Math.abs(amt - compareAmt);
             result.totalAsh += amt;

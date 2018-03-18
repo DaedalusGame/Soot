@@ -106,7 +106,7 @@ public class VillagerAntimonyHandler {
             {
                 replaceTradeList((EntityVillager) merchant,list);
             }
-            else
+            else if(merchant.getWorld().isRemote)
             {
                 merchant.setRecipes(list);
             }

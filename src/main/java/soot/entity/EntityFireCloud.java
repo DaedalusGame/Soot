@@ -3,7 +3,7 @@ package soot.entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.world.World;
 
-public class EntityFireCloud extends EntityCloud {
+public class EntityFireCloud extends EntityCustomCloud {
     public EntityFireCloud(World worldIn) {
         super(worldIn);
     }
@@ -17,7 +17,7 @@ public class EntityFireCloud extends EntityCloud {
         if(entitylivingbase.isImmuneToFire())
             return false;
 
-        entitylivingbase.setFire(30);
+        entitylivingbase.setFire(10*20);
         return true;
     }
 }
