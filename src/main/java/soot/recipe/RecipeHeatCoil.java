@@ -6,8 +6,16 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 public class RecipeHeatCoil {
-    Ingredient input;
-    ItemStack output;
+    Ingredient input = Ingredient.EMPTY;
+    ItemStack output = ItemStack.EMPTY;
+
+    public RecipeHeatCoil() {
+    }
+
+    public RecipeHeatCoil(ItemStack output, Ingredient input) {
+        this.input = input;
+        this.output = output;
+    }
 
     public boolean matches(ItemStack stack)
     {
