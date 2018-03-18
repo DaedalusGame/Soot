@@ -35,6 +35,7 @@ public class Soot
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
+        Config.preInit(event);
         creativeTab = new CreativeTabs("soot") {
             @Override
             public ItemStack getTabIconItem() {
@@ -44,7 +45,6 @@ public class Soot
         CraftingRegistry.preInit();
         Registry.preInit();
         proxy.preInit();
-        Config.preInit(event);
         MinecraftForge.EVENT_BUS.register(Attributes.class);
         if(Config.ASH_FIRST)
             MinecraftForge.EVENT_BUS.register(PedestalHandler.class);
