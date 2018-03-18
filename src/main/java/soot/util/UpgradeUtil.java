@@ -8,6 +8,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import soot.capability.CapabilityUpgradeProvider;
 import soot.capability.IUpgradeProvider;
+import teamroots.embers.tileentity.TileEntityMechCore;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +23,19 @@ public class UpgradeUtil {
             if(te != null && te.hasCapability(CapabilityUpgradeProvider.UPGRADE_PROVIDER_CAPABILITY,facing.getOpposite()))
             {
                 upgrades.add(te.getCapability(CapabilityUpgradeProvider.UPGRADE_PROVIDER_CAPABILITY,facing.getOpposite()));
+            }
+        }
+        return upgrades;
+    }
+
+    public static ArrayList<IUpgradeProvider> getUpgradesForMultiblock(World world, BlockPos pos, EnumFacing[] facings)
+    {
+        ArrayList<IUpgradeProvider> upgrades = new ArrayList<>();
+        for (EnumFacing facing: facings) {
+            TileEntity te = world.getTileEntity(pos.offset(facing));
+            if(te instanceof TileEntityMechCore)
+            {
+                upgrades.addAll(getUpgrades(world,pos,EnumFacing.VALUES));
             }
         }
         return upgrades;

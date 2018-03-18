@@ -10,15 +10,31 @@ public class Config {
     public static boolean TRADING_ANTIMONY;
     public static boolean GOLEMS_TYRFING_WEAK;
     public static boolean GOLEMS_POISON_IMMUNE;
+    public static boolean HEARTHCOIL_SMELTING;
+    public static boolean ASH_FIRST;
+    public static boolean MIGRATE_ALCHEMY_RECIPES;
+
+    public static boolean OVERRIDE_DAWNSTONE_ANVIL;
+    public static boolean OVERRIDE_HEARTH_COIL;
+    public static boolean OVERRIDE_MIXER;
+    public static boolean OVERRIDE_ALCHEMY_TABLET;
 
     public static void preInit(FMLPreInitializationEvent event)
     {
         configuration = new Configuration(event.getSuggestedConfigurationFile());
         configuration.load();
 
+        OVERRIDE_DAWNSTONE_ANVIL = loadPropBool("dawnstoneAnvil","Overrides","Overrides the Dawnstone Anvil",true);
+        OVERRIDE_HEARTH_COIL = loadPropBool("hearthCoil","Overrides","Overrides the Hearth Coil",true);
+        OVERRIDE_MIXER = loadPropBool("mixer","Overrides","Overrides the Mixer Centrifuge",true);
+        OVERRIDE_ALCHEMY_TABLET = loadPropBool("alchemyTablet","Overrides","Overrides the Exchange Tablet",true);
+
         TRADING_ANTIMONY = loadPropBool("tradingAntimony","Features","Allows trading signet of antimony with villagers instead of emeralds.",true);
         GOLEMS_TYRFING_WEAK = loadPropBool("golemsTyrfingWeak","Features","Golems take extra damage from the Tyrfing.",true);
         GOLEMS_POISON_IMMUNE = loadPropBool("golemsPoisonImmune","Features","Golems are immune to poison.",true);
+        HEARTHCOIL_SMELTING = loadPropBool("hearthCoilSmelting","Features","(requires override) The Hearthcoil can smelt items normally smeltable in a furnace.",true);
+        ASH_FIRST = loadPropBool("ashFirst","Features","Ash is removed before the aspect from pedestals.",true);
+        MIGRATE_ALCHEMY_RECIPES = loadPropBool("migrateAlchemyRecipes","Features","Disabling this will clear all alchemy recipes if the alchemy tablet override is enabled.",true);
 
         if (configuration.hasChanged())
         {

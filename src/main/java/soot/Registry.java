@@ -36,6 +36,7 @@ import soot.util.CaskManager;
 import soot.util.CaskManager.CaskLiquid;
 import soot.util.Nope;
 import teamroots.embers.Embers;
+import teamroots.embers.block.BlockHeatCoil;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -88,8 +89,7 @@ public class Registry {
     public static Fluid MOLTEN_SUGAR;
     public static Fluid MOLTEN_REDSTONE;
 
-    public static void preInit()
-    {
+    public static void preInit() {
         MinecraftForge.EVENT_BUS.register(Registry.class);
         registerBlocks();
         registerTileEntities();
@@ -98,8 +98,7 @@ public class Registry {
         registerCapabilities();
     }
 
-    public static void init()
-    {
+    public static void init() {
         registerCaskLiquids();
     }
 
@@ -116,21 +115,20 @@ public class Registry {
         ABSINTHE = FluidRegistry.getFluid("absinthe");
         METHANOL = FluidRegistry.getFluid("methanol");
 
-        CaskManager.register(new CaskLiquid(BOILING_WORT,1,0xFF898516));
-        CaskManager.register(new CaskLiquid(BOILING_POTATO_JUICE,1,0xFFECEAA7));
-        CaskManager.register(new CaskLiquid(BOILING_WORMWOOD,1,0xFFAFFF8D).addEffect(new PotionEffect(MobEffects.POISON,1200,0),2).addEffect(new PotionEffect(MobEffects.BLINDNESS,1200,0),0));
-        CaskManager.register(new CaskLiquid(BOILING_BEETROOT_SOUP,1,0xFFC62E00));
+        CaskManager.register(new CaskLiquid(BOILING_WORT, 1, 0xFF898516));
+        CaskManager.register(new CaskLiquid(BOILING_POTATO_JUICE, 1, 0xFFECEAA7));
+        CaskManager.register(new CaskLiquid(BOILING_WORMWOOD, 1, 0xFFAFFF8D).addEffect(new PotionEffect(MobEffects.POISON, 1200, 0), 2).addEffect(new PotionEffect(MobEffects.BLINDNESS, 1200, 0), 0));
+        CaskManager.register(new CaskLiquid(BOILING_BEETROOT_SOUP, 1, 0xFFC62E00));
 
-        CaskManager.register(new CaskLiquid(ALE,2,0xFFE1862C).addEffect(new PotionEffect(POTION_ALE,1200,0),4));
-        CaskManager.register(new CaskLiquid(VODKA,1,0xFFC8EFEF).addEffect(new PotionEffect(POTION_STOUTNESS,1600,0),4));
-        CaskManager.register(new CaskLiquid(INNER_FIRE,2,0xFFFF4D00).addEffect(new PotionEffect(POTION_INNER_FIRE,1000,0),2));
-        CaskManager.register(new CaskLiquid(UMBER_ALE,2,0xFF473216));
-        CaskManager.register(new CaskLiquid(ABSINTHE,1,0xFF58FF2E));
-        CaskManager.register(new CaskLiquid(METHANOL,1,0xFF666633).addEffect(new PotionEffect(POTION_FIRE_LUNG,200,0),2));
+        CaskManager.register(new CaskLiquid(ALE, 2, 0xFFE1862C).addEffect(new PotionEffect(POTION_ALE, 1200, 0), 4));
+        CaskManager.register(new CaskLiquid(VODKA, 1, 0xFFC8EFEF).addEffect(new PotionEffect(POTION_STOUTNESS, 1600, 0), 4));
+        CaskManager.register(new CaskLiquid(INNER_FIRE, 2, 0xFFFF4D00).addEffect(new PotionEffect(POTION_INNER_FIRE, 1000, 0), 2));
+        CaskManager.register(new CaskLiquid(UMBER_ALE, 2, 0xFF473216));
+        CaskManager.register(new CaskLiquid(ABSINTHE, 1, 0xFF58FF2E));
+        CaskManager.register(new CaskLiquid(METHANOL, 1, 0xFF666633).addEffect(new PotionEffect(POTION_FIRE_LUNG, 200, 0), 2));
     }
 
-    public static void registerBlocks()
-    {
+    public static void registerBlocks() {
         Nope.shutupForge(Registry::registerOverrides);
 
         BlockEmberBurst emberBurst = (BlockEmberBurst) new BlockEmberBurst(Material.ROCK).setCreativeTab(Soot.creativeTab);
@@ -141,94 +139,97 @@ public class Registry {
         BlockAlchemyGlobe alchemyGlobe = (BlockAlchemyGlobe) new BlockAlchemyGlobe(Material.ROCK).setCreativeTab(Soot.creativeTab);
         registerBlock("alchemy_globe", alchemyGlobe, new ItemBlock(alchemyGlobe));
 
-        registerItem("signet_antimony",new Item().setCreativeTab(Soot.creativeTab));
-        registerItem("ingot_antimony",new Item().setCreativeTab(Soot.creativeTab));
-        registerItem("mug",new ItemMug().setCreativeTab(Soot.creativeTab));
+        registerItem("signet_antimony", new Item().setCreativeTab(Soot.creativeTab));
+        registerItem("ingot_antimony", new Item().setCreativeTab(Soot.creativeTab));
+        registerItem("mug", new ItemMug().setCreativeTab(Soot.creativeTab));
     }
 
-    public static void registerOverrides()
-    {
-        BlockMixerImproved mixerImproved = (BlockMixerImproved) new BlockMixerImproved(Material.ROCK,"mixer",true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.0F);
-        registerBlock(mixerImproved,false);
-        registerItem(mixerImproved.getItemBlock(),false);
-
-        BlockDawnstoneAnvilImproved dawnstoneAnvilImproved = (BlockDawnstoneAnvilImproved) new BlockDawnstoneAnvilImproved(Material.ROCK,"dawnstone_anvil",true).setHarvestProperties("pickaxe", 1).setIsFullCube(false).setIsOpaqueCube(false).setHardness(1.6f).setLightOpacity(0);
-        registerBlock(dawnstoneAnvilImproved,false);
-        registerItem(dawnstoneAnvilImproved.getItemBlock(),false);
+    public static void registerOverrides() {
+        if (Config.OVERRIDE_MIXER) {
+            BlockMixerImproved mixerImproved = (BlockMixerImproved) new BlockMixerImproved(Material.ROCK, "mixer", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.0F);
+            registerBlock(mixerImproved, false);
+            registerItem(mixerImproved.getItemBlock(), false);
+        }
+        if (Config.OVERRIDE_DAWNSTONE_ANVIL) {
+            BlockDawnstoneAnvilImproved dawnstoneAnvilImproved = (BlockDawnstoneAnvilImproved) new BlockDawnstoneAnvilImproved(Material.ROCK, "dawnstone_anvil", true).setHarvestProperties("pickaxe", 1).setIsFullCube(false).setIsOpaqueCube(false).setHardness(1.6f).setLightOpacity(0);
+            registerBlock(dawnstoneAnvilImproved, false);
+            registerItem(dawnstoneAnvilImproved.getItemBlock(), false);
+        }
+        if (Config.OVERRIDE_ALCHEMY_TABLET) {
+            BlockAlchemyTabletImproved alchemyTabletImproved = (BlockAlchemyTabletImproved) new BlockAlchemyTabletImproved(Material.ROCK, "alchemy_tablet", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.6F);
+            registerBlock(alchemyTabletImproved, false);
+            registerItem(alchemyTabletImproved.getItemBlock(), false);
+        }
+        if (Config.OVERRIDE_HEARTH_COIL) {
+            BlockHeatCoilImproved heatCoilImproved = (BlockHeatCoilImproved) new BlockHeatCoilImproved(Material.ROCK, "heat_coil", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.0F);
+            registerBlock(heatCoilImproved, false);
+            registerItem(heatCoilImproved.getItemBlock(), false);
+        }
     }
 
-    public static void registerFluids()
-    {
+    public static void registerFluids() {
         //For creating alcohol. All made in Melter, so very hot.
-        FluidRegistry.registerFluid(new Fluid("boiling_wort",new ResourceLocation(Soot.MODID,"blocks/wort"),new ResourceLocation(Soot.MODID,"blocks/wort_flowing")).setTemperature(500));
-        FluidRegistry.registerFluid(new Fluid("boiling_potato_juice",new ResourceLocation(Soot.MODID,"blocks/potato_juice"),new ResourceLocation(Soot.MODID,"blocks/potato_juice_flowing")).setTemperature(500));
-        FluidRegistry.registerFluid(new Fluid("boiling_wormwood",new ResourceLocation(Soot.MODID,"blocks/verdigris"),new ResourceLocation(Soot.MODID,"blocks/verdigris_flowing")).setTemperature(500));
-        FluidRegistry.registerFluid(new Fluid("boiling_beetroot_soup",new ResourceLocation(Soot.MODID,"blocks/beetroot_soup"),new ResourceLocation(Soot.MODID,"blocks/beetroot_soup_flowing")).setTemperature(500));
+        FluidRegistry.registerFluid(new Fluid("boiling_wort", new ResourceLocation(Soot.MODID, "blocks/wort"), new ResourceLocation(Soot.MODID, "blocks/wort_flowing")).setTemperature(500));
+        FluidRegistry.registerFluid(new Fluid("boiling_potato_juice", new ResourceLocation(Soot.MODID, "blocks/potato_juice"), new ResourceLocation(Soot.MODID, "blocks/potato_juice_flowing")).setTemperature(500));
+        FluidRegistry.registerFluid(new Fluid("boiling_wormwood", new ResourceLocation(Soot.MODID, "blocks/verdigris"), new ResourceLocation(Soot.MODID, "blocks/verdigris_flowing")).setTemperature(500));
+        FluidRegistry.registerFluid(new Fluid("boiling_beetroot_soup", new ResourceLocation(Soot.MODID, "blocks/beetroot_soup"), new ResourceLocation(Soot.MODID, "blocks/beetroot_soup_flowing")).setTemperature(500));
         //Alcohol itself. Cold.
-        FluidRegistry.registerFluid(new Fluid("ale",new ResourceLocation(Soot.MODID,"blocks/ale"),new ResourceLocation(Soot.MODID,"blocks/ale_flowing")));
-        FluidRegistry.registerFluid(new Fluid("vodka",new ResourceLocation(Soot.MODID,"blocks/vodka"),new ResourceLocation(Soot.MODID,"blocks/vodka_flowing")));
-        FluidRegistry.registerFluid(new Fluid("inner_fire",new ResourceLocation(Soot.MODID,"blocks/inner_fire"),new ResourceLocation(Soot.MODID,"blocks/inner_fire_flowing")));
-        FluidRegistry.registerFluid(new Fluid("umber_ale",new ResourceLocation(Soot.MODID,"blocks/umber_ale"),new ResourceLocation(Soot.MODID,"blocks/umber_ale_flowing")));
-        FluidRegistry.registerFluid(new Fluid("methanol",new ResourceLocation(Soot.MODID,"blocks/methanol"),new ResourceLocation(Soot.MODID,"blocks/methanol_flowing")));
-        FluidRegistry.registerFluid(new Fluid("absinthe",new ResourceLocation(Soot.MODID,"blocks/absinthe"),new ResourceLocation(Soot.MODID,"blocks/absinthe_flowing")));
+        FluidRegistry.registerFluid(new Fluid("ale", new ResourceLocation(Soot.MODID, "blocks/ale"), new ResourceLocation(Soot.MODID, "blocks/ale_flowing")));
+        FluidRegistry.registerFluid(new Fluid("vodka", new ResourceLocation(Soot.MODID, "blocks/vodka"), new ResourceLocation(Soot.MODID, "blocks/vodka_flowing")));
+        FluidRegistry.registerFluid(new Fluid("inner_fire", new ResourceLocation(Soot.MODID, "blocks/inner_fire"), new ResourceLocation(Soot.MODID, "blocks/inner_fire_flowing")));
+        FluidRegistry.registerFluid(new Fluid("umber_ale", new ResourceLocation(Soot.MODID, "blocks/umber_ale"), new ResourceLocation(Soot.MODID, "blocks/umber_ale_flowing")));
+        FluidRegistry.registerFluid(new Fluid("methanol", new ResourceLocation(Soot.MODID, "blocks/methanol"), new ResourceLocation(Soot.MODID, "blocks/methanol_flowing")));
+        FluidRegistry.registerFluid(new Fluid("absinthe", new ResourceLocation(Soot.MODID, "blocks/absinthe"), new ResourceLocation(Soot.MODID, "blocks/absinthe_flowing")));
         //Alchemy Fluids
-        registerFluid(new FluidMolten("antimony",new ResourceLocation(Soot.MODID,"blocks/molten_antimony"),new ResourceLocation(Soot.MODID,"blocks/molten_antimony_flowing")), true);
-        registerFluid(new FluidMolten("sugar",new ResourceLocation(Soot.MODID,"blocks/molten_sugar"),new ResourceLocation(Soot.MODID,"blocks/molten_sugar_flowing")), true);
-        registerFluid(new FluidMolten("alchemical_redstone",new ResourceLocation(Embers.MODID,"blocks/alchemic_slurry_still"),new ResourceLocation(Embers.MODID,"blocks/alchemic_slurry_flowing")), true);
+        registerFluid(new FluidMolten("antimony", new ResourceLocation(Soot.MODID, "blocks/molten_antimony"), new ResourceLocation(Soot.MODID, "blocks/molten_antimony_flowing")), true);
+        registerFluid(new FluidMolten("sugar", new ResourceLocation(Soot.MODID, "blocks/molten_sugar"), new ResourceLocation(Soot.MODID, "blocks/molten_sugar_flowing")), true);
+        registerFluid(new FluidMolten("alchemical_redstone", new ResourceLocation(Embers.MODID, "blocks/alchemic_slurry_still"), new ResourceLocation(Embers.MODID, "blocks/alchemic_slurry_flowing")), true);
     }
 
-    private static void registerFluid(Fluid fluid, boolean withBucket)
-    {
+    private static void registerFluid(Fluid fluid, boolean withBucket) {
         FluidRegistry.registerFluid(fluid);
-        if(withBucket)
+        if (withBucket)
             FluidRegistry.addBucketForFluid(fluid);
     }
 
-    public static void registerBlockModels()
-    {
+    public static void registerBlockModels() {
         for (Block block : MODELLED_BLOCKS) {
             Soot.proxy.registerBlockModel(block);
         }
     }
 
-    public static void registerItemModels()
-    {
+    public static void registerItemModels() {
         for (Item item : MODELLED_ITEMS) {
             Soot.proxy.registerItemModel(item);
         }
     }
 
-    public static void registerBlock(String id,Block block, ItemBlock itemBlock)
-    {
-        block.setRegistryName(Soot.MODID,id);
+    public static void registerBlock(String id, Block block, ItemBlock itemBlock) {
+        block.setRegistryName(Soot.MODID, id);
         block.setUnlocalizedName(id);
-        registerBlock(block,true);
-        registerItem(id,itemBlock);
+        registerBlock(block, true);
+        registerItem(id, itemBlock);
     }
 
-    public static void registerBlock(Block block, boolean hasmodel)
-    {
+    public static void registerBlock(Block block, boolean hasmodel) {
         BLOCKS.add(block);
-        if(hasmodel)
+        if (hasmodel)
             MODELLED_BLOCKS.add(block);
     }
 
-    public static void registerItem(String id,Item item)
-    {
-        item.setRegistryName(Soot.MODID,id);
+    public static void registerItem(String id, Item item) {
+        item.setRegistryName(Soot.MODID, id);
         item.setUnlocalizedName(id);
-        registerItem(item,true);
+        registerItem(item, true);
     }
 
-    public static void registerItem(Item item, boolean hasmodel)
-    {
+    public static void registerItem(Item item, boolean hasmodel) {
         ITEMS.add(item);
-        if(hasmodel)
+        if (hasmodel)
             MODELLED_ITEMS.add(item);
     }
 
-    public static void registerTileEntities()
-    {
+    public static void registerTileEntities() {
         registerTileEntity(TileEntityEmberBurst.class);
         registerTileEntity(TileEntityEmberFunnel.class);
 
@@ -239,11 +240,10 @@ public class Registry {
     }
 
     private static void registerEntities() {
-        EntityRegistry.registerModEntity(new ResourceLocation(Soot.MODID,"fireCloud"),EntityFireCloud.class,"fireCloud",0,Soot.instance,80,1,true);
+        EntityRegistry.registerModEntity(new ResourceLocation(Soot.MODID, "fireCloud"), EntityFireCloud.class, "fireCloud", 0, Soot.instance, 80, 1, true);
     }
 
-    public static void registerCapabilities()
-    {
+    public static void registerCapabilities() {
         CapabilityManager.INSTANCE.register(IUpgradeProvider.class, new Capability.IStorage<IUpgradeProvider>() {
             @Nullable
             @Override
@@ -256,7 +256,7 @@ public class Registry {
                 //NOOP
             }
         }, () -> {
-            return new CapabilityUpgradeProvider("none",null);
+            return new CapabilityUpgradeProvider("none", null);
         });
     }
 
@@ -276,14 +276,13 @@ public class Registry {
 
     @SubscribeEvent
     public static void registerPotions(RegistryEvent.Register<Potion> event) {
-        event.getRegistry().register(new PotionAle().setRegistryName(Soot.MODID,"ale"));
-        event.getRegistry().register(new PotionStoutness().setRegistryName(Soot.MODID,"stoutness"));
-        event.getRegistry().register(new PotionInnerFire().setRegistryName(Soot.MODID,"inner_fire"));
-        event.getRegistry().register(new PotionFireLung().setRegistryName(Soot.MODID,"fire_lung"));
+        event.getRegistry().register(new PotionAle().setRegistryName(Soot.MODID, "ale"));
+        event.getRegistry().register(new PotionStoutness().setRegistryName(Soot.MODID, "stoutness"));
+        event.getRegistry().register(new PotionInnerFire().setRegistryName(Soot.MODID, "inner_fire"));
+        event.getRegistry().register(new PotionFireLung().setRegistryName(Soot.MODID, "fire_lung"));
     }
 
-    private static void registerTileEntity(Class<? extends TileEntity> tile)
-    {
-        GameRegistry.registerTileEntity(tile,tile.getSimpleName().toLowerCase());
+    private static void registerTileEntity(Class<? extends TileEntity> tile) {
+        GameRegistry.registerTileEntity(tile, tile.getSimpleName().toLowerCase());
     }
 }

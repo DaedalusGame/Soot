@@ -46,7 +46,8 @@ public class Soot
         proxy.preInit();
         Config.preInit(event);
         MinecraftForge.EVENT_BUS.register(Attributes.class);
-        MinecraftForge.EVENT_BUS.register(PedestalHandler.class);
+        if(Config.ASH_FIRST)
+            MinecraftForge.EVENT_BUS.register(PedestalHandler.class);
         if(Config.TRADING_ANTIMONY)
             MinecraftForge.EVENT_BUS.register(VillagerAntimonyHandler.class);
         if(Config.GOLEMS_POISON_IMMUNE || Config.GOLEMS_TYRFING_WEAK)
