@@ -89,16 +89,6 @@ public class ItemMug extends ItemFluidContainer implements IItemColored {
     {
         EntityPlayer entityplayer = entityLiving instanceof EntityPlayer ? (EntityPlayer)entityLiving : null;
 
-        if (entityplayer == null || !entityplayer.capabilities.isCreativeMode)
-        {
-            stack.shrink(1);
-        }
-
-        if (entityplayer instanceof EntityPlayerMP)
-        {
-            CriteriaTriggers.CONSUME_ITEM.trigger((EntityPlayerMP)entityplayer, stack);
-        }
-
         if (!worldIn.isRemote)
         {
             FluidStack fluid = FluidUtil.getFluidContained(stack);
@@ -108,6 +98,11 @@ public class ItemMug extends ItemFluidContainer implements IItemColored {
                 liquid.applyEffects(entityLiving, entityplayer, entityplayer, fluid);
         }
 
+        if (entityplayer instanceof EntityPlayerMP)
+        {
+            CriteriaTriggers.CONSUME_ITEM.trigger((EntityPlayerMP)entityplayer, stack);
+        }
+
         if (entityplayer != null)
         {
             entityplayer.addStat(StatList.getObjectUseStats(this));
@@ -115,6 +110,8 @@ public class ItemMug extends ItemFluidContainer implements IItemColored {
 
         if (entityplayer == null || !entityplayer.capabilities.isCreativeMode)
         {
+            stack.shrink(1);
+
             if (stack.isEmpty())
             {
                 return getEmpty();

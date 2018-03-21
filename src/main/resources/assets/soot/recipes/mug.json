@@ -1,0 +1,19 @@
+{
+  "result": {
+    "item": "soot:mug",
+    "count": 2,
+    "data": 0
+  },
+  "pattern": [
+    "W W",
+    "W W",
+    "WWW"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "W": {
+      "item": "embers:sealed_planks",
+      "data": 0
+    }
+  }
+}

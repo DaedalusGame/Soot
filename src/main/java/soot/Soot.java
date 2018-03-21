@@ -16,7 +16,7 @@ import soot.recipe.CraftingRegistry;
 import soot.util.Attributes;
 import teamroots.embers.RegistryManager;
 
-@Mod(modid = Soot.MODID, version = Soot.VERSION, acceptedMinecraftVersions = "[1.12, 1.13)", dependencies = "required-after:embers")
+@Mod(modid = Soot.MODID, acceptedMinecraftVersions = "[1.12, 1.13)", dependencies = "required-after:embers")
 @Mod.EventBusSubscriber
 public class Soot
 {
@@ -25,7 +25,6 @@ public class Soot
 
     public static final String MODID = "soot";
     public static final String NAME = "Soot";
-    public static final String VERSION = "0.1";
 
     @SidedProxy(clientSide = "soot.ClientProxy",serverSide = "soot.ServerProxy")
     public static IProxy proxy;
