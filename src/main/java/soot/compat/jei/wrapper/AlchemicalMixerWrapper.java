@@ -4,8 +4,10 @@ import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraftforge.fluids.FluidStack;
 import soot.recipe.RecipeAlchemicalMixer;
+import soot.util.AspectList;
+import soot.util.IHasAspects;
 
-public class AlchemicalMixerWrapper implements IRecipeWrapper {
+public class AlchemicalMixerWrapper implements IRecipeWrapper, IHasAspects {
     public RecipeAlchemicalMixer recipe;
 
     public AlchemicalMixerWrapper(RecipeAlchemicalMixer recipe)
@@ -21,5 +23,10 @@ public class AlchemicalMixerWrapper implements IRecipeWrapper {
             }
         }
         ingredients.setOutput(FluidStack.class, recipe.output);
+    }
+
+    @Override
+    public AspectList.AspectRangeList getAspects() {
+        return recipe.getAspects();
     }
 }

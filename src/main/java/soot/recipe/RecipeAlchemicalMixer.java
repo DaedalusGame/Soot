@@ -5,9 +5,10 @@ import net.minecraftforge.fluids.FluidStack;
 import soot.util.AlchemyResult;
 import soot.util.AspectList;
 import soot.util.AspectList.AspectRangeList;
+import soot.util.IHasAspects;
 import teamroots.embers.recipe.FluidMixingRecipe;
 
-public class RecipeAlchemicalMixer extends FluidMixingRecipe {
+public class RecipeAlchemicalMixer extends FluidMixingRecipe implements IHasAspects {
     public AspectRangeList aspectRange;
 
     public RecipeAlchemicalMixer(FluidStack[] inputs, FluidStack output, AspectRangeList aspectRange) {
@@ -18,5 +19,10 @@ public class RecipeAlchemicalMixer extends FluidMixingRecipe {
     public AlchemyResult matchAshes(AspectList list, World world)
     {
         return AlchemyResult.create(list,aspectRange,world);
+    }
+
+    @Override
+    public AspectRangeList getAspects() {
+        return aspectRange;
     }
 }

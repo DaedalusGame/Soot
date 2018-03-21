@@ -48,7 +48,7 @@ public class UpgradeUtil {
         HashMap<String,Integer> upgradeCounts = new HashMap<>();
         list.forEach(x -> {
             String id = x.getUpgradeId();
-            upgradeCounts.put(x.getUpgradeId(), upgradeCounts.containsKey(id) ? upgradeCounts.get(x.getUpgradeId()) : 1);
+            upgradeCounts.put(x.getUpgradeId(), upgradeCounts.containsKey(id) ? upgradeCounts.get(x.getUpgradeId()) + 1 : 1);
         });
         list.removeIf(x -> upgradeCounts.get(x.getUpgradeId()) > x.getLimit(tile));
         list.sort((x,y) -> Integer.compare(x.getPriority(),y.getPriority()));
@@ -112,5 +112,14 @@ public class UpgradeUtil {
         }
 
         return output;
+    }
+
+    public static double getOtherParameter(TileEntity tile, String type, double initial, List<IUpgradeProvider> list)
+    {
+        for (IUpgradeProvider upgrade : list) {
+            initial = upgrade.getOtherParameter(tile,type,initial);
+        }
+
+        return initial;
     }
 }

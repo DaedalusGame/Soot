@@ -2,8 +2,13 @@ package soot.util;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.MobEffects;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.DamageSource;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -29,19 +34,12 @@ public class CaskManager {
         public int model;
         public int color;
         public ArrayList<CaskPotionEffect> effects = new ArrayList<>();
-        public IBlockState caskState;
 
         public CaskLiquid(Fluid fluid, int model, int color)
         {
             this.fluid = fluid;
             this.model = model;
             this.color = color;
-        }
-
-        public CaskLiquid setCaskState(IBlockState state)
-        {
-            caskState = state;
-            return this;
         }
 
         public CaskLiquid addEffect(PotionEffect effect, int maxstack)
@@ -55,22 +53,34 @@ public class CaskManager {
             return effects.stream().map(x -> x.potionEffect).collect(Collectors.toCollection(ArrayList::new));
         }
 
-        public void applyEffects(EntityLivingBase target, EntityLivingBase source, EntityLivingBase indirectsource) {
+        public void applyEffects(EntityLivingBase target, EntityLivingBase source, EntityLivingBase indirectsource, FluidStack fluid) {
+            Fluid internal = fluid != null ? fluid.getFluid() : null;
+            NBTTagCompound compound = FluidUtil.getModifiers(fluid);
+            for (String key : compound.getKeySet()) {
+                FluidModifier modifier = FluidUtil.MODIFIERS.get(key);
+                if(modifier != null)
+                    modifier.applyEffect(target,compound,internal);
+            }
+
+            float duration_modifier = FluidUtil.getModifier(compound, internal, "duration");
+            boolean concentrated = FluidUtil.getModifier(compound, internal,"concentration") >= 100;
+
             for (CaskPotionEffect effect : effects)
             {
                 PotionEffect potioneffect = effect.potionEffect;
                 PotionEffect currentStack = target.getActivePotionEffect(potioneffect.getPotion());
+                int concentration_bonus = concentrated ? 1 : 0;
                 if (potioneffect.getPotion().isInstant())
                 {
-                    potioneffect.getPotion().affectEntity(source, indirectsource, target, potioneffect.getAmplifier(), 1.0D);
+                    potioneffect.getPotion().affectEntity(source, indirectsource, target, potioneffect.getAmplifier() + concentration_bonus, 1.0D);
                 }
                 else
                 {
                     int amplifier = potioneffect.getAmplifier();
-                    int duration = potioneffect.getDuration();
+                    int duration = (int)(potioneffect.getDuration() * duration_modifier);
                     if(currentStack != null)
                     {
-                        amplifier = Math.min(amplifier + currentStack.getAmplifier() + 1,effect.maxStack);
+                        amplifier = Math.min(amplifier + currentStack.getAmplifier() + 1,effect.maxStack + concentration_bonus);
                         if(amplifier != currentStack.getAmplifier())
                             duration += currentStack.getDuration();
                     }
@@ -82,21 +92,11 @@ public class CaskManager {
     }
 
     @Nullable
-    public static CaskLiquid getFromCask(IBlockState state)
+    public static CaskLiquid getFromFluid(FluidStack fluid)
     {
+        if(fluid != null)
         for (CaskLiquid liquid : liquids) {
-            if(liquid.caskState.equals(state))
-                return liquid;
-        }
-
-        return null;
-    }
-
-    @Nullable
-    public static CaskLiquid getFromFluid(Fluid fluid)
-    {
-        for (CaskLiquid liquid : liquids) {
-            if(liquid.fluid.equals(fluid))
+            if(liquid.fluid.equals(fluid.getFluid()))
                 return liquid;
         }
 

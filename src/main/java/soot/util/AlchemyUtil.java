@@ -32,6 +32,18 @@ public class AlchemyUtil {
         return null;
     }
 
+    public static ItemStack getAspectStack(String aspect) {
+        switch(aspect)
+        {
+            case("iron"):return new ItemStack(RegistryManager.aspectus_iron);
+            case("dawnstone"):return new ItemStack(RegistryManager.aspectus_dawnstone);
+            case("copper"):return new ItemStack(RegistryManager.aspectus_copper);
+            case("silver"):return new ItemStack(RegistryManager.aspectus_silver);
+            case("lead"):return new ItemStack(RegistryManager.aspectus_lead);
+        }
+        return ItemStack.EMPTY;
+    }
+
     public static List<TileEntityAlchemyPedestal> getNearbyPedestals(World world, BlockPos pos){
         ArrayList<TileEntityAlchemyPedestal> pedestals = new ArrayList<>();
         BlockPos.MutableBlockPos pedestalPos = new BlockPos.MutableBlockPos(pos);

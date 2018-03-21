@@ -1,13 +1,21 @@
 package soot.recipe;
 
 import com.google.common.collect.Lists;
+import mezz.jei.util.Translator;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -19,15 +27,13 @@ import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreIngredient;
 import soot.Config;
 import soot.Registry;
-import soot.util.AspectList;
+import soot.tile.TileEntityStillBase;
+import soot.util.*;
 import soot.util.AspectList.AspectRangeList;
 import teamroots.embers.ConfigManager;
 import teamroots.embers.RegistryManager;
 import teamroots.embers.item.EnumStampType;
-import teamroots.embers.recipe.AlchemyRecipe;
-import teamroots.embers.recipe.ItemMeltingRecipe;
-import teamroots.embers.recipe.ItemStampingRecipe;
-import teamroots.embers.recipe.RecipeRegistry;
+import teamroots.embers.recipe.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +43,8 @@ public class CraftingRegistry {
     public static ArrayList<RecipeDawnstoneAnvil> dawnstoneAnvilRecipes = new ArrayList<>();
     public static ArrayList<RecipeAlchemicalMixer> alchemicalMixingRecipes = new ArrayList<>();
     public static ArrayList<RecipeHeatCoil> heatCoilRecipes = new ArrayList<>();
+    public static ArrayList<RecipeStill> stillRecipes = new ArrayList<>();
+    public static ArrayList<CatalystInfo> stillCatalysts = new ArrayList<>();
 
     public static void preInit()
     {
@@ -46,7 +54,8 @@ public class CraftingRegistry {
     @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event)
     {
-        RecipeRegistry.alchemyRecipes.add(new AlchemyRecipe(0,0,16,32,0,0,0,0,32,64,new ItemStack(Blocks.GLASS),new ItemStack(RegistryManager.ingot_lead),new ItemStack(RegistryManager.aspectus_lead),new ItemStack(RegistryManager.ingot_lead),new ItemStack(RegistryManager.archaic_circuit),new ItemStack(Registry.ALCHEMY_GLOBE)));
+        OreIngredient ingotLead = new OreIngredient("ingotLead");
+        addAlchemyTabletRecipe(new ItemStack(Registry.ALCHEMY_GLOBE),new OreIngredient("blockGlassColorless"), ingotLead,Ingredient.fromItem(RegistryManager.aspectus_lead), ingotLead,Ingredient.fromItem(RegistryManager.archaic_circuit),new AspectRangeList(AspectList.createStandard(0,0,16,0,32),AspectList.createStandard(0,0,32,0,64)));
         RecipeRegistry.meltingRecipes.add(new ItemMeltingRecipe(new ItemStack(Items.SUGAR),FluidRegistry.getFluidStack("sugar",16),false,false)); //Nugget size -> you can combine sugar and lead into antimony without remainder and 1000 sugar store nicely in a fluid vessel
 
         ArrayList<Fluid> leveledMetals = new ArrayList<>();
@@ -78,8 +87,10 @@ public class CraftingRegistry {
 
         migrateAlchemyRecipes();
 
+        initAlcoholRecipes();
+
         //Catch-All Furnace recipe
-        if(Config.HEARTHCOIL_SMELTING && Config.OVERRIDE_ALCHEMY_TABLET) {
+        if(Config.HEARTHCOIL_SMELTING && Config.OVERRIDE_HEARTH_COIL) {
             heatCoilRecipes.add(new RecipeHeatCoil() {
                 @Override
                 public boolean matches(ItemStack stack) {
@@ -88,10 +99,250 @@ public class CraftingRegistry {
 
                 @Override
                 public ItemStack getResult(World world, TileEntity tile, ItemStack stack) {
-                    return FurnaceRecipes.instance().getSmeltingResult(stack);
+                    return FurnaceRecipes.instance().getSmeltingResult(stack).copy();
                 }
             });
         }
+    }
+
+    private static void initAlcoholRecipes()
+    {
+        FluidUtil.registerModifier(new FluidModifier("viscosity",1000));
+        FluidUtil.registerModifier(new FluidModifier("light",0));
+        FluidUtil.registerModifier(new FluidModifier("health",0){
+            @Override
+            public void applyEffect(EntityLivingBase target, NBTTagCompound compound, Fluid fluid) {
+                float value = getOrDefault(compound, fluid);
+                if(value > 0)
+                    target.heal(value);
+                else if(value < 0)
+                    MiscUtil.damageWithoutInvulnerability(target,new DamageSource("acid"),value);
+            }
+        });
+        FluidUtil.registerModifier(new FluidModifier("hunger",0){
+            @Override
+            public void applyEffect(EntityLivingBase target, NBTTagCompound compound, Fluid fluid) {
+                if(target instanceof EntityPlayer) {
+                    int hunger = (int) compound.getFloat("hunger");
+                    float saturation = compound.getFloat("saturation");
+                    ((EntityPlayer) target).getFoodStats().addStats(hunger,saturation);
+                }
+            }
+        });
+        FluidUtil.registerModifier(new FluidModifier("saturation",0));
+        FluidUtil.registerModifier(new FluidModifier("toxicity",0) {
+            @Override
+            public void applyEffect(EntityLivingBase target, NBTTagCompound compound, Fluid fluid) {
+                float value = getOrDefault(compound, fluid);
+                if(value > 0)
+                    target.addPotionEffect(new PotionEffect(MobEffects.NAUSEA,(int)value * 4));
+                if(value >= 50)
+                    target.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS,(int)value * 2));
+                if(value >= 100)
+                    target.addPotionEffect(new PotionEffect(MobEffects.POISON,(int)value - 50));
+                if(value >= 200)
+                    target.addPotionEffect(new PotionEffect(MobEffects.WITHER,(int)(value - 150)));
+            }
+        });
+        FluidUtil.registerModifier(new FluidModifier("heat",300) {
+            @Override
+            public void applyEffect(EntityLivingBase target, NBTTagCompound compound, Fluid fluid) {
+                float value = getOrDefault(compound, fluid);
+                if(value > 400) //Scalding
+                {
+                    MiscUtil.damageWithoutInvulnerability(target,new DamageSource("scalding"),2.0f);
+                    //TODO: Message
+                }
+                if(value > 500) //Burning hot
+                    target.setFire((int)((value - 500) / 10));
+            }
+        });
+        FluidUtil.registerModifier(new FluidModifier("lifedrinker",0) {
+            @Override
+            public void applyEffect(EntityLivingBase target, NBTTagCompound compound, Fluid fluid) {
+                float value = getOrDefault(compound, fluid);
+                target.addPotionEffect(new PotionEffect(Registry.POTION_LIFEDRINKER,(int)value));
+            }
+        });
+        FluidUtil.registerModifier(new FluidModifier("concentration",0));
+        FluidUtil.registerModifier(new FluidModifier("duration",1));
+
+        Fluid boiling_wort = FluidRegistry.getFluid("boiling_wort");
+        Fluid boiling_potato_juice = FluidRegistry.getFluid("boiling_potato_juice");
+
+        Fluid boiling_beetroot_soup = FluidRegistry.getFluid("boiling_beetroot_soup");
+        FluidUtil.setDefaultValue(boiling_beetroot_soup,"hunger",6);
+        FluidUtil.setDefaultValue(boiling_beetroot_soup,"saturation",0.6F);
+
+        Fluid boiling_verdigris = FluidRegistry.getFluid("boiling_wormwood");
+        FluidUtil.setDefaultValue(boiling_verdigris,"toxicity",100);
+
+        Fluid ale = FluidRegistry.getFluid("ale");
+
+        Fluid inner_fire = FluidRegistry.getFluid("inner_fire");
+        FluidUtil.setDefaultValue(inner_fire,"heat",600);
+
+        Fluid umber_ale = FluidRegistry.getFluid("umber_ale");
+        Fluid vodka = FluidRegistry.getFluid("vodka");
+
+        Fluid snowpoff = FluidRegistry.getFluid("snowpoff");
+        FluidUtil.setDefaultValue(snowpoff,"heat",200);
+        Fluid absinthe = FluidRegistry.getFluid("absinthe");
+        FluidUtil.setDefaultValue(absinthe,"toxicity",50);
+
+        Fluid methanol = FluidRegistry.getFluid("methanol");
+        FluidUtil.setDefaultValue(methanol,"toxicity",10);
+
+        RecipeRegistry.meltingOreRecipes.add(new ItemMeltingOreRecipe("cropWheat",new FluidStack(boiling_wort,100)));
+        RecipeRegistry.meltingOreRecipes.add(new ItemMeltingOreRecipe("cropPotato",new FluidStack(boiling_potato_juice,50)));
+        RecipeRegistry.meltingRecipes.add(new ItemMeltingRecipe(new ItemStack(Items.BEETROOT),new FluidStack(boiling_beetroot_soup,50),false,false));
+        RecipeRegistry.mixingRecipes.add(new FluidMixingRecipe(new FluidStack[]{new FluidStack(ale,4),FluidRegistry.getFluidStack("lava",1)},new FluidStack(inner_fire,4)));
+        //TODO: Umber Ale requires clockwork arcana
+
+        stillRecipes.add(new RecipeStill(new FluidStack(boiling_wort,1),Ingredient.EMPTY,0,new FluidStack(ale,1)));
+        stillRecipes.add(new RecipeStill(new FluidStack(boiling_potato_juice,3),Ingredient.EMPTY,0,new FluidStack(vodka,2)));
+        //stillRecipes.add(new RecipeStill(new FluidStack(vodka,1),Ingredient.fromItem(Items.SNOWBALL),1,new FluidStack(snowpoff,1)));
+        stillRecipes.add(new RecipeStill(null,new OreIngredient("logWood"),1,new FluidStack(methanol,1)));
+
+        ArrayList<Fluid> allSoups = new ArrayList<>();
+        allSoups.add(boiling_beetroot_soup);
+        ArrayList<Fluid> allAlcohols = new ArrayList<>();
+        allAlcohols.add(ale);
+        allAlcohols.add(vodka);
+        allAlcohols.add(inner_fire);
+        allAlcohols.add(umber_ale);
+        allAlcohols.add(methanol);
+        allAlcohols.add(absinthe);
+        allAlcohols.add(snowpoff);
+        ArrayList<Fluid> allDrinks = new ArrayList<>(allAlcohols);
+        allDrinks.addAll(allSoups);
+        allDrinks.add(boiling_verdigris);
+
+        stillCatalysts.add(new CatalystInfo(new OreIngredient("sugar"),100));
+        stillCatalysts.add(new CatalystInfo(Ingredient.fromItem(Items.SNOWBALL),250));
+        stillCatalysts.add(new CatalystInfo(new OreIngredient("logWood"),750));
+
+        stillRecipes.add(new RecipeStillModifier(allAlcohols, Ingredient.EMPTY, 0) {
+            @Override
+            public void modifyOutput(World world, TileEntityStillBase tile, FluidStack output) {
+                NBTTagCompound compound = FluidUtil.createModifiers(output);
+                output.amount = 2;
+                float concentration = getModifierOrDefault("concentration",compound,output);
+                if(concentration < 120)
+                    compound.setFloat("concentration",Math.min((concentration + 10)*1.8f,120));
+            }
+
+            @Override
+            public void modifyTooltip(List<String> tooltip) {
+                super.modifyTooltip(tooltip);
+                tooltip.add(tooltip.size()-1,TextFormatting.BLUE+ Translator.translateToLocalFormatted("distilling.effect.add",Translator.translateToLocal("distilling.modifier.concentration.name"),10));
+                tooltip.add(tooltip.size()-1,TextFormatting.BLUE+ Translator.translateToLocalFormatted("distilling.effect.add_percent",Translator.translateToLocal("distilling.modifier.concentration.name"),80));
+                tooltip.add(tooltip.size()-1,TextFormatting.RED+ Translator.translateToLocalFormatted("distilling.effect.loss",33));
+            }
+        });
+        stillRecipes.add(new RecipeStillModifier(allAlcohols, Ingredient.fromItem(Items.GHAST_TEAR), 1) {
+            @Override
+            public void modifyOutput(World world, TileEntityStillBase tile, FluidStack output) {
+                NBTTagCompound compound = FluidUtil.createModifiers(output);
+                float lifedrinker = getModifierOrDefault("lifedrinker",compound,output);
+                float toxicity = getModifierOrDefault("toxicity",compound,output);
+                compound.setFloat("toxicity",toxicity + 10);
+                if(lifedrinker < 18000)
+                    compound.setFloat("lifedrinker",Math.min((lifedrinker + 600) * 1.6f,18000));
+            }
+            @Override
+            public void modifyTooltip(List<String> tooltip) {
+                super.modifyTooltip(tooltip);
+                tooltip.add(tooltip.size()-1,TextFormatting.GREEN+ Translator.translateToLocal("distilling.effect.lifedrinker"));
+                tooltip.add(tooltip.size()-1,TextFormatting.RED+ Translator.translateToLocalFormatted("distilling.effect.add",Translator.translateToLocal("distilling.modifier.toxicity.name"),10));
+            }
+        });
+        stillRecipes.add(new RecipeStillModifier(allAlcohols, new OreIngredient("dustRedstone"), 1) {
+            @Override
+            public void modifyOutput(World world, TileEntityStillBase tile, FluidStack output) {
+                NBTTagCompound compound = FluidUtil.createModifiers(output);
+                float duration = getModifierOrDefault("duration",compound,output);
+                float toxicity = getModifierOrDefault("toxicity",compound,output);
+                compound.setFloat("toxicity",toxicity + 5);
+                if(duration < 2.5f)
+                    compound.setFloat("duration",Math.min(duration + 0.5f,2.5f));
+            }
+            @Override
+            public void modifyTooltip(List<String> tooltip) {
+                super.modifyTooltip(tooltip);
+                tooltip.add(tooltip.size()-1,TextFormatting.BLUE+ Translator.translateToLocalFormatted("distilling.effect.add_percent",Translator.translateToLocal("distilling.modifier.duration.name"),50));
+                tooltip.add(tooltip.size()-1,TextFormatting.RED+ Translator.translateToLocalFormatted("distilling.effect.add",Translator.translateToLocal("distilling.modifier.toxicity.name"),5));
+            }
+        });
+        /*stillRecipes.add(new RecipeStillModifier(allDrinks, new OreIngredient("sugar"), 1) {
+            @Override
+            public void modifyOutput(World world, TileEntityStillBase tile, FluidStack output) {
+                NBTTagCompound compound = FluidUtil.createModifiers(output);
+                float sweetness = getModifierOrDefault("sweetness",compound,output);
+                if(sweetness < 80)
+                    compound.setFloat("sweetness",Math.min(sweetness+15,80));
+            }
+        });*/ //TODO: Use for sweetness
+        stillRecipes.add(new RecipeStillModifier(allDrinks, new OreIngredient("dustPrismarine"), 1) {
+            @Override
+            public void modifyOutput(World world, TileEntityStillBase tile, FluidStack output) {
+                NBTTagCompound compound = FluidUtil.createModifiers(output);
+                float toxicity = getModifierOrDefault("toxicity",compound,output);
+                if(toxicity > 0)
+                    compound.setFloat("toxicity",Math.max(toxicity * 0.8f - 20,0));
+            }
+            @Override
+            public void modifyTooltip(List<String> tooltip) {
+                super.modifyTooltip(tooltip);
+                tooltip.add(tooltip.size()-1,TextFormatting.BLUE+Translator.translateToLocalFormatted("distilling.effect.sub_percent",Translator.translateToLocal("distilling.modifier.toxicity.name"),20));
+                tooltip.add(tooltip.size()-1,TextFormatting.BLUE+Translator.translateToLocalFormatted("distilling.effect.sub",Translator.translateToLocal("distilling.modifier.toxicity.name"),20));
+            }
+        });
+        stillRecipes.add(new RecipeStillModifier(allDrinks, new OreIngredient("cropNetherWart"), 1) {
+            @Override
+            public void modifyOutput(World world, TileEntityStillBase tile, FluidStack output) {
+                NBTTagCompound compound = FluidUtil.createModifiers(output);
+                float health = getModifierOrDefault("health",compound,output);
+                float hunger = getModifierOrDefault("hunger",compound,output);
+                compound.setFloat("health",health + 4);
+                compound.setFloat("hunger",hunger - 3);
+            }
+            @Override
+            public void modifyTooltip(List<String> tooltip) {
+                super.modifyTooltip(tooltip);
+                tooltip.add(tooltip.size()-1,TextFormatting.BLUE+Translator.translateToLocalFormatted("distilling.effect.add",Translator.translateToLocal("distilling.modifier.health.name"),4));
+                tooltip.add(tooltip.size()-1,TextFormatting.BLUE+Translator.translateToLocalFormatted("distilling.effect.sub",Translator.translateToLocal("distilling.modifier.hunger.name"),3));
+            }
+        });
+        stillRecipes.add(new RecipeStillModifier(allDrinks, Ingredient.fromStacks(new ItemStack(Blocks.ICE)), 1) {
+            @Override
+            public void modifyOutput(World world, TileEntityStillBase tile, FluidStack output) {
+                NBTTagCompound compound = FluidUtil.createModifiers(output);
+                float heat = getModifierOrDefault("heat",compound,output);
+                if(heat > 200)
+                    compound.setFloat("heat",Math.max(heat * 0.5f,200));
+            }
+            @Override
+            public void modifyTooltip(List<String> tooltip) {
+                super.modifyTooltip(tooltip);
+                tooltip.add(tooltip.size()-1,TextFormatting.GREEN+Translator.translateToLocalFormatted("distilling.effect.sub_percent",Translator.translateToLocal("distilling.modifier.heat.name"),50));
+            }
+        });
+        stillRecipes.add(new RecipeStillModifierFood(allSoups, new OreIngredient("cropPotato"), 1, 2, 0.3f));
+        stillRecipes.add(new RecipeStillModifierFood(allSoups, new OreIngredient("cropCarrot"), 1, 1, 0.2f));
+        stillRecipes.add(new RecipeStillModifierFood(allSoups, new OreIngredient("cropWheat"), 1, 4, 0.6f) {
+            @Override
+            public void modifyOutput(World world, TileEntityStillBase tile, FluidStack output) {
+                NBTTagCompound compound = FluidUtil.createModifiers(output);
+                float viscosity = getModifierOrDefault("viscosity",compound,output);
+                compound.setFloat("viscosity",viscosity+1000);
+            }
+            @Override
+            public void modifyTooltip(List<String> tooltip) {
+                super.modifyTooltip(tooltip);
+                tooltip.add(tooltip.size()-1,TextFormatting.GREEN+Translator.translateToLocal("distilling.effect.thick_soup"));
+            }
+        });
     }
 
     private static void migrateAlchemyRecipes()
@@ -138,7 +389,7 @@ public class CraftingRegistry {
         Ingredient sand = new OreIngredient("sand");
         addAlchemyTabletRecipe(new ItemStack(Blocks.SOUL_SAND, 4), ash, sand, sand, sand, sand, new AspectRangeList(AspectList.createStandard(0,0,8,0,0),AspectList.createStandard(0,0,16,0,0)));
 
-        Ingredient leadSword = Ingredient.fromItem(RegistryManager.sword_lead);
+        Ingredient leadSword = new IngredientMaterialTool("sword","lead");
         Ingredient obsidian = new OreIngredient("obsidian");
         Ingredient coalBlock = new OreIngredient("blockCoal");
         addAlchemyTabletRecipe(new ItemStack(RegistryManager.tyrfing, 1), leadSword, coalBlock, obsidian, lead, lead, new AspectRangeList(AspectList.createStandard(0,0,0,64,64),AspectList.createStandard(0,0,0,96,96)));
@@ -214,5 +465,23 @@ public class CraftingRegistry {
         }
 
         return matchedRecipe;
+    }
+
+    public static RecipeStill getStillRecipe(FluidStack stack, ItemStack catalyst)
+    {
+        RecipeStill matchedRecipe = null;
+
+        for (RecipeStill recipe : stillRecipes) {
+            if(recipe.matches(stack,catalyst) && (matchedRecipe == null || matchedRecipe.input == null || matchedRecipe.catalystInput.apply(ItemStack.EMPTY)))
+                matchedRecipe = recipe;
+        }
+
+        return matchedRecipe;
+    }
+
+    public static int getStillCatalyst(ItemStack stack) {
+        if(stack.isEmpty()) return 0;
+        CatalystInfo matchedCatalyst = stillCatalysts.stream().filter(catalyst -> catalyst.matches(stack)).findFirst().orElse(null);
+        return matchedCatalyst == null ? 1000 : matchedCatalyst.getAmount(stack);
     }
 }

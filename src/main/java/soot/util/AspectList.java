@@ -1,13 +1,11 @@
 package soot.util;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import teamroots.embers.tileentity.TileEntityAlchemyPedestal;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class AspectList {
     HashMap<String,Integer> aspectList = new HashMap<>();
@@ -61,6 +59,20 @@ public class AspectList {
             ItemStack ash = pedestal.inventory.getStackInSlot(0);
             addAspect(AlchemyUtil.getAspect(aspect),ash.getCount());
         }
+    }
+
+    public void deserializeNBT(NBTTagCompound compound)
+    {
+        compound.getKeySet().stream().filter(key -> compound.hasKey(key, 99)).forEach(key -> aspectList.put(key, compound.getInteger(key)));
+    }
+
+    public NBTTagCompound serializeNBT()
+    {
+        NBTTagCompound compound = new NBTTagCompound();
+        for (Map.Entry<String, Integer> entry : aspectList.entrySet()) {
+            compound.setInteger(entry.getKey(),entry.getValue());
+        }
+        return compound;
     }
 
     public static AspectList createStandard(int iron, int dawnstone, int copper, int silver, int lead)

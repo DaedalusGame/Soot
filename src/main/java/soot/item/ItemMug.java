@@ -1,5 +1,6 @@
 package soot.item;
 
+import com.google.common.collect.ImmutableMap;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -18,6 +19,7 @@ import net.minecraft.stats.StatList;
 import net.minecraft.util.*;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
+import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -47,24 +49,16 @@ public class ItemMug extends ItemFluidContainer implements IItemColored {
         super(CAPACITY);
         this.setHasSubtypes(true);
         this.setMaxStackSize(MAX_STACK_SIZE);
-        this.addPropertyOverride(new ResourceLocation("fillmodel"),new IItemPropertyGetter(){
-            @Override
-            public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn) {
-                CaskLiquid liquid = getCaskLiquid(stack);
-                if (liquid != null) return liquid.model;
+        this.addPropertyOverride(new ResourceLocation("fillmodel"), (stack, worldIn, entityIn) -> {
+            CaskLiquid liquid = getCaskLiquid(stack);
+            if (liquid != null) return liquid.model;
 
-                return 0;
-            }
+            return 0;
         });
     }
 
     public CaskLiquid getCaskLiquid(ItemStack stack) {
-        FluidStack fluid = FluidUtil.getFluidContained(stack);
-        if(fluid != null) {
-            CaskLiquid liquid = CaskManager.getFromFluid(fluid.getFluid());
-            return liquid;
-        }
-        return null;
+        return CaskManager.getFromFluid(FluidUtil.getFluidContained(stack));
     }
 
     public ItemStack getEmpty()
@@ -107,10 +101,11 @@ public class ItemMug extends ItemFluidContainer implements IItemColored {
 
         if (!worldIn.isRemote)
         {
-            CaskLiquid liquid = getCaskLiquid(stack);
+            FluidStack fluid = FluidUtil.getFluidContained(stack);
+            CaskLiquid liquid = CaskManager.getFromFluid(fluid);
 
             if(liquid != null)
-                liquid.applyEffects(entityLiving, entityplayer, entityplayer);
+                liquid.applyEffects(entityLiving, entityplayer, entityplayer, fluid);
         }
 
         if (entityplayer != null)
@@ -137,7 +132,8 @@ public class ItemMug extends ItemFluidContainer implements IItemColored {
     @Override
     public int getMaxItemUseDuration(ItemStack stack)
     {
-        return 35;
+        FluidStack fluid = FluidUtil.getFluidContained(stack);
+        return (int)((soot.util.FluidUtil.getModifier(fluid,"viscosity") / 1000f) * 35f);
     }
 
     @Override
@@ -149,11 +145,12 @@ public class ItemMug extends ItemFluidContainer implements IItemColored {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)
     {
+        ItemStack stack = playerIn.getHeldItem(handIn);
+        if(FluidUtil.getFluidContained(stack) == null)
+            return new ActionResult<>(EnumActionResult.PASS, stack);
         playerIn.setActiveHand(handIn);
-        return new ActionResult<>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));
+        return new ActionResult<>(EnumActionResult.SUCCESS, stack);
     }
-
-
 
     @Override
     public String getItemStackDisplayName(ItemStack stack) {

@@ -49,4 +49,6 @@ public interface IUpgradeProvider {
     {
         return output;
     }
+
+    default double getOtherParameter(TileEntity tile, String type, double value) { return value; }
 }

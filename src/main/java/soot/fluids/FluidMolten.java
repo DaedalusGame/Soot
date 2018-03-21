@@ -2,6 +2,7 @@ package soot.fluids;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 
 public class FluidMolten extends Fluid {
     public FluidMolten(String fluidName, ResourceLocation still, ResourceLocation flowing) {

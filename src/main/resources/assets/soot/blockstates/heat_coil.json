@@ -1,0 +1,10 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "transform": "forge:default-block"
+    },
+    "variants":{
+        "inventory":[{ "model": "embers:crate_coil" }],
+        "normal":[{ "model": "embers:heat_coil", "x":180 }]
+    }
+}

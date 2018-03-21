@@ -1,0 +1,30 @@
+{
+  "result": {
+    "item": "soot:still",
+    "data": 0
+  },
+  "pattern": [
+    " FI",
+    "DVD",
+    "DDD"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "F": {
+      "item": "embers:pump",
+      "data": 0
+    },
+    "I": {
+      "item": "embers:item_pump",
+      "data": 0
+    },
+    "V": {
+      "item": "embers:block_tank",
+      "data": 0
+    },
+    "D": {
+      "type": "forge:ore_dict",
+      "ore": "plateDawnstone"
+    }
+  }
+}

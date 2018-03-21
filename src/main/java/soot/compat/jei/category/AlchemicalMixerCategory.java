@@ -1,19 +1,19 @@
 package soot.compat.jei.category;
 
 import mezz.jei.api.IGuiHelper;
-import mezz.jei.api.gui.IDrawable;
-import mezz.jei.api.gui.IGuiFluidStackGroup;
-import mezz.jei.api.gui.IRecipeLayout;
+import mezz.jei.api.gui.*;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeCategory;
 import mezz.jei.util.Translator;
 import net.minecraft.client.Minecraft;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 import soot.Soot;
 import soot.compat.jei.wrapper.AlchemicalMixerWrapper;
 import soot.recipe.RecipeAlchemicalMixer;
 import soot.util.AspectList;
+import soot.util.AspectRenderUtil;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -28,14 +28,16 @@ public class AlchemicalMixerCategory implements IRecipeCategory<AlchemicalMixerW
     @Nonnull
     private final String localizedName;
     private RecipeAlchemicalMixer lastRecipe = null;
-    private IGuiHelper helper;
+    private AspectRenderUtil helper;
     private final ResourceLocation resourceLocation = new ResourceLocation(Soot.MODID, "textures/gui/jei_alchemical_mixer.png");
+    public static final int ASPECTBARS_X = 16;
+    public static final int ASPECTBARS_Y = 69;
 
     public AlchemicalMixerCategory(IGuiHelper helper)
     {
         background = helper.createDrawable(resourceLocation, 0, 0, WIDTH, HEIGHT);
         localizedName = Translator.translateToLocal(L18N_KEY);
-        this.helper = helper;
+        this.helper = new AspectRenderUtil(helper,5,ASPECTBARS_X,ASPECTBARS_Y,108,0,54,7,resourceLocation);
     }
 
     @Override
@@ -60,12 +62,15 @@ public class AlchemicalMixerCategory implements IRecipeCategory<AlchemicalMixerW
 
     @Override
     public void setRecipe(IRecipeLayout recipeLayout, AlchemicalMixerWrapper recipeWrapper, IIngredients ingredients) {
+        IGuiItemStackGroup stacks = recipeLayout.getItemStacks();
         IGuiFluidStackGroup fluid = recipeLayout.getFluidStacks();
         fluid.init(0, true, 26, 3, 16, 16, 16, true, null);
         fluid.init(1, true, 26, 45, 16, 16, 16, true, null);
         fluid.init(2, true, 66, 3, 16, 16, 16, true, null);
         fluid.init(3, true, 66, 45, 16, 16, 16, true, null);
         fluid.init(4, false, 89, 16, 16, 32, 16, true, null);
+        helper.addAspectStacks(recipeWrapper,stacks,0);
+        stacks.addTooltipCallback((slotIndex, input, ingredient, tooltip) -> tooltip.clear());
 
         List<List<FluidStack>> inputs = ingredients.getInputs(FluidStack.class);
         int size = inputs.size();
@@ -82,29 +87,7 @@ public class AlchemicalMixerCategory implements IRecipeCategory<AlchemicalMixerW
     @Override
     public void drawExtras(Minecraft minecraft) {
         if(lastRecipe != null) {
-            AspectList.AspectRangeList aspectRange = lastRecipe.aspectRange;
-            int aspectTotal = aspectRange.getMaxAspects().getTotal();
-            drawAspectBar(minecraft, aspectRange, aspectTotal, 16, 69, "iron");
-            drawAspectBar(minecraft, aspectRange, aspectTotal, 16, 80, "copper");
-            drawAspectBar(minecraft, aspectRange, aspectTotal, 16, 91, "dawnstone");
-            drawAspectBar(minecraft, aspectRange, aspectTotal, 16, 102, "lead");
-            drawAspectBar(minecraft, aspectRange, aspectTotal, 16, 114, "silver");
-        }
-    }
-
-    public void drawAspectBar(Minecraft minecraft, AspectList.AspectRangeList aspectRange, int aspectTotal, int x, int y, String aspect) {
-        int max = aspectRange.getMax(aspect);
-        if (max > 0){
-            int min = aspectRange.getMin(aspect);
-            int u = 109;
-            int v = 0;
-            int width = 54;
-            int height = 7;
-            IDrawable ashBar = helper.createDrawable(resourceLocation, u, v, ((width *min)/aspectTotal), height);
-            IDrawable ashPartialBar = helper.createDrawable(resourceLocation, u, v + 7, ((width * max)/aspectTotal), height);
-            ashPartialBar.draw(minecraft, x, y);
-            ashBar.draw(minecraft, x, y);
-            Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(min+"-"+max, x +width+6, y, 0xFFFFFF);
+            helper.drawAspectBars(minecraft,lastRecipe);
         }
     }
 }

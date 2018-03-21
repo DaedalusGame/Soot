@@ -8,7 +8,7 @@ import java.awt.*;
 public class PotionAle extends PotionBase {
     public PotionAle() {
         super(false, new Color(125,78,24).getRGB());
-        setPotionName("Ale");
+        setPotionName("effect.ale");
         setIconIndex(0,0);
         setBeneficial();
         registerPotionAttributeModifier(SharedMonsterAttributes.ATTACK_DAMAGE,"6795bd8a-4239-454e-81a1-2d69b1316d66",0.8,2);

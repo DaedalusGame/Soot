@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IngredientCraftTweaker extends Ingredient {
+public class IngredientCraftTweaker extends Ingredient implements IHasSize {
     IIngredient predicate;
 
     public IngredientCraftTweaker(IIngredient ingredient)
@@ -29,5 +29,10 @@ public class IngredientCraftTweaker extends Ingredient {
         if(predicate == null)
             return stack.isEmpty();
         return predicate.matches(InputHelper.toIItemStack(stack));
+    }
+
+    @Override
+    public int getSize() {
+        return predicate.getAmount();
     }
 }

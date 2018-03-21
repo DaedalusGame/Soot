@@ -10,7 +10,7 @@ import java.awt.*;
 public class PotionStoutness extends PotionBase {
     public PotionStoutness() {
         super(false, new Color(240,255,128).getRGB());
-        setPotionName("Stoutness");
+        setPotionName("effect.stoutness");
         setIconIndex(2,0);
         setBeneficial();
         registerPotionAttributeModifier(SharedMonsterAttributes.ATTACK_DAMAGE,"328b29cb-9d51-4e1f-b92b-9ed06a0ebe4f",-0.1,2);

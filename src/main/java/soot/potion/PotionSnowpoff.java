@@ -7,7 +7,7 @@ import java.awt.*;
 public class PotionSnowpoff extends PotionBase {
     public PotionSnowpoff() {
         super(false, new Color(240,255,255).getRGB());
-        setPotionName("Snowpoff");
+        setPotionName("effect.snowpoff");
         setIconIndex(4,0);
         setBeneficial();
         MinecraftForge.EVENT_BUS.register(this);

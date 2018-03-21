@@ -1,11 +1,13 @@
 package soot.util;
 
 import com.google.common.collect.Lists;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
@@ -96,5 +98,11 @@ public class MiscUtil {
                 }
             }
         }
+    }
+
+    public static void damageWithoutInvulnerability(Entity entity, DamageSource source, float amount)
+    {
+        if(entity.attackEntityFrom(source,amount))
+            entity.hurtResistantTime = 0;
     }
 }

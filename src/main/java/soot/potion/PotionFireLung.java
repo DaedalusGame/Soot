@@ -22,7 +22,7 @@ import java.awt.*;
 public class PotionFireLung extends PotionBase {
     public PotionFireLung() {
         super(false, new Color(152,93,63).getRGB());
-        setPotionName("FireLung");
+        setPotionName("effect.fire_lung");
         setIconIndex(3,0);
         setBeneficial();
         MinecraftForge.EVENT_BUS.register(this);

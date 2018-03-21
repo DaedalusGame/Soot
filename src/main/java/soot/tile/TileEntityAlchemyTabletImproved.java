@@ -3,6 +3,7 @@ package soot.tile;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import soot.recipe.CraftingRegistry;
 import soot.recipe.RecipeAlchemyTablet;
 import soot.util.AlchemyResult;
@@ -23,10 +24,37 @@ public class TileEntityAlchemyTabletImproved extends TileEntityAlchemyTablet {
     private AspectList aspects = new AspectList();
 
     @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        super.writeToNBT(compound);
+        compound.setInteger("progress", this.progress);
+        compound.setTag("aspects", this.aspects.serializeNBT());
+        compound.setTag("north", this.north.serializeNBT());
+        compound.setTag("south", this.south.serializeNBT());
+        compound.setTag("east", this.east.serializeNBT());
+        compound.setTag("west", this.west.serializeNBT());
+        compound.setTag("center", this.center.serializeNBT());
+        return compound;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound compound) {
+        super.readFromNBT(compound);
+        this.progress = compound.getInteger("progress");
+        this.aspects.deserializeNBT(compound.getCompoundTag("aspects"));
+        this.north.deserializeNBT(compound.getCompoundTag("north"));
+        this.south.deserializeNBT(compound.getCompoundTag("south"));
+        this.east.deserializeNBT(compound.getCompoundTag("east"));
+        this.west.deserializeNBT(compound.getCompoundTag("west"));
+        this.center.deserializeNBT(compound.getCompoundTag("center"));
+    }
+
+    @Override
     public void sparkProgress() {
         if(progress != 0)
             return;
         RecipeAlchemyTablet recipe = getRecipe();
+        if(recipe == null)
+            return;
         List<TileEntityAlchemyPedestal> pedestals = AlchemyUtil.getNearbyPedestals(getWorld(),getPos());
         AspectList list = new AspectList();
         list.collect(pedestals);
@@ -78,8 +106,8 @@ public class TileEntityAlchemyTabletImproved extends TileEntityAlchemyTablet {
                                 ParticleUtil.spawnParticleStar(getWorld(), pedestal.getPos().getX()+0.5f, pedestal.getPos().getY()+1.0f, pedestal.getPos().getZ()+0.5f, dx/lifetime, dy/lifetime, dz/lifetime, 255, 64, 16, 4.0f, (int)lifetime);
                             }
                         }
-                        ItemStack aspect = pedestal.inventory.extractItem(0, 1, false);
-                        aspects.addAspect(AlchemyUtil.getAspect(aspect),1);
+                        pedestal.inventory.extractItem(0, 1, false);
+                        aspects.addAspect(AlchemyUtil.getAspect(pedestal.inventory.getStackInSlot(1)),1);
                         markDirty();
                         pedestal.markDirty();
                     }

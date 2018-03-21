@@ -7,6 +7,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreIngredient;
 import soot.util.AlchemyResult;
 import soot.util.AspectList;
+import soot.util.IHasAspects;
 import teamroots.embers.recipe.AlchemyRecipe;
 
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
-public class RecipeAlchemyTablet {
+public class RecipeAlchemyTablet implements IHasAspects {
     public Ingredient centerInput;
     public ArrayList<Ingredient> inputs;
     public ItemStack output;
@@ -46,7 +47,7 @@ public class RecipeAlchemyTablet {
         if(!centerInput.apply(center))
             return false;
 
-        HashSet<Ingredient> ingredients = new HashSet<>(inputs);
+        ArrayList<Ingredient> ingredients = new ArrayList<>(inputs);
         for (ItemStack stack : test) {
             Optional<Ingredient> found = ingredients.stream().filter(x -> x.apply(stack)).findFirst();
             if(found.isPresent())
@@ -56,5 +57,10 @@ public class RecipeAlchemyTablet {
         }
 
         return true;
+    }
+
+    @Override
+    public AspectList.AspectRangeList getAspects() {
+        return aspectRange;
     }
 }
