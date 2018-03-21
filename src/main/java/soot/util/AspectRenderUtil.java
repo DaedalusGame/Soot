@@ -40,7 +40,7 @@ public class AspectRenderUtil {
         {
             String aspect = aspects.get(i);
             stacks.init(id+i, false, 0, aspectbarsY +height/2-8+(height+spacing)*i);
-            stacks.set(id+i, AlchemyUtil.getAspectStack(aspect));
+            stacks.set(id+i, AlchemyUtil.getAspectStacks(aspect));
         }
     }
 

@@ -1,8 +1,10 @@
 package soot.util;
 
+import com.google.common.collect.Lists;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -12,36 +14,30 @@ import teamroots.embers.block.BlockAlchemyPedestal;
 import teamroots.embers.tileentity.TileEntityAlchemyPedestal;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class AlchemyUtil {
-    //TODO: Highly doubt there will ever be more aspects, but if there are, move this to a 'registry'
+    static HashMap<String,AspectInfo> ASPECT_REGISTRY = new HashMap<>();
+
+    public static void registerAspect(String aspect, Ingredient item)
+    {
+        ASPECT_REGISTRY.put(aspect,new AspectInfo(aspect,item));
+    }
+
     public static String getAspect(ItemStack aspect)
     {
-        Item item = aspect.getItem();
-        if (item == RegistryManager.aspectus_iron)
-            return "iron";
-        if (item == RegistryManager.aspectus_dawnstone)
-            return "dawnstone";
-        if (item == RegistryManager.aspectus_copper)
-            return "copper";
-        if (item == RegistryManager.aspectus_silver)
-            return "silver";
-        if (item == RegistryManager.aspectus_lead)
-            return "lead";
+        for (AspectInfo info : ASPECT_REGISTRY.values()) {
+            if(info.matches(aspect))
+                return info.id;
+        }
+
         return null;
     }
 
-    public static ItemStack getAspectStack(String aspect) {
-        switch(aspect)
-        {
-            case("iron"):return new ItemStack(RegistryManager.aspectus_iron);
-            case("dawnstone"):return new ItemStack(RegistryManager.aspectus_dawnstone);
-            case("copper"):return new ItemStack(RegistryManager.aspectus_copper);
-            case("silver"):return new ItemStack(RegistryManager.aspectus_silver);
-            case("lead"):return new ItemStack(RegistryManager.aspectus_lead);
-        }
-        return ItemStack.EMPTY;
+    public static List<ItemStack> getAspectStacks(String aspect) {
+        AspectInfo info = ASPECT_REGISTRY.get(aspect);
+        return info != null ? Lists.newArrayList(info.getStacks()) : new ArrayList<>();
     }
 
     public static List<TileEntityAlchemyPedestal> getNearbyPedestals(World world, BlockPos pos){
@@ -64,5 +60,26 @@ public class AlchemyUtil {
             }
         }
         return pedestals;
+    }
+
+    public static class AspectInfo
+    {
+        public String id;
+        public Ingredient matcher;
+
+        public AspectInfo(String id, Ingredient matcher) {
+            this.id = id;
+            this.matcher = matcher;
+        }
+
+        public boolean matches(ItemStack stack)
+        {
+            return matcher.apply(stack);
+        }
+
+        public ItemStack[] getStacks()
+        {
+            return matcher.getMatchingStacks();
+        }
     }
 }

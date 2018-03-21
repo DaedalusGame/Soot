@@ -18,6 +18,8 @@ public class Config {
     public static boolean OVERRIDE_HEARTH_COIL;
     public static boolean OVERRIDE_MIXER;
     public static boolean OVERRIDE_ALCHEMY_TABLET;
+    public static boolean FIX_MATH_ERROR_A;
+    public static boolean FIX_MATH_ERROR_B;
 
     public static void preInit(FMLPreInitializationEvent event)
     {
@@ -35,6 +37,8 @@ public class Config {
         HEARTHCOIL_SMELTING = loadPropBool("hearthCoilSmelting","Features","(requires override) The Hearthcoil can smelt items normally smeltable in a furnace.",true);
         ASH_FIRST = loadPropBool("ashFirst","Features","Ash is removed before the aspect from pedestals.",true);
         MIGRATE_ALCHEMY_RECIPES = loadPropBool("migrateAlchemyRecipes","Features","Disabling this will clear all alchemy recipes if the alchemy tablet override is enabled.",true);
+        FIX_MATH_ERROR_A = loadPropBool("fixMathErrorA","Features","If two aspect ranges are the same size on an alchemy recipe, they will no longer have the same exact value.",true);
+        FIX_MATH_ERROR_B = loadPropBool("fixMathErrorB","Features","If two aspect ranges are the same size on two alchemy recipes, they will no longer have the same exact value.",true);
 
         if (configuration.hasChanged())
         {
