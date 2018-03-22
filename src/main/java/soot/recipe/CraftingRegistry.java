@@ -182,7 +182,7 @@ public class CraftingRegistry {
         Fluid boiling_verdigris = FluidRegistry.getFluid("boiling_wormwood");
         FluidUtil.setDefaultValue(boiling_verdigris,"toxicity",100);
 
-        Fluid ale = FluidRegistry.getFluid("ale");
+        Fluid ale = FluidRegistry.getFluid("dwarven_ale");
 
         Fluid inner_fire = FluidRegistry.getFluid("inner_fire");
         FluidUtil.setDefaultValue(inner_fire,"heat",600);

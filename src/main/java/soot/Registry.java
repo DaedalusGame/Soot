@@ -116,7 +116,7 @@ public class Registry {
         BOILING_WORMWOOD = FluidRegistry.getFluid("boiling_wormwood");
         BOILING_BEETROOT_SOUP = FluidRegistry.getFluid("boiling_beetroot_soup");
 
-        ALE = FluidRegistry.getFluid("ale");
+        ALE = FluidRegistry.getFluid("dwarven_ale");
         VODKA = FluidRegistry.getFluid("vodka");
         INNER_FIRE = FluidRegistry.getFluid("inner_fire");
         UMBER_ALE = FluidRegistry.getFluid("umber_ale");
@@ -200,7 +200,7 @@ public class Registry {
         FluidRegistry.registerFluid(new FluidBooze("boiling_wormwood", new ResourceLocation(Soot.MODID, "blocks/verdigris"), new ResourceLocation(Soot.MODID, "blocks/verdigris_flowing")).setTemperature(500));
         FluidRegistry.registerFluid(new FluidBooze("boiling_beetroot_soup", new ResourceLocation(Soot.MODID, "blocks/beetsoup"), new ResourceLocation(Soot.MODID, "blocks/beetsoup_flowing")).setTemperature(500));
         //Alcohol itself. Cold.
-        FluidRegistry.registerFluid(new FluidBooze("ale", new ResourceLocation(Soot.MODID, "blocks/ale"), new ResourceLocation(Soot.MODID, "blocks/ale_flowing")));
+        FluidRegistry.registerFluid(new FluidBooze("dwarven_ale", new ResourceLocation(Soot.MODID, "blocks/ale"), new ResourceLocation(Soot.MODID, "blocks/ale_flowing")));
         FluidRegistry.registerFluid(new FluidBooze("vodka", new ResourceLocation(Soot.MODID, "blocks/vodka"), new ResourceLocation(Soot.MODID, "blocks/vodka_flowing")));
         FluidRegistry.registerFluid(new FluidBooze("inner_fire", new ResourceLocation(Soot.MODID, "blocks/inner_fire"), new ResourceLocation(Soot.MODID, "blocks/inner_fire_flowing")));
         FluidRegistry.registerFluid(new FluidBooze("umber_ale", new ResourceLocation(Soot.MODID, "blocks/umber_ale"), new ResourceLocation(Soot.MODID, "blocks/umber_ale_flowing")));
