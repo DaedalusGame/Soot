@@ -20,12 +20,14 @@ public class Config {
     public static boolean OVERRIDE_ALCHEMY_TABLET;
     public static boolean FIX_MATH_ERROR_A;
     public static boolean FIX_MATH_ERROR_B;
+    public static boolean OVERRIDE_MECH_ACCESSOR;
 
     public static void preInit(FMLPreInitializationEvent event)
     {
         configuration = new Configuration(event.getSuggestedConfigurationFile());
         configuration.load();
 
+        OVERRIDE_MECH_ACCESSOR = loadPropBool("mechAccessor","Overrides","Overrides the Mech Accessor",true);
         OVERRIDE_DAWNSTONE_ANVIL = loadPropBool("dawnstoneAnvil","Overrides","Overrides the Dawnstone Anvil",true);
         OVERRIDE_HEARTH_COIL = loadPropBool("hearthCoil","Overrides","Overrides the Hearth Coil",true);
         OVERRIDE_MIXER = loadPropBool("mixer","Overrides","Overrides the Mixer Centrifuge",true);

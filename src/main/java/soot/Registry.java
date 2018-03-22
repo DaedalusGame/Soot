@@ -36,6 +36,7 @@ import soot.util.CaskManager.CaskLiquid;
 import soot.util.Nope;
 import teamroots.embers.Embers;
 import teamroots.embers.block.BlockHeatCoil;
+import teamroots.embers.tileentity.*;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -106,6 +107,7 @@ public class Registry {
 
     public static void init() {
         registerCaskLiquids();
+        registerAccessorTiles();
     }
 
     public static void registerCaskLiquids() {
@@ -134,6 +136,14 @@ public class Registry {
         CaskManager.register(new CaskLiquid(ABSINTHE, 1, 0xFF58FF2E));
         CaskManager.register(new CaskLiquid(METHANOL, 1, 0xFF666633).addEffect(new PotionEffect(POTION_FIRE_LUNG, 200, 0), 2));
         CaskManager.register(new CaskLiquid(SNOWPOFF_VODKA, 2, 0xFFC3E6F7));
+    }
+
+    public static void registerAccessorTiles() {
+        TileEntityMechAccessorImproved.registerAccessibleTile(TileEntityMechCore.class);
+        TileEntityMechAccessorImproved.registerAccessibleTile(TileEntityMixerBottom.class);
+        TileEntityMechAccessorImproved.registerAccessibleTile(TileEntityActivatorBottom.class);
+        TileEntityMechAccessorImproved.registerAccessibleTile(TileEntityFurnaceBottom.class);
+        TileEntityMechAccessorImproved.registerAccessibleTile(TileEntityBoilerBottom.class);
     }
 
     public static void registerBlocks() {
@@ -175,6 +185,11 @@ public class Registry {
             BlockHeatCoilImproved heatCoilImproved = (BlockHeatCoilImproved) new BlockHeatCoilImproved(Material.ROCK, "heat_coil", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.0F);
             registerBlock(heatCoilImproved, false);
             registerItem(heatCoilImproved.getItemBlock(), false);
+        }
+        if (Config.OVERRIDE_MECH_ACCESSOR) {
+            BlockMechAccessorImproved accessorImproved = (BlockMechAccessorImproved) new BlockMechAccessorImproved(Material.ROCK, "mech_accessor", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.0F);
+            registerBlock(accessorImproved, false);
+            registerItem(accessorImproved.getItemBlock(), false);
         }
     }
 
@@ -253,6 +268,7 @@ public class Registry {
         registerTileEntity(TileEntityDawnstoneAnvilImproved.class);
         registerTileEntity(TileEntityHeatCoilImproved.class);
         registerTileEntity(TileEntityAlchemyTabletImproved.class);
+        registerTileEntity(TileEntityMechAccessorImproved.class);
     }
 
     private static void registerEntities() {
