@@ -144,6 +144,7 @@ public class Registry {
         TileEntityMechAccessorImproved.registerAccessibleTile(TileEntityActivatorBottom.class);
         TileEntityMechAccessorImproved.registerAccessibleTile(TileEntityFurnaceBottom.class);
         TileEntityMechAccessorImproved.registerAccessibleTile(TileEntityBoilerBottom.class);
+        TileEntityMechAccessorImproved.registerAccessibleTile(TileEntityReactor.class);
     }
 
     public static void registerBlocks() {
