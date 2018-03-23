@@ -40,13 +40,13 @@ public class Alchemy {
         CraftTweakerAPI.apply(new AddAspect(name,item));
     }
 
-    @ZenMethod
+    /*@ZenMethod
     public static void add(IItemStack output,@NotNull IItemStack[] input, IntRange iron, IntRange copper, IntRange lead, IntRange silver, IntRange dawnstone) {
         if(Config.OVERRIDE_ALCHEMY_TABLET)
             add(output,input,iron,copper,lead,silver,dawnstone);
         else
             addInternalOld(output,input,iron.getFrom(),iron.getTo(),copper.getFrom(),copper.getTo(),lead.getFrom(),lead.getTo(),silver.getFrom(),silver.getTo(),dawnstone.getFrom(),dawnstone.getTo());
-    }
+    }*/
 
     @ZenMethod
     public static void add(IItemStack output, @NotNull IIngredient[] input, Map<String,IntRange> aspects) {

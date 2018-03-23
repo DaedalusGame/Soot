@@ -10,6 +10,8 @@ import crafttweaker.api.liquid.ILiquidStack;
 import net.minecraftforge.fluids.FluidStack;
 import soot.recipe.CraftingRegistry;
 import soot.recipe.RecipeAlchemicalMixer;
+import soot.util.AspectList;
+import soot.util.AspectList.AspectRangeList;
 import soot.util.CTUtil;
 import stanhebben.zenscript.annotations.NotNull;
 import stanhebben.zenscript.annotations.ZenClass;
@@ -18,6 +20,7 @@ import stanhebben.zenscript.value.IntRange;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @ZenRegister
@@ -25,14 +28,31 @@ import java.util.stream.Collectors;
 public class AlchemicalMixer {
     public static final String clazz = "mods.soot.AlchemicalMixer";
 
-    @ZenMethod
-    public static void add(ILiquidStack output, @NotNull ILiquidStack[] inputs,  int ironMin, int ironMax, int copperMin, int copperMax, int leadMin, int leadMax, int silverMin, int silverMax, int dawnstoneMin, int dawnstoneMax) {
-        add(output, inputs, new IntRange(ironMin,ironMax),new IntRange(copperMin,copperMax),new IntRange(leadMin,leadMax),new IntRange(silverMin,silverMax),new IntRange(dawnstoneMin,dawnstoneMax));
-    }
+    //@ZenMethod
+    //public static void add(ILiquidStack output, @NotNull ILiquidStack[] inputs, int ironMin, int ironMax, int copperMin, int copperMax, int leadMin, int leadMax, int silverMin, int silverMax, int dawnstoneMin, int dawnstoneMax) {
+    //    add(output, inputs, new IntRange(ironMin,ironMax),new IntRange(copperMin,copperMax),new IntRange(leadMin,leadMax),new IntRange(silverMin,silverMax),new IntRange(dawnstoneMin,dawnstoneMax));
+    //}
 
     @ZenMethod
     public static void add(ILiquidStack output, @NotNull ILiquidStack[] inputs, IntRange iron, IntRange copper, IntRange lead, IntRange silver, IntRange dawnstone) {
-        RecipeAlchemicalMixer recipe = new RecipeAlchemicalMixer(InputHelper.toFluids(inputs),InputHelper.toFluid(output), CTUtil.toAspectRange(iron,copper,lead,silver,dawnstone));
+        addInternal(output,inputs,CTUtil.toAspectRange(iron,copper,lead,silver,dawnstone));
+    }
+
+    @ZenMethod
+    public static void add(ILiquidStack output, @NotNull ILiquidStack[] inputs, Map<String,IntRange> aspects) {
+        AspectList minAspects = new AspectList();
+        AspectList maxAspects = new AspectList();
+        for (Map.Entry<String, IntRange> entry : aspects.entrySet()) {
+            String aspect = entry.getKey();
+            minAspects.addAspect(aspect,entry.getValue().getFrom());
+            maxAspects.addAspect(aspect,entry.getValue().getTo());
+        }
+        addInternal(output, inputs, new AspectRangeList(minAspects,maxAspects));
+    }
+
+    private static void addInternal(ILiquidStack output, @NotNull ILiquidStack[] inputs, AspectRangeList aspects)
+    {
+        RecipeAlchemicalMixer recipe = new RecipeAlchemicalMixer(InputHelper.toFluids(inputs),InputHelper.toFluid(output), aspects);
         CraftTweakerAPI.apply(new Add(recipe));
     }
 
