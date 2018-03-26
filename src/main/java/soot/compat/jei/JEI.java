@@ -71,7 +71,7 @@ public class JEI implements IModPlugin {
             catch (Exception e) { //Gotta catch em all
                 e.printStackTrace();
             }
-            boolean isRepairable = item.getIsRepairable(stack, repairItem);
+            boolean isRepairable = !repairItem.isEmpty() && item.getIsRepairable(stack, repairItem);
             boolean materiaAllowed = item.isRepairable();
             if(isRepairable || materiaAllowed)
             {
