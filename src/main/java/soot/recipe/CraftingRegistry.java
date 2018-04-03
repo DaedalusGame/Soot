@@ -46,6 +46,8 @@ public class CraftingRegistry {
     public static ArrayList<RecipeStill> stillRecipes = new ArrayList<>();
     public static ArrayList<CatalystInfo> stillCatalysts = new ArrayList<>();
 
+    public static ArrayList<RecipeDawnstoneAnvil> dawnstoneAnvilBlacklist = new ArrayList<>();
+
     public static void preInit()
     {
         MinecraftForge.EVENT_BUS.register(CraftingRegistry.class);
@@ -469,6 +471,16 @@ public class CraftingRegistry {
         }
 
         return null;
+    }
+
+    public static boolean isDawnstoneAnvilRecipeBlacklisted(ItemStack bottom, ItemStack top)
+    {
+        for (RecipeDawnstoneAnvil recipe: dawnstoneAnvilBlacklist) {
+            if(recipe.matches(bottom,top))
+                return true;
+        }
+
+        return false;
     }
 
     public static RecipeHeatCoil getHeatCoilRecipe(ItemStack input)

@@ -22,6 +22,8 @@ public class TileEntityDawnstoneAnvilImproved extends TileEntityDawnstoneAnvil {
             markDirty();
             return recipe.getResult(stack1, stack2);
         }
+        if(CraftingRegistry.isDawnstoneAnvilRecipeBlacklisted(stack1,stack2))
+            return new ItemStack[0];
         return super.getResult(stack1, stack2);
     }
 }

@@ -7,6 +7,7 @@ import crafttweaker.CraftTweakerAPI;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.item.IIngredient;
 import crafttweaker.api.item.IItemStack;
+import net.minecraft.item.ItemStack;
 import soot.recipe.RecipeDawnstoneAnvil;
 import soot.recipe.CraftingRegistry;
 import soot.util.CTUtil;
@@ -24,10 +25,28 @@ public class DawnstoneAnvil {
         CraftTweakerAPI.apply(new Add(recipe));
     }
 
+    @ZenMethod
+    public static void remove(IIngredient inputBottom, IIngredient inputTop) {
+        RecipeDawnstoneAnvil recipe = new RecipeDawnstoneAnvil(new ItemStack[0], CTUtil.toIngredient(inputBottom), CTUtil.toIngredient(inputTop));
+        CraftTweakerAPI.apply(new Remove(recipe));
+    }
+
     public static class Add extends BaseListAddition<RecipeDawnstoneAnvil>
     {
         public Add(RecipeDawnstoneAnvil recipe) {
             super("DawnstoneAnvil", CraftingRegistry.dawnstoneAnvilRecipes, Lists.newArrayList(recipe));
+        }
+
+        @Override
+        protected String getRecipeInfo(RecipeDawnstoneAnvil recipe) {
+            return recipe.toString();
+        }
+    }
+
+    public static class Remove extends BaseListAddition<RecipeDawnstoneAnvil>
+    {
+        public Remove(RecipeDawnstoneAnvil recipe) {
+            super("DawnstoneAnvil", CraftingRegistry.dawnstoneAnvilBlacklist, Lists.newArrayList(recipe));
         }
 
         @Override
