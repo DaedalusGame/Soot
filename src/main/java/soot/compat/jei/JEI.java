@@ -79,9 +79,12 @@ public class JEI implements IModPlugin {
                 repairMaterials.add(repairItem.copy());
                 if(materiaAllowed)
                     repairMaterials.add(new ItemStack(RegistryManager.isolated_materia));
-                ItemStack[] repairMaterialsArray = repairMaterials.toArray(new ItemStack[repairMaterials.size()]);
-                repairRecipes.add(new RecipeDawnstoneAnvil(new ItemStack[]{stack.copy()}, Ingredient.fromStacks(makeDamaged(stack)),Ingredient.fromStacks(repairMaterialsArray)));
-                if(Misc.getResourceCount(stack) != -1) {
+                repairMaterials.removeIf(repairStack -> CraftingRegistry.isDawnstoneAnvilRecipeBlacklisted(stack,repairStack));
+                if(!repairMaterials.isEmpty()) {
+                    ItemStack[] repairMaterialsArray = repairMaterials.toArray(new ItemStack[repairMaterials.size()]);
+                    repairRecipes.add(new RecipeDawnstoneAnvil(new ItemStack[]{stack.copy()}, Ingredient.fromStacks(makeDamaged(stack)), Ingredient.fromStacks(repairMaterialsArray)));
+                }
+                if(Misc.getResourceCount(stack) != -1 && !CraftingRegistry.isDawnstoneAnvilRecipeBlacklisted(stack,ItemStack.EMPTY)) {
                     ItemStack material = repairItem.copy();
                     material.setCount(Misc.getResourceCount(stack));
                     destroyRecipes.add(new RecipeDawnstoneAnvil(new ItemStack[]{material}, Ingredient.fromStacks(makeDamaged(stack)), Ingredient.EMPTY));
