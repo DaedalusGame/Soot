@@ -17,7 +17,7 @@ public class CraftTweaker {
     @ZenRegister
     public static class IngredientExtensions {
         @ZenMethod
-        public IIngredient anyHeat(IIngredient ingredient)
+        public static IIngredient anyHeat(IIngredient ingredient)
         {
             return ingredient.only(iItemStack -> {
                 ItemStack stack = CraftTweakerMC.getItemStack(iItemStack);
@@ -26,7 +26,7 @@ public class CraftTweaker {
         }
 
         @ZenMethod
-        public IIngredient onlyHeatAtLeast(IIngredient ingredient, float threshold)
+        public static IIngredient onlyHeatAtLeast(IIngredient ingredient, float threshold)
         {
             return ingredient.only(iItemStack -> {
                 ItemStack stack = CraftTweakerMC.getItemStack(iItemStack);
@@ -35,7 +35,7 @@ public class CraftTweaker {
         }
 
         @ZenMethod
-        public IIngredient onlyHeatAtMost(IIngredient ingredient, float threshold)
+        public static IIngredient onlyHeatAtMost(IIngredient ingredient, float threshold)
         {
             return ingredient.only(iItemStack -> {
                 ItemStack stack = CraftTweakerMC.getItemStack(iItemStack);
@@ -44,7 +44,7 @@ public class CraftTweaker {
         }
 
         @ZenMethod
-        public IIngredient onlyHeatLevelAtLeast(IIngredient ingredient, int threshold)
+        public static IIngredient onlyHeatLevelAtLeast(IIngredient ingredient, int threshold)
         {
             return ingredient.only(iItemStack -> {
                 ItemStack stack = CraftTweakerMC.getItemStack(iItemStack);
@@ -53,7 +53,7 @@ public class CraftTweaker {
         }
 
         @ZenMethod
-        public IIngredient onlyHeatLevelAtMost(IIngredient ingredient, int threshold)
+        public static IIngredient onlyHeatLevelAtMost(IIngredient ingredient, int threshold)
         {
             return ingredient.only(iItemStack -> {
                 ItemStack stack = CraftTweakerMC.getItemStack(iItemStack);
@@ -62,7 +62,7 @@ public class CraftTweaker {
         }
 
         @ZenMethod
-        public IIngredient onlyWithModifier(IIngredient ingredient, String modifier)
+        public static IIngredient onlyWithModifier(IIngredient ingredient, String modifier)
         {
             return ingredient.only(iItemStack -> {
                 ItemStack stack = CraftTweakerMC.getItemStack(iItemStack);
@@ -71,7 +71,7 @@ public class CraftTweaker {
         }
 
         @ZenMethod
-        public IIngredient onlyWithModifierLevelAtLeast(IIngredient ingredient, String modifier, int threshold)
+        public static IIngredient onlyWithModifierLevelAtLeast(IIngredient ingredient, String modifier, int threshold)
         {
             return ingredient.only(iItemStack -> {
                 ItemStack stack = CraftTweakerMC.getItemStack(iItemStack);
@@ -80,7 +80,7 @@ public class CraftTweaker {
         }
 
         @ZenMethod
-        public IIngredient onlyWithModifierLevelAtMost(IIngredient ingredient, String modifier, int threshold)
+        public static IIngredient onlyWithModifierLevelAtMost(IIngredient ingredient, String modifier, int threshold)
         {
             return ingredient.only(iItemStack -> {
                 ItemStack stack = CraftTweakerMC.getItemStack(iItemStack);
@@ -89,7 +89,7 @@ public class CraftTweaker {
         }
 
         @ZenMethod
-        public IIngredient onlyIfModifierValid(IIngredient ingredient, IItemStack modifier)
+        public static IIngredient onlyIfModifierValid(IIngredient ingredient, IItemStack modifier)
         {
             return ingredient.only(iItemStack -> {
                 ItemStack stack = CraftTweakerMC.getItemStack(iItemStack);
@@ -103,69 +103,69 @@ public class CraftTweaker {
     @ZenRegister
     public static class ItemStackExtensions {
         @ZenGetter("hasHeat")
-        public boolean hasHeat(IItemStack itemStack) {
+        public static boolean hasHeat(IItemStack itemStack) {
             ItemStack stack = (ItemStack) itemStack.getInternal();
             return ItemModUtil.hasHeat(stack);
         }
 
         @ZenGetter("heat")
-        public float getHeat(IItemStack itemStack) {
+        public static float getHeat(IItemStack itemStack) {
             ItemStack stack = (ItemStack) itemStack.getInternal();
             return ItemModUtil.getHeat(stack);
         }
 
         @ZenSetter("heat")
-        public void setHeat(IItemStack itemStack, float heat) {
+        public static void setHeat(IItemStack itemStack, float heat) {
             ItemStack stack = (ItemStack) itemStack.getInternal();
             ItemModUtil.setHeat(stack, heat);
         }
 
         @ZenGetter("maxHeat")
-        public float getMaxHeat(IItemStack itemStack) {
+        public static float getMaxHeat(IItemStack itemStack) {
             ItemStack stack = (ItemStack) itemStack.getInternal();
             return ItemModUtil.getMaxHeat(stack);
         }
 
         @ZenGetter("heatLevel")
-        public int getHeatLevel(IItemStack itemStack) {
+        public static int getHeatLevel(IItemStack itemStack) {
             ItemStack stack = (ItemStack) itemStack.getInternal();
             return ItemModUtil.getLevel(stack);
         }
 
         @ZenSetter("heatLevel")
-        public void getHeatLevel(IItemStack itemStack, int level) {
+        public static void getHeatLevel(IItemStack itemStack, int level) {
             ItemStack stack = (ItemStack) itemStack.getInternal();
             ItemModUtil.setLevel(stack, level);
         }
 
         @ZenMethod
-        public void addModifier(IItemStack itemStack, IItemStack modifier) {
+        public static void addModifier(IItemStack itemStack, IItemStack modifier) {
             ItemStack stack = (ItemStack) itemStack.getInternal();
             ItemStack modifierStack = CraftTweakerMC.getItemStack(modifier);
             ItemModUtil.addModifier(stack,modifierStack);
         }
 
         @ZenMethod
-        public boolean isModifierValid(IItemStack itemStack, IItemStack modifier) {
+        public static boolean isModifierValid(IItemStack itemStack, IItemStack modifier) {
             ItemStack stack = (ItemStack) itemStack.getInternal();
             ItemStack modifierStack = CraftTweakerMC.getItemStack(modifier);
             return ItemModUtil.isModValid(stack,modifierStack);
         }
 
         @ZenMethod
-        public boolean hasModifier(IItemStack itemStack, String modifier) {
+        public static boolean hasModifier(IItemStack itemStack, String modifier) {
             ItemStack stack = (ItemStack) itemStack.getInternal();
             return ItemModUtil.hasModifier(stack,modifier);
         }
 
         @ZenMethod
-        public int getModifierLevel(IItemStack itemStack, String modifier) {
+        public static int getModifierLevel(IItemStack itemStack, String modifier) {
             ItemStack stack = (ItemStack) itemStack.getInternal();
             return ItemModUtil.getModifierLevel(stack,modifier);
         }
 
         @ZenMethod
-        public void setModifierLevel(IItemStack itemStack, String modifier, int level) {
+        public static void setModifierLevel(IItemStack itemStack, String modifier, int level) {
             ItemStack stack = (ItemStack) itemStack.getInternal();
             ItemModUtil.setModifierLevel(stack,modifier,level);
         }
