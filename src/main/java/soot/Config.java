@@ -21,6 +21,7 @@ public class Config {
     public static boolean FIX_MATH_ERROR_A;
     public static boolean FIX_MATH_ERROR_B;
     public static boolean OVERRIDE_MECH_ACCESSOR;
+    public static boolean OVERRIDE_ALCHEMY_PEDESTAL;
 
     public static void preInit(FMLPreInitializationEvent event)
     {
@@ -32,6 +33,7 @@ public class Config {
         OVERRIDE_HEARTH_COIL = loadPropBool("hearthCoil","Overrides","Overrides the Hearth Coil",true);
         OVERRIDE_MIXER = loadPropBool("mixer","Overrides","Overrides the Mixer Centrifuge",true);
         OVERRIDE_ALCHEMY_TABLET = loadPropBool("alchemyTablet","Overrides","Overrides the Exchange Tablet",true);
+        OVERRIDE_ALCHEMY_PEDESTAL = loadPropBool("alchemyPedestal","Overrides","Overrides the Alchemy Pedestal",true);
 
         TRADING_ANTIMONY = loadPropBool("tradingAntimony","Features","Allows trading signet of antimony with villagers instead of emeralds.",true);
         GOLEMS_TYRFING_WEAK = loadPropBool("golemsTyrfingWeak","Features","Golems take extra damage from the Tyrfing.",true);

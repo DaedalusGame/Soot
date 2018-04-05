@@ -11,7 +11,6 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import soot.handler.FluidFixHandler;
 import soot.handler.GolemHandler;
-import soot.handler.PedestalHandler;
 import soot.handler.VillagerAntimonyHandler;
 import soot.recipe.CraftingRegistry;
 import soot.util.Attributes;
@@ -47,8 +46,6 @@ public class Soot
         proxy.preInit();
         MinecraftForge.EVENT_BUS.register(Attributes.class);
         MinecraftForge.EVENT_BUS.register(FluidFixHandler.class);
-        if(Config.ASH_FIRST)
-            MinecraftForge.EVENT_BUS.register(PedestalHandler.class);
         if(Config.TRADING_ANTIMONY)
             MinecraftForge.EVENT_BUS.register(VillagerAntimonyHandler.class);
         if(Config.GOLEMS_POISON_IMMUNE || Config.GOLEMS_TYRFING_WEAK)

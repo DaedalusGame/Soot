@@ -182,6 +182,11 @@ public class Registry {
             registerBlock(alchemyTabletImproved, false);
             registerItem(alchemyTabletImproved.getItemBlock(), false);
         }
+        if (Config.OVERRIDE_ALCHEMY_PEDESTAL) {
+            BlockAlchemyPedestalImproved alchemyPedestalImproved = (BlockAlchemyPedestalImproved) new BlockAlchemyPedestalImproved(Material.ROCK, "alchemy_pedestal", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.6F);
+            registerBlock(alchemyPedestalImproved, false);
+            registerItem(alchemyPedestalImproved.getItemBlock(), false);
+        }
         if (Config.OVERRIDE_HEARTH_COIL) {
             BlockHeatCoilImproved heatCoilImproved = (BlockHeatCoilImproved) new BlockHeatCoilImproved(Material.ROCK, "heat_coil", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.0F);
             registerBlock(heatCoilImproved, false);
@@ -269,6 +274,7 @@ public class Registry {
         registerTileEntity(TileEntityDawnstoneAnvilImproved.class);
         registerTileEntity(TileEntityHeatCoilImproved.class);
         registerTileEntity(TileEntityAlchemyTabletImproved.class);
+        registerTileEntity(TileEntityAlchemyPedestalImproved.class);
         registerTileEntity(TileEntityMechAccessorImproved.class);
     }
 
