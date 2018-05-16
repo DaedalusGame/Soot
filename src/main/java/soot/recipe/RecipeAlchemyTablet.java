@@ -17,11 +17,11 @@ import java.util.Optional;
 
 public class RecipeAlchemyTablet implements IHasAspects {
     public Ingredient centerInput;
-    public ArrayList<Ingredient> inputs;
+    public List<Ingredient> inputs;
     public ItemStack output;
     public AspectList.AspectRangeList aspectRange;
 
-    public RecipeAlchemyTablet(ItemStack output, Ingredient center, ArrayList<Ingredient> outside, AspectList.AspectRangeList range)
+    public RecipeAlchemyTablet(ItemStack output, Ingredient center, List<Ingredient> outside, AspectList.AspectRangeList range)
     {
         this.output = output;
         this.centerInput = center;
@@ -34,8 +34,9 @@ public class RecipeAlchemyTablet implements IHasAspects {
         return AlchemyResult.create(list,aspectRange,world);
     }
 
-    public ItemStack getResult(World world, TileEntity tile, AspectList aspects)
+    public ItemStack getResult(TileEntity tile, AspectList aspects)
     {
+        World world = tile.getWorld();
         AlchemyResult result = matchAshes(aspects,world);
         if(result.getAccuracy() == 1.0)
             return output.copy();

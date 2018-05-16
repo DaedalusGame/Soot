@@ -9,6 +9,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import org.apache.logging.log4j.Logger;
 import soot.handler.FluidFixHandler;
 import soot.handler.GolemHandler;
 import soot.handler.VillagerAntimonyHandler;
@@ -26,6 +27,8 @@ public class Soot
     public static final String MODID = "soot";
     public static final String NAME = "Soot";
 
+    public static Logger log;
+
     @SidedProxy(clientSide = "soot.ClientProxy",serverSide = "soot.ServerProxy")
     public static IProxy proxy;
 
@@ -34,6 +37,7 @@ public class Soot
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
+        log = event.getModLog();
         Config.preInit(event);
         creativeTab = new CreativeTabs("soot") {
             @Override

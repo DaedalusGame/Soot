@@ -167,6 +167,11 @@ public class Registry {
     }
 
     public static void registerOverrides() {
+        if (Config.OVERRIDE_STAMPER) {
+            BlockStamperImproved stamperImproved = (BlockStamperImproved) new BlockStamperImproved(Material.ROCK, "stamper", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.0F);
+            registerBlock(stamperImproved, false);
+            registerItem(stamperImproved.getItemBlock(), false);
+        }
         if (Config.OVERRIDE_MIXER) {
             BlockMixerImproved mixerImproved = (BlockMixerImproved) new BlockMixerImproved(Material.ROCK, "mixer", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.0F);
             registerBlock(mixerImproved, false);
@@ -270,6 +275,7 @@ public class Registry {
         registerTileEntity(TileEntityStillBase.class);
         registerTileEntity(TileEntityStillTip.class);
 
+        registerTileEntity(TileEntityStamperImproved.class);
         registerTileEntity(TileEntityMixerBottomImproved.class);
         registerTileEntity(TileEntityDawnstoneAnvilImproved.class);
         registerTileEntity(TileEntityHeatCoilImproved.class);

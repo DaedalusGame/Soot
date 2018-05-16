@@ -12,12 +12,13 @@ import teamroots.embers.tileentity.TileEntityMechCore;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 public class UpgradeUtil {
-    public static ArrayList<IUpgradeProvider> getUpgrades(World world, BlockPos pos, EnumFacing[] facings)
+    public static List<IUpgradeProvider> getUpgrades(World world, BlockPos pos, EnumFacing[] facings)
     {
-        ArrayList<IUpgradeProvider> upgrades = new ArrayList<>();
+        LinkedList<IUpgradeProvider> upgrades = new LinkedList<>();
         for (EnumFacing facing: facings) {
             TileEntity te = world.getTileEntity(pos.offset(facing));
             if(te != null && te.hasCapability(CapabilityUpgradeProvider.UPGRADE_PROVIDER_CAPABILITY,facing.getOpposite()))
@@ -28,9 +29,9 @@ public class UpgradeUtil {
         return upgrades;
     }
 
-    public static ArrayList<IUpgradeProvider> getUpgradesForMultiblock(World world, BlockPos pos, EnumFacing[] facings)
+    public static List<IUpgradeProvider> getUpgradesForMultiblock(World world, BlockPos pos, EnumFacing[] facings)
     {
-        ArrayList<IUpgradeProvider> upgrades = new ArrayList<>();
+        LinkedList<IUpgradeProvider> upgrades = new LinkedList<>();
         for (EnumFacing facing: facings) {
             TileEntity te = world.getTileEntity(pos.offset(facing));
             if(te instanceof TileEntityMechCore)
@@ -44,11 +45,12 @@ public class UpgradeUtil {
     public static void verifyUpgrades(TileEntity tile,List<IUpgradeProvider> list)
     {
         //Count, remove, sort
-        //This call is expensive. Ideally should be cached.
+        //This call is expensive. Ideally should be cached. The total time complexity is O(n + n^2 + n log n) = O(n^2) for an ArrayList.
+        //Total time complexity for a LinkedList should be O(n + n + n log n) = O(n log n). Slightly better.
         HashMap<String,Integer> upgradeCounts = new HashMap<>();
         list.forEach(x -> {
             String id = x.getUpgradeId();
-            upgradeCounts.put(x.getUpgradeId(), upgradeCounts.containsKey(id) ? upgradeCounts.get(x.getUpgradeId()) + 1 : 1);
+            upgradeCounts.put(x.getUpgradeId(), upgradeCounts.getOrDefault(id,0) + 1);
         });
         list.removeIf(x -> upgradeCounts.get(x.getUpgradeId()) > x.getLimit(tile));
         list.sort((x,y) -> Integer.compare(x.getPriority(),y.getPriority()));
@@ -114,7 +116,7 @@ public class UpgradeUtil {
         return output;
     }
 
-    public static double getOtherParameter(TileEntity tile, String type, double initial, List<IUpgradeProvider> list)
+    public static <T> T getOtherParameter(TileEntity tile, String type, T initial, List<IUpgradeProvider> list)
     {
         for (IUpgradeProvider upgrade : list) {
             initial = upgrade.getOtherParameter(tile,type,initial);

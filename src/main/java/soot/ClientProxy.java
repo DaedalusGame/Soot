@@ -18,10 +18,7 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import soot.block.IBlockVariants;
 import soot.entity.EntityCustomCloud;
-import soot.tile.TileEntityAlchemyGlobe;
-import soot.tile.TileEntityAlchemyGlobeRenderer;
-import soot.tile.TileEntityEmberBurst;
-import soot.tile.TileEntityEmberBurstRenderer;
+import soot.tile.*;
 import soot.util.IBlockColored;
 import soot.util.IItemColored;
 import teamroots.embers.block.IBlock;
@@ -83,6 +80,7 @@ public class ClientProxy implements IProxy {
     {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityEmberBurst.class, new TileEntityEmberBurstRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAlchemyGlobe.class, new TileEntityAlchemyGlobeRenderer());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityStamperImproved.class, new TileEntityStamperImprovedRenderer());
     }
 
     @Override

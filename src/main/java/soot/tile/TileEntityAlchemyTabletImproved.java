@@ -115,7 +115,7 @@ public class TileEntityAlchemyTabletImproved extends TileEntityAlchemyTablet {
                 else {
                     RecipeAlchemyTablet recipe = getRecipe();
                     if (recipe != null && !getWorld().isRemote){
-                        ItemStack stack = recipe.getResult(getWorld(), this, aspects);
+                        ItemStack stack = recipe.getResult(this, aspects);
                         if (!getWorld().isRemote){
                             getWorld().spawnEntity(new EntityItem(getWorld(),getPos().getX()+0.5,getPos().getY()+1.0f,getPos().getZ()+0.5,stack));
                             PacketHandler.INSTANCE.sendToAll(new MessageEmberSphereFX(getPos().getX()+0.5,getPos().getY()+0.875,getPos().getZ()+0.5));

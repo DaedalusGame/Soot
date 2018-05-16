@@ -28,6 +28,10 @@ public class TileEntityHeatCoilImproved extends TileEntityHeatCoil {
     public static final int MIN_COOK_TIME = 20;
     public static final int MAX_COOK_TIME = 300;
 
+    public static final String TAG_HEATING_SPEED = "heating_speed";
+    public static final String TAG_COOLING_SPEED = "cooling_speed";
+    public static final String TAG_MAX_HEAT = "max_heat";
+
     private Random random = new Random();
     private int ticksExisted;
     private double heat;
@@ -66,15 +70,15 @@ public class TileEntityHeatCoilImproved extends TileEntityHeatCoil {
         if (capability.getEmber() >= EMBER_COST * cost_multiplier){
             capability.removeAmount(EMBER_COST * cost_multiplier, true);
             if (ticksExisted % 20 == 0){
-                heat += UpgradeUtil.getOtherParameter(this,"heating_speed",HEATING_SPEED,upgrades);
+                heat += UpgradeUtil.getOtherParameter(this,TAG_HEATING_SPEED,HEATING_SPEED,upgrades);
             }
         }
         else {
             if (ticksExisted % 20 == 0){
-                heat -= UpgradeUtil.getOtherParameter(this,"cooling_speed",COOLING_SPEED,upgrades);
+                heat -= UpgradeUtil.getOtherParameter(this,TAG_COOLING_SPEED,COOLING_SPEED,upgrades);
             }
         }
-        double maxHeat = UpgradeUtil.getOtherParameter(this,"max_heat",MAX_HEAT,upgrades);
+        double maxHeat = UpgradeUtil.getOtherParameter(this,TAG_MAX_HEAT,MAX_HEAT,upgrades);
         heat = MathHelper.clamp(heat,0, maxHeat);
 
         boolean cancel = UpgradeUtil.doWork(this,upgrades);
@@ -90,7 +94,7 @@ public class TileEntityHeatCoilImproved extends TileEntityHeatCoil {
                 EntityItem entityItem = items.get(i);
                 RecipeHeatCoil recipe = CraftingRegistry.getHeatCoilRecipe(entityItem.getItem());
                 if (recipe != null){
-                    ArrayList<ItemStack> returns = Lists.newArrayList(recipe.getResult(world,this, entityItem.getItem()));
+                    ArrayList<ItemStack> returns = Lists.newArrayList(recipe.getResult(this, entityItem.getItem()));
                     UpgradeUtil.transformOutput(this,returns,upgrades);
                     int inputCount = recipe.getInputConsumed();
                     depleteItem(entityItem, inputCount);

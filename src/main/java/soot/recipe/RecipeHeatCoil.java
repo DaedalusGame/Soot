@@ -29,7 +29,7 @@ public class RecipeHeatCoil {
         return input.apply(stack);
     }
 
-    public ItemStack getResult(World world, TileEntity tile, ItemStack stack)
+    public ItemStack getResult(TileEntity tile, ItemStack stack)
     {
         return output.copy();
     }

@@ -4,6 +4,8 @@ import com.blamejared.mtlib.helpers.InputHelper;
 import com.blamejared.mtlib.utils.BaseListAddition;
 import com.blamejared.mtlib.utils.BaseListRemoval;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.google.common.collect.Streams;
 import crafttweaker.CraftTweakerAPI;
 import crafttweaker.IAction;
 import crafttweaker.annotations.ZenRegister;
@@ -25,6 +27,7 @@ import teamroots.embers.recipe.AlchemyRecipe;
 import teamroots.embers.recipe.RecipeRegistry;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -33,20 +36,13 @@ import java.util.stream.Collectors;
 @ZenClass(Alchemy.clazz)
 public class Alchemy {
     public static final String clazz = "mods.embers.Alchemy";
+    private static final HashSet<String> validAspects = Sets.newHashSet("iron","copper","dawnstone","lead","silver");
 
     @ZenMethod
     public static void addAspect(String name, IIngredient item)
     {
         CraftTweakerAPI.apply(new AddAspect(name,item));
     }
-
-    /*@ZenMethod
-    public static void add(IItemStack output,@NotNull IItemStack[] input, IntRange iron, IntRange copper, IntRange lead, IntRange silver, IntRange dawnstone) {
-        if(Config.OVERRIDE_ALCHEMY_TABLET)
-            add(output,input,iron,copper,lead,silver,dawnstone);
-        else
-            addInternalOld(output,input,iron.getFrom(),iron.getTo(),copper.getFrom(),copper.getTo(),lead.getFrom(),lead.getTo(),silver.getFrom(),silver.getTo(),dawnstone.getFrom(),dawnstone.getTo());
-    }*/
 
     @ZenMethod
     public static void add(IItemStack output, @NotNull IIngredient[] input, Map<String,IntRange> aspects) {
@@ -57,54 +53,57 @@ public class Alchemy {
             minAspects.addAspect(aspect,entry.getValue().getFrom());
             maxAspects.addAspect(aspect,entry.getValue().getTo());
         }
-        addInternal(output, input, new AspectRangeList(minAspects,maxAspects));
+        AspectRangeList aspectRange = new AspectRangeList(minAspects, maxAspects);
+        add(output, input, aspectRange);
     }
 
     @ZenMethod
     public static void add(IItemStack output, @NotNull IIngredient[] input, IntRange iron, IntRange copper, IntRange lead, IntRange silver, IntRange dawnstone) {
-        addInternal(output, input, CTUtil.toAspectRange(iron,copper,lead,silver,dawnstone));
+        add(output, input, CTUtil.toAspectRange(iron,copper,lead,silver,dawnstone));
     }
 
-    private static void addInternal(IItemStack output, @NotNull IIngredient[] input, AspectRangeList aspects)
-    {
-        warnIfOld(output);
+    public static void add(IItemStack output, @NotNull IIngredient[] input, AspectRangeList aspectRange) {
+        if(Config.OVERRIDE_ALCHEMY_TABLET)
+            addInternal(output, input, aspectRange);
+        else if(input instanceof IItemStack[] && !hasInvalidAspects(aspectRange))
+            addInternalOld(output,(IItemStack[])input, aspectRange);
+        else
+            CraftTweakerAPI.logWarning("Alchemy recipe for "+output.getDisplayName()+" is invalid if alchemy tablet override is disabled.");
+    }
+
+    private static boolean hasInvalidAspects(AspectRangeList list) {
+        return list.getMaxAspects().getAspects().stream().anyMatch(aspect -> !validAspects.contains(aspect));
+    }
+
+    private static void addInternal(IItemStack output, @NotNull IIngredient[] input, AspectRangeList aspects) {
         RecipeAlchemyTablet recipe = new RecipeAlchemyTablet(InputHelper.toStack(output), CTUtil.toIngredient(input[0]), Lists.newArrayList(CTUtil.toIngredient(input[1]),CTUtil.toIngredient(input[2]),CTUtil.toIngredient(input[3]),CTUtil.toIngredient(input[4])), aspects);
         CraftTweakerAPI.apply(new Add(recipe));
     }
 
-    private static void addInternalOld(IItemStack output, @NotNull IItemStack[] input, int ironMin, int ironMax, int copperMin, int copperMax, int leadMin, int leadMax, int silverMin, int silverMax, int dawnstoneMin, int dawnstoneMax)
-    {
-        AlchemyRecipe recipe = new AlchemyRecipe(ironMin,ironMax,
-                dawnstoneMin,dawnstoneMax,
-                copperMin,copperMax,
-                silverMin,silverMax,
-                leadMin,leadMax,
+    private static void addInternalOld(IItemStack output, @NotNull IItemStack[] input, AspectRangeList aspects) {
+        AlchemyRecipe recipe = new AlchemyRecipe(aspects.getMin("iron"),aspects.getMax("iron"),
+                aspects.getMin("dawnstone"),aspects.getMax("dawnstone"),
+                aspects.getMin("copper"),aspects.getMax("copper"),
+                aspects.getMin("silver"),aspects.getMax("silver"),
+                aspects.getMin("lead"),aspects.getMax("lead"),
                 InputHelper.toStack(input[0]),InputHelper.toStack(input[1]),InputHelper.toStack(input[2]),InputHelper.toStack(input[3]),InputHelper.toStack(input[4]),
                 InputHelper.toStack(output));
         CraftTweakerAPI.apply(new AddOld(recipe));
     }
 
-    public static void warnIfOld(IItemStack output) {
-        if(!Config.OVERRIDE_ALCHEMY_TABLET)
-            CraftTweakerAPI.logWarning("Alchemy recipe for "+output.getDisplayName()+" is invalid if alchemy tablet override is disabled.");
-    }
-
     @ZenMethod
-    public static void remove(IItemStack output)
-    {
+    public static void remove(IItemStack output) {
         if(Config.OVERRIDE_ALCHEMY_TABLET)
             CraftTweakerAPI.apply(new Remove(InputHelper.toStack(output)));
         else
             CraftTweakerAPI.apply(new RemoveOld(InputHelper.toStack(output)));
     }
 
-    private static List<AlchemyRecipe> getOldRecipesByOutput(ItemStack stack)
-    {
+    private static List<AlchemyRecipe> getOldRecipesByOutput(ItemStack stack) {
        return RecipeRegistry.alchemyRecipes.stream().filter(recipe -> ItemStack.areItemsEqual(recipe.result, stack)).collect(Collectors.toCollection(ArrayList::new));
     }
 
-    private static List<RecipeAlchemyTablet> getRecipesByOutput(ItemStack stack)
-    {
+    private static List<RecipeAlchemyTablet> getRecipesByOutput(ItemStack stack) {
         return CraftingRegistry.alchemyTabletRecipes.stream().filter(recipe -> ItemStack.areItemsEqual(recipe.output, stack)).collect(Collectors.toCollection(ArrayList::new));
     }
 

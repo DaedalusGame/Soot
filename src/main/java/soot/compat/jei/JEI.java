@@ -8,17 +8,19 @@ import mezz.jei.api.recipe.IRecipeCategoryRegistration;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.FMLLog;
+import soot.Config;
 import soot.Registry;
+import soot.Soot;
 import soot.compat.jei.category.AlchemicalMixerCategory;
 import soot.compat.jei.category.AlchemyTabletCategory;
 import soot.compat.jei.category.DawnstoneAnvilCategory;
 import soot.compat.jei.category.StillCategory;
-import soot.compat.jei.wrapper.AlchemicalMixerWrapper;
-import soot.compat.jei.wrapper.AlchemyTabletWrapper;
-import soot.compat.jei.wrapper.DawnstoneAnvilWrapper;
-import soot.compat.jei.wrapper.StillWrapper;
+import soot.compat.jei.wrapper.*;
 import soot.recipe.*;
 import teamroots.embers.RegistryManager;
+import teamroots.embers.compat.jei.StampRecipeCategory;
 import teamroots.embers.util.Misc;
 
 import java.util.ArrayList;
@@ -43,11 +45,13 @@ public class JEI implements IModPlugin {
         registry.addRecipes(CraftingRegistry.alchemicalMixingRecipes, AlchemicalMixerCategory.UID);
         registry.addRecipes(CraftingRegistry.alchemyTabletRecipes, AlchemyTabletCategory.UID);
         registry.addRecipes(CraftingRegistry.stillRecipes, StillCategory.UID);
+        registry.addRecipes(CraftingRegistry.stamperRecipes, "embers.stamp"); //REEEEE
         
         registry.handleRecipes(RecipeDawnstoneAnvil.class, DawnstoneAnvilWrapper::new, DawnstoneAnvilCategory.UID);
         registry.handleRecipes(RecipeAlchemicalMixer.class, AlchemicalMixerWrapper::new, AlchemicalMixerCategory.UID);
         registry.handleRecipes(RecipeAlchemyTablet.class, recipe -> new AlchemyTabletWrapper(helpers,recipe), AlchemyTabletCategory.UID);
         registry.handleRecipes(RecipeStill.class, StillWrapper::new, StillCategory.UID);
+        registry.handleRecipes(RecipeStamper.class, StamperWrapper::new, "embers.stamp");
         
         registry.addRecipeCatalyst(new ItemStack(RegistryManager.dawnstone_anvil), DawnstoneAnvilCategory.UID);
         registry.addRecipeCatalyst(new ItemStack(RegistryManager.mixer), AlchemicalMixerCategory.UID);
@@ -69,7 +73,10 @@ public class JEI implements IModPlugin {
                 repairItem = Misc.getRepairItem(stack);
             }
             catch (Exception e) { //Gotta catch em all
-                e.printStackTrace();
+                if(Config.DEBUG_MODE)
+                    e.printStackTrace();
+                else
+                    Soot.log.info("Cannot find repair material for "+stack.getDisplayName());
             }
             boolean isRepairable = !repairItem.isEmpty() && item.getIsRepairable(stack, repairItem);
             boolean materiaAllowed = item.isRepairable();

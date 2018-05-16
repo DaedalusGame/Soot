@@ -50,5 +50,5 @@ public interface IUpgradeProvider {
         return output;
     }
 
-    default double getOtherParameter(TileEntity tile, String type, double value) { return value; }
+    default <T> T getOtherParameter(TileEntity tile, String type, T value) { return value; }
 }
