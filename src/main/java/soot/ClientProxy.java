@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.util.ResourceLocation;
@@ -16,19 +17,46 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import soot.block.IBlockVariants;
 import soot.entity.EntityCustomCloud;
 import soot.tile.*;
 import soot.util.IBlockColored;
 import soot.util.IItemColored;
+import soot.util.ResourceProxy;
 import teamroots.embers.block.IBlock;
+import teamroots.embers.tileentity.TileEntityBinRenderer;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 public class ClientProxy implements IProxy {
     ArrayList<IBlockColored> COLOR_BLOCKS = new ArrayList<>();
     ArrayList<IItemColored> COLOR_ITEMS = new ArrayList<>();
+
+    static ResourceProxy resourceProxy;
+
+    static {
+        resourceProxy = new ResourceProxy();
+    }
+
+    @Override
+    public void registerResourcePack() {
+        List<IResourcePack> packs = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), "aD", "field_110449_ao", "defaultResourcePacks");
+        packs.add(resourceProxy);
+    }
+
+    @Override
+    public void addResourceOverride(String space, String dir, String file, String ext) {
+        resourceProxy.addResource(space, dir, file, ext);
+    }
+
+    @Override
+    public void addResourceOverride(String modid, String space, String dir, String file, String ext) {
+        resourceProxy.addResource(space, modid, dir, file, ext);
+    }
 
     @Override
     public void preInit() {
@@ -81,6 +109,7 @@ public class ClientProxy implements IProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityEmberBurst.class, new TileEntityEmberBurstRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAlchemyGlobe.class, new TileEntityAlchemyGlobeRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityStamperImproved.class, new TileEntityStamperImprovedRenderer());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityRedstoneBin.class, new TileEntityBinRenderer());
     }
 
     @Override

@@ -23,8 +23,8 @@ public abstract class RecipeStillModifier extends RecipeStill {
     }
 
     @Override
-    public boolean matches(FluidStack stack, ItemStack catalyst) {
-        return stack != null && catalystInput.apply(catalyst) && validFluids.contains(stack.getFluid());
+    public boolean matches(TileEntityStillBase tile, FluidStack stack, ItemStack catalyst) {
+        return stack != null && catalystInput.apply(catalyst) && validFluids.contains(stack.getFluid()) && stack.amount >= getInputConsumed();
     }
 
     @Override
@@ -43,15 +43,15 @@ public abstract class RecipeStillModifier extends RecipeStill {
     }
 
     @Override
-    public FluidStack getOutput(World world, TileEntityStillBase tile, FluidStack input)
+    public FluidStack getOutput(TileEntityStillBase tile, FluidStack input)
     {
         FluidStack outputStack = input.copy();
         outputStack.amount = 1;
-        modifyOutput(world, tile, outputStack);
+        modifyOutput(tile, outputStack);
         return outputStack;
     }
 
-    public abstract void modifyOutput(World world, TileEntityStillBase tile, FluidStack output);
+    public abstract void modifyOutput(TileEntityStillBase tile, FluidStack output);
 
     @Override
     public void modifyTooltip(List<String> tooltip) {

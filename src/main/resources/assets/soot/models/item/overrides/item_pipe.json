@@ -1,0 +1,54 @@
+{
+	"parent": "block/block",
+	"textures": {
+		"item": "embers:blocks/item_pipe_tex"
+	},
+	"elements": [
+		{
+			"name": "cube",
+			"from": [6, 6, 6],
+			"to": [10, 10, 10],
+			"shade": true,
+			"faces": {
+				"north": {"uv": [1, 1, 5, 5], "texture": "#item"},
+				"south": {"uv": [1, 1, 5, 5], "texture": "#item"},
+				"up": {"uv": [1, 1, 5, 5], "texture": "#item"},
+				"down": {"uv": [1, 1, 5, 5], "texture": "#item"}
+			}
+		},
+		{
+			"name": "cube",
+			"from": [10, 6, 6],
+			"to": [16, 10, 10],
+			"shade": true,
+			"faces": {
+				"north": {
+					"uv": [0, 12, 6, 16],
+					"texture": "#item",
+					"rotation": 180
+				},
+				"east": {"uv": [12, 12, 16, 16], "texture": "#item"},
+				"south": {"uv": [0, 12, 6, 16], "texture": "#item"},
+				"up": {"uv": [0, 12, 6, 16], "texture": "#item"},
+				"down": {"uv": [0, 12, 6, 16], "texture": "#item"}
+			}
+		},
+		{
+			"name": "cube",
+			"from": [0, 6, 6],
+			"to": [6, 10, 10],
+			"shade": true,
+			"faces": {
+				"north": {
+					"uv": [6, 12, 12, 16],
+					"texture": "#item",
+					"rotation": 180
+				},
+				"south": {"uv": [6, 12, 12, 16], "texture": "#item"},
+				"west": {"uv": [12, 12, 16, 16], "texture": "#item"},
+				"up": {"uv": [6, 12, 12, 16], "texture": "#item"},
+				"down": {"uv": [6, 12, 12, 16], "texture": "#item"}
+			}
+		}
+	]
+}

@@ -22,7 +22,8 @@ import java.util.List;
 
 public class TileEntityMixerBottomImproved extends TileEntityMixerBottom {
     CapabilityMixerOutput mixerOutput;
-    FluidTank[] tanks;
+    public FluidTank[] tanks;
+    public List<IUpgradeProvider> upgrades;
 
     public TileEntityMixerBottomImproved()
     {
@@ -60,12 +61,12 @@ public class TileEntityMixerBottomImproved extends TileEntityMixerBottom {
         BlockPos pos = getPos();
         TileEntityMixerTop top = (TileEntityMixerTop) world.getTileEntity(pos.up());
         if (top != null) {
-            List<IUpgradeProvider> upgrades = UpgradeUtil.getUpgrades(world,pos.up(),EnumFacing.values()); //TODO: Cache both of these calls
+            upgrades = UpgradeUtil.getUpgrades(world,pos.up(),EnumFacing.values()); //TODO: Cache both of these calls
             UpgradeUtil.verifyUpgrades(this,upgrades);
             boolean cancel = UpgradeUtil.doWork(this,upgrades);
             if(cancel)
                 return;
-            double emberCost = 2.0 * UpgradeUtil.getTotalEmberFuelEfficiency(this,upgrades);
+            double emberCost = 2.0 * UpgradeUtil.getTotalEmberConsumption(this,upgrades);
             if (top.capability.getEmber() >= emberCost) {
                 ArrayList<FluidStack> fluids = getFluids();
                 FluidMixingRecipe recipe = RecipeRegistry.getMixingRecipe(fluids);

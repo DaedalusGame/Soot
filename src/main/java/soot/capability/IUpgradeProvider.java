@@ -20,16 +20,16 @@ public interface IUpgradeProvider {
     }
 
     //The speed modifier that this upgrade provides
-    default float getSpeed(TileEntity tile) {
-        return 0.0f;
+    default double getSpeed(TileEntity tile, double speed) {
+        return speed;
     }
 
-    default float getEmberFuelEfficiency(TileEntity tile) {
-        return 0.0f;
+    default double getEmberConsumption(TileEntity tile, double multiplier) {
+        return multiplier;
     }
 
-    default float getEmberProductEfficiency(TileEntity tile) {
-        return 0.0f;
+    default double getEmberProduction(TileEntity tile, double multiplier) {
+        return multiplier;
     }
 
     //Called if machine is working
@@ -39,8 +39,7 @@ public interface IUpgradeProvider {
     }
 
     //Called when machine would output items, allows modification of what items the machine outputs.
-    default void transformOutput(TileEntity tile, List<ItemStack> outputs)
-    {
+    default void transformOutput(TileEntity tile, List<ItemStack> outputs) {
         //NOOP
     }
 
@@ -49,6 +48,14 @@ public interface IUpgradeProvider {
     {
         return output;
     }
+
+    default boolean getOtherParameter(TileEntity tile, String type, boolean value) { return value; }
+
+    default double getOtherParameter(TileEntity tile, String type, double value) { return value; }
+
+    default int getOtherParameter(TileEntity tile, String type, int value) { return value; }
+
+    default String getOtherParameter(TileEntity tile, String type, String value) { return value; }
 
     default <T> T getOtherParameter(TileEntity tile, String type, T value) { return value; }
 }

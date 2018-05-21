@@ -11,8 +11,10 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import soot.tile.TileEntityAlchemyGlobe;
 import teamroots.embers.particle.ParticleUtil;
@@ -54,7 +56,7 @@ public class BlockAlchemyGlobe extends Block {
     }*/
 
     @Override
-    public boolean isFullBlock(IBlockState state) {
+    public boolean isFullCube(IBlockState state) {
         return false;
     }
 
@@ -65,7 +67,26 @@ public class BlockAlchemyGlobe extends Block {
 
     @Override
     public BlockRenderLayer getBlockLayer() {
-        return BlockRenderLayer.CUTOUT;
+        return BlockRenderLayer.TRANSLUCENT;
+    }
+
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+        switch (state.getValue(FACING)) {
+            case UP:
+                return new AxisAlignedBB(0.125, 0.0, 0.125, 0.875, 0.875, 0.875);
+            case DOWN:
+                return new AxisAlignedBB(0.125, 0.125, 0.125, 0.875, 1.0, 0.875);
+            case NORTH:
+                return new AxisAlignedBB(0.125, 0.125, 0.125, 0.875, 0.875, 1.0);
+            case SOUTH:
+                return new AxisAlignedBB(0.125, 0.125, 0.0, 0.875, 0.875, 0.875);
+            case WEST:
+                return new AxisAlignedBB(0.125, 0.125, 0.125, 1.0, 0.875, 0.875);
+            case EAST:
+                return new AxisAlignedBB(0.0, 0.125, 0.125, 0.875, 0.875, 0.875);
+        }
+        return FULL_BLOCK_AABB;
     }
 
     @Override

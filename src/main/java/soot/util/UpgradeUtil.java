@@ -10,7 +10,6 @@ import soot.capability.CapabilityUpgradeProvider;
 import soot.capability.IUpgradeProvider;
 import teamroots.embers.tileentity.TileEntityMechCore;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,7 +35,7 @@ public class UpgradeUtil {
             TileEntity te = world.getTileEntity(pos.offset(facing));
             if(te instanceof TileEntityMechCore)
             {
-                upgrades.addAll(getUpgrades(world,pos,EnumFacing.VALUES));
+                upgrades.addAll(getUpgrades(world,pos.offset(facing),EnumFacing.VALUES));
             }
         }
         return upgrades;
@@ -56,34 +55,34 @@ public class UpgradeUtil {
         list.sort((x,y) -> Integer.compare(x.getPriority(),y.getPriority()));
     }
 
-    public static float getTotalEmberFuelEfficiency(TileEntity tile,List<IUpgradeProvider> list)
+    public static double getTotalEmberConsumption(TileEntity tile, List<IUpgradeProvider> list)
     {
-        float total = 1.0f;
+        double total = 1.0f;
 
         for (IUpgradeProvider upgrade : list) {
-            total += upgrade.getEmberFuelEfficiency(tile);
+            total = upgrade.getEmberConsumption(tile, total);
         }
 
         return total;
     }
 
-    public static float getTotalEmberProductEfficiency(TileEntity tile,List<IUpgradeProvider> list)
+    public static double getTotalEmberProduction(TileEntity tile, List<IUpgradeProvider> list)
     {
-        float total = 1.0f;
+        double total = 1.0f;
 
         for (IUpgradeProvider upgrade : list) {
-            total += upgrade.getEmberProductEfficiency(tile);
+            total = upgrade.getEmberProduction(tile, total);
         }
 
         return total;
     }
 
-    public static float getTotalSpeedModifier(TileEntity tile,List<IUpgradeProvider> list)
+    public static double getTotalSpeedModifier(TileEntity tile,List<IUpgradeProvider> list)
     {
-        float total = 1.0f;
+        double total = 1.0f;
 
         for (IUpgradeProvider upgrade : list) {
-            total += upgrade.getSpeed(tile);
+            total = upgrade.getSpeed(tile, total);
         }
 
         return total;
@@ -114,6 +113,42 @@ public class UpgradeUtil {
         }
 
         return output;
+    }
+
+    public static boolean getOtherParameter(TileEntity tile, String type, boolean initial, List<IUpgradeProvider> list)
+    {
+        for (IUpgradeProvider upgrade : list) {
+            initial = upgrade.getOtherParameter(tile,type,initial);
+        }
+
+        return initial;
+    }
+
+    public static double getOtherParameter(TileEntity tile, String type, double initial, List<IUpgradeProvider> list)
+    {
+        for (IUpgradeProvider upgrade : list) {
+            initial = upgrade.getOtherParameter(tile,type,initial);
+        }
+
+        return initial;
+    }
+
+    public static int getOtherParameter(TileEntity tile, String type, int initial, List<IUpgradeProvider> list)
+    {
+        for (IUpgradeProvider upgrade : list) {
+            initial = upgrade.getOtherParameter(tile,type,initial);
+        }
+
+        return initial;
+    }
+
+    public static String getOtherParameter(TileEntity tile, String type, String initial, List<IUpgradeProvider> list)
+    {
+        for (IUpgradeProvider upgrade : list) {
+            initial = upgrade.getOtherParameter(tile,type,initial);
+        }
+
+        return initial;
     }
 
     public static <T> T getOtherParameter(TileEntity tile, String type, T initial, List<IUpgradeProvider> list)

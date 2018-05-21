@@ -31,11 +31,6 @@ public class BlockEmberBurst extends Block {
     }
 
     @Override
-    public boolean isFullBlock(IBlockState state) {
-        return false;
-    }
-
-    @Override
     public boolean isFullCube(IBlockState state) {
         return false;
     }
@@ -133,19 +128,19 @@ public class BlockEmberBurst extends Block {
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         switch (state.getValue(facing)) {
             case UP:
-                return new AxisAlignedBB(0.25, 0, 0.25, 0.75, 0.9375, 0.75);
+                return new AxisAlignedBB(0.25, 0.0, 0.25, 0.75, 1.0, 0.75);
             case DOWN:
-                return new AxisAlignedBB(0.25, 0.0625, 0.25, 0.75, 1.0, 0.75);
+                return new AxisAlignedBB(0.25, 0.0, 0.25, 0.75, 1.0, 0.75);
             case NORTH:
-                return new AxisAlignedBB(0.25, 0.25, 0.0625, 0.75, 0.75, 1.0);
+                return new AxisAlignedBB(0.25, 0.25, 0.0, 0.75, 0.75, 1.0);
             case SOUTH:
-                return new AxisAlignedBB(0.25, 0.25, 0, 0.75, 0.75, 0.9375);
+                return new AxisAlignedBB(0.25, 0.25, 0.0, 0.75, 0.75, 1.0);
             case WEST:
-                return new AxisAlignedBB(0.0625, 0.25, 0.25, 1.0, 0.75, 0.75);
+                return new AxisAlignedBB(0.0, 0.25, 0.25, 1.0, 0.75, 0.75);
             case EAST:
-                return new AxisAlignedBB(0.0, 0.25, 0.25, 0.9375, 0.75, 0.75);
+                return new AxisAlignedBB(0.0, 0.25, 0.25, 1.0, 0.75, 0.75);
         }
-        return new AxisAlignedBB(0.25, 0, 0.25, 0.75, 0.9375, 0.75);
+        return FULL_BLOCK_AABB;
     }
 
 }

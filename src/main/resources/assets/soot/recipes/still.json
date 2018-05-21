@@ -5,12 +5,13 @@
   },
   "pattern": [
     "FI",
-    "D "
+    "D ",
+    "V "
   ],
   "type": "forge:ore_shaped",
   "key": {
     "F": {
-      "item": "embers:pump",
+      "item": "embers:pipe",
       "data": 0
     },
     "I": {
@@ -20,6 +21,10 @@
     "D": {
       "type": "forge:ore_dict",
       "ore": "plateDawnstone"
+    },
+    "V": {
+      "item": "embers:block_tank",
+      "data": 0
     }
   }
 }

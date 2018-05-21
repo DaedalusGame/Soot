@@ -1,0 +1,16 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "soot:distillation_pipe",
+    "transform": "forge:default-block"
+  },
+  "variants":{
+    "inventory":[{}],
+    "facing":{
+      "north": { "y": 90 },
+      "south": { "y": 270 },
+      "west":  { "y": 0 },
+      "east":  { "y": 180 }
+    }
+  }
+}

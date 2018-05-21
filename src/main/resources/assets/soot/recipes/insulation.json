@@ -1,0 +1,26 @@
+{
+  "result": {
+    "item": "soot:insulation",
+    "data": 0
+  },
+  "pattern": [
+    "N",
+    "C",
+    "A"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "N": {
+      "type": "forge:ore_dict",
+      "ore": "plateNickel"
+    },
+    "C": {
+      "type": "forge:ore_dict",
+      "ore": "blockCopper"
+    },
+    "A": {
+      "item": "embers:ashen_tile",
+      "data": 0
+    }
+  }
+}

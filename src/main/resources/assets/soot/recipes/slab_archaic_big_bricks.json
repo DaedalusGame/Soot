@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "soot:archaic_big_bricks_slab",
+    "count": 6,
+    "data": 0
+  },
+  "pattern": [
+    "AAA"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "A": {
+      "item": "soot:archaic_big_bricks",
+      "data": 0
+    }
+  }
+}

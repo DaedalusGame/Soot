@@ -13,4 +13,10 @@ public interface IProxy {
     void registerBlockModel(Block block);
 
     void registerItemModel(Item item);
+
+    void registerResourcePack();
+
+    void addResourceOverride(String space, String dir, String file, String ext);
+
+    void addResourceOverride(String modid, String space, String dir, String file, String ext);
 }

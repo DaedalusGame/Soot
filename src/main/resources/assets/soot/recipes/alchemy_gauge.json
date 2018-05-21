@@ -1,0 +1,26 @@
+{
+  "result": {
+    "item": "soot:alchemy_gauge",
+    "data": 0
+  },
+  "pattern": [
+    "C",
+    "P",
+    "I"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "I": {
+      "type": "forge:ore_dict",
+      "ore": "ingotAntimony"
+    },
+    "P": {
+      "type": "forge:ore_dict",
+      "ore": "paper"
+    },
+    "C": {
+      "item": "minecraft:compass",
+      "data": 0
+    }
+  }
+}

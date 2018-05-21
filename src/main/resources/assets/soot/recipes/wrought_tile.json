@@ -1,0 +1,18 @@
+{
+  "result": {
+    "item": "soot:wrought_tile",
+    "count": 16,
+    "data": 0
+  },
+  "pattern": [
+    "BB",
+    "BB"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "B": {
+      "type": "forge:ore_dict",
+      "ore": "plateIron"
+    }
+  }
+}

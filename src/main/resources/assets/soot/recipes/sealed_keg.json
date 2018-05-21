@@ -1,0 +1,18 @@
+{
+  "result": {
+    "item": "soot:sealed_keg",
+    "count": 1,
+    "data": 0
+  },
+  "type": "forge:ore_shapeless",
+  "ingredients": [
+    {
+      "item": "soot:sealed_pillar",
+      "data": 0
+    },
+    {
+      "item": "minecraft:iron_bars",
+      "data": 0
+    }
+  ]
+}

@@ -8,13 +8,16 @@ import net.minecraftforge.fluids.FluidStack;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.TreeSet;
 
 public class FluidUtil {
     public static final String BREW_MODIFIERS_TAG = "brew_modifiers";
     public static final HashMap<String,FluidModifier> MODIFIERS = new HashMap<>();
+    public static final TreeSet<String> SORTED_MODIFIER_KEYS = new TreeSet<>();
 
     public static void registerModifier(FluidModifier fluidModifier) {
         MODIFIERS.put(fluidModifier.name,fluidModifier);
+        SORTED_MODIFIER_KEYS.add(fluidModifier.name);
     }
 
     public static void setDefaultValue(Fluid fluid, String name, float value)

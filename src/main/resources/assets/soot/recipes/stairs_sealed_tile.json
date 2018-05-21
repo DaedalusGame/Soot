@@ -1,0 +1,19 @@
+{
+  "result": {
+    "item": "soot:sealed_tile_stairs",
+    "count": 4,
+    "data": 0
+  },
+  "pattern": [
+    "C  ",
+    "CC ",
+    "CCC"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "C": {
+      "item": "soot:sealed_tile",
+      "data": 0
+    }
+  }
+}

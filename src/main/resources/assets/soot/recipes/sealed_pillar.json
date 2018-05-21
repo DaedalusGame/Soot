@@ -1,0 +1,19 @@
+{
+  "result": {
+    "item": "soot:sealed_pillar",
+    "count": 6,
+    "data": 0
+  },
+  "pattern": [
+    "W W",
+    "W W",
+    "W W"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "W": {
+      "item": "embers:sealed_planks",
+      "data": 0
+    }
+  }
+}

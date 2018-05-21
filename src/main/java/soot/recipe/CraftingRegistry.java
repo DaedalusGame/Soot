@@ -2,6 +2,7 @@ package soot.recipe;
 
 import com.google.common.collect.Lists;
 import mezz.jei.util.Translator;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -15,6 +16,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -26,23 +28,24 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreIngredient;
+import net.minecraftforge.registries.ForgeRegistry;
 import soot.Config;
 import soot.Registry;
 import soot.tile.TileEntityStillBase;
 import soot.util.*;
 import soot.util.AspectList.AspectRangeList;
 import teamroots.embers.ConfigManager;
+import teamroots.embers.Embers;
 import teamroots.embers.RegistryManager;
 import teamroots.embers.item.EnumStampType;
 import teamroots.embers.recipe.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CraftingRegistry {
+    public static HashSet<ResourceLocation> REMOVE_RECIPE_BY_RL = new HashSet<>();
+
     public static ArrayList<RecipeAlchemyTablet> alchemyTabletRecipes = new ArrayList<>();
     public static ArrayList<RecipeDawnstoneAnvil> dawnstoneAnvilRecipes = new ArrayList<>();
     public static ArrayList<RecipeAlchemicalMixer> alchemicalMixingRecipes = new ArrayList<>();
@@ -57,6 +60,18 @@ public class CraftingRegistry {
 
     public static void preInit() {
         MinecraftForge.EVENT_BUS.register(CraftingRegistry.class);
+    }
+
+    public static void removeRecipe(ResourceLocation resloc) {
+        REMOVE_RECIPE_BY_RL.add(resloc);
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void removeRecipes(RegistryEvent.Register<IRecipe> event) {
+        ForgeRegistry<IRecipe> reg = (ForgeRegistry<IRecipe>) event.getRegistry();
+        for (IRecipe recipe : reg) {
+            REMOVE_RECIPE_BY_RL.stream().filter(loc -> loc.equals(recipe.getRegistryName())).forEach(loc -> reg.remove(recipe.getRegistryName()));
+        }
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
@@ -96,10 +111,19 @@ public class CraftingRegistry {
         convertIngredient.put(new ItemStack(RegistryManager.sword_lead, 1, OreDictionary.WILDCARD_VALUE), new IngredientMaterialTool("sword", "lead"));
 
         OreIngredient ingotLead = new OreIngredient("ingotLead");
-        addAlchemyTabletRecipe(new ItemStack(Registry.ALCHEMY_GLOBE), new OreIngredient("blockGlassColorless"), ingotLead, Ingredient.fromItem(RegistryManager.aspectus_lead), ingotLead, Ingredient.fromItem(RegistryManager.archaic_circuit), new AspectRangeList(AspectList.createStandard(0, 0, 16, 0, 32), AspectList.createStandard(0, 0, 32, 0, 64)));
-        RecipeRegistry.meltingRecipes.add(new ItemMeltingRecipe(new ItemStack(Items.SUGAR), FluidRegistry.getFluidStack("sugar", 16), false, false)); //Nugget size -> you can combine sugar and lead into antimony without remainder and 1000 sugar store nicely in a fluid vessel
+        OreIngredient ingotSilver = new OreIngredient("ingotSilver");
+        OreIngredient blankGlass = new OreIngredient("blockGlassColorless");
+        OreIngredient redstoneBlock = new OreIngredient("blockRedstone");
+        OreIngredient glass = new OreIngredient("blockGlass");
+        Ingredient fluidPipe = Ingredient.fromStacks(new ItemStack(RegistryManager.pipe));
+        addAlchemyTabletRecipe(new ItemStack(Registry.ALCHEMY_GLOBE), blankGlass, ingotLead, Ingredient.fromItem(RegistryManager.aspectus_lead), ingotLead, Ingredient.fromItem(RegistryManager.archaic_circuit), new AspectRangeList(AspectList.createStandard(0, 0, 16, 0, 32), AspectList.createStandard(0, 0, 32, 0, 64)));
+        addAlchemyTabletRecipe(new ItemStack(Registry.CATALYTIC_PLUG), ingotSilver, fluidPipe, glass, fluidPipe, redstoneBlock, new AspectRangeList(AspectList.createStandard(0, 20, 0, 32, 0), AspectList.createStandard(0, 30, 0, 64, 0)));
 
-        addStamperRecipe(new ItemStack(Items.REDSTONE),Ingredient.fromItem(Items.BLAZE_POWDER),FluidRegistry.getFluidStack("water",1000),Ingredient.fromItem(Items.COOKED_BEEF));
+        removeRecipe(new ResourceLocation(Embers.MODID,"archaic_bricks_2")); //Remove conflicting recipe
+
+        FurnaceRecipes.instance().addSmeltingRecipe(new ItemStack(Registry.CAMINITE_CLAY),new ItemStack(Registry.CAMINITE_LARGE_TILE),0.1f);
+
+        RecipeRegistry.meltingRecipes.add(new ItemMeltingRecipe(new ItemStack(Items.SUGAR), FluidRegistry.getFluidStack("sugar", 16), false, false)); //Nugget size -> you can combine sugar and lead into antimony without remainder and 1000 sugar store nicely in a fluid vessel
 
         ArrayList<Fluid> leveledMetals = new ArrayList<>();
         leveledMetals.add(RegistryManager.fluid_molten_lead);
@@ -151,8 +175,17 @@ public class CraftingRegistry {
     }
 
     private static void initAlcoholRecipes() {
-        FluidUtil.registerModifier(new FluidModifier("viscosity", 1000));
-        FluidUtil.registerModifier(new FluidModifier("light", 0));
+        FluidUtil.registerModifier(new FluidModifier("viscosity", 1000){
+            @Override
+            public String getFormattedText(NBTTagCompound compound, Fluid fluid) {
+                float value = getOrDefault(compound, fluid);
+                if(value > 1000)
+                    return I18n.format("distilling.modifier.dial.slower_chugging",value);
+                else
+                    return I18n.format("distilling.modifier.dial.faster_chugging",value);
+            }
+        });
+        FluidUtil.registerModifier(new FluidModifier("light", 0).setFormatType(FluidModifier.FormatType.NAME_ONLY));
         FluidUtil.registerModifier(new FluidModifier("health", 0) {
             @Override
             public void applyEffect(EntityLivingBase target, NBTTagCompound compound, Fluid fluid) {
@@ -162,18 +195,36 @@ public class CraftingRegistry {
                 else if (value < 0)
                     MiscUtil.damageWithoutInvulnerability(target, new DamageSource("acid"), value);
             }
+
+            @Override
+            public String getFormattedText(NBTTagCompound compound, Fluid fluid) {
+                int value = (int)Math.ceil(getOrDefault(compound, fluid) / 2);
+                if(value >= 0)
+                    return I18n.format("distilling.modifier.dial.add_health",value);
+                else
+                    return I18n.format("distilling.modifier.dial.sub_health",value);
+            }
         });
         FluidUtil.registerModifier(new FluidModifier("hunger", 0) {
             @Override
             public void applyEffect(EntityLivingBase target, NBTTagCompound compound, Fluid fluid) {
                 if (target instanceof EntityPlayer) {
-                    int hunger = (int) compound.getFloat("hunger");
+                    int hunger = (int)compound.getFloat("hunger");
                     float saturation = compound.getFloat("saturation");
                     ((EntityPlayer) target).getFoodStats().addStats(hunger, saturation);
                 }
             }
+
+            @Override
+            public String getFormattedText(NBTTagCompound compound, Fluid fluid) {
+                int value = (int)Math.ceil(getOrDefault(compound, fluid) / 2);
+                if(value >= 0)
+                    return I18n.format("distilling.modifier.dial.add_hunger",value);
+                else
+                    return I18n.format("distilling.modifier.dial.sub_hunger",value);
+            }
         });
-        FluidUtil.registerModifier(new FluidModifier("saturation", 0));
+        FluidUtil.registerModifier(new FluidModifier("saturation", 0).setFormatType(FluidModifier.FormatType.NONE)); //Saturation is a classic hidden value
         FluidUtil.registerModifier(new FluidModifier("toxicity", 0) {
             @Override
             public void applyEffect(EntityLivingBase target, NBTTagCompound compound, Fluid fluid) {
@@ -207,9 +258,9 @@ public class CraftingRegistry {
                 float value = getOrDefault(compound, fluid);
                 target.addPotionEffect(new PotionEffect(Registry.POTION_LIFEDRINKER, (int) value));
             }
-        });
-        FluidUtil.registerModifier(new FluidModifier("concentration", 0));
-        FluidUtil.registerModifier(new FluidModifier("duration", 1));
+        }.setFormatType(FluidModifier.FormatType.NAME_ONLY));
+        FluidUtil.registerModifier(new FluidModifier("concentration", 0).setFormatType(FluidModifier.FormatType.PERCENTAGE));
+        FluidUtil.registerModifier(new FluidModifier("duration", 1).setFormatType(FluidModifier.FormatType.MULTIPLIER));
 
         Fluid boiling_wort = FluidRegistry.getFluid("boiling_wort");
         Fluid boiling_potato_juice = FluidRegistry.getFluid("boiling_potato_juice");
@@ -266,27 +317,10 @@ public class CraftingRegistry {
         stillCatalysts.add(new CatalystInfo(Ingredient.fromItem(Items.SNOWBALL), 250));
         stillCatalysts.add(new CatalystInfo(new OreIngredient("logWood"), 750));
 
-        stillRecipes.add(new RecipeStillModifier(allAlcohols, Ingredient.EMPTY, 0) {
-            @Override
-            public void modifyOutput(World world, TileEntityStillBase tile, FluidStack output) {
-                NBTTagCompound compound = FluidUtil.createModifiers(output);
-                output.amount = 2;
-                float concentration = getModifierOrDefault("concentration", compound, output);
-                if (concentration < 120)
-                    compound.setFloat("concentration", Math.min((concentration + 10) * 1.8f, 120));
-            }
-
-            @Override
-            public void modifyTooltip(List<String> tooltip) {
-                super.modifyTooltip(tooltip);
-                tooltip.add(tooltip.size() - 1, TextFormatting.BLUE + Translator.translateToLocalFormatted("distilling.effect.add", Translator.translateToLocal("distilling.modifier.concentration.name"), 10));
-                tooltip.add(tooltip.size() - 1, TextFormatting.BLUE + Translator.translateToLocalFormatted("distilling.effect.add_percent", Translator.translateToLocal("distilling.modifier.concentration.name"), 80));
-                tooltip.add(tooltip.size() - 1, TextFormatting.RED + Translator.translateToLocalFormatted("distilling.effect.loss", 33));
-            }
-        });
+        stillRecipes.add(new RecipeStillDoubleDistillation(allAlcohols, Ingredient.EMPTY, 0));
         stillRecipes.add(new RecipeStillModifier(allAlcohols, Ingredient.fromItem(Items.GHAST_TEAR), 1) {
             @Override
-            public void modifyOutput(World world, TileEntityStillBase tile, FluidStack output) {
+            public void modifyOutput(TileEntityStillBase tile, FluidStack output) {
                 NBTTagCompound compound = FluidUtil.createModifiers(output);
                 float lifedrinker = getModifierOrDefault("lifedrinker", compound, output);
                 float toxicity = getModifierOrDefault("toxicity", compound, output);
@@ -304,7 +338,7 @@ public class CraftingRegistry {
         });
         stillRecipes.add(new RecipeStillModifier(allAlcohols, new OreIngredient("dustRedstone"), 1) {
             @Override
-            public void modifyOutput(World world, TileEntityStillBase tile, FluidStack output) {
+            public void modifyOutput(TileEntityStillBase tile, FluidStack output) {
                 NBTTagCompound compound = FluidUtil.createModifiers(output);
                 float duration = getModifierOrDefault("duration", compound, output);
                 float toxicity = getModifierOrDefault("toxicity", compound, output);
@@ -331,7 +365,7 @@ public class CraftingRegistry {
         });*/ //TODO: Use for sweetness
         stillRecipes.add(new RecipeStillModifier(allDrinks, new OreIngredient("dustPrismarine"), 1) {
             @Override
-            public void modifyOutput(World world, TileEntityStillBase tile, FluidStack output) {
+            public void modifyOutput(TileEntityStillBase tile, FluidStack output) {
                 NBTTagCompound compound = FluidUtil.createModifiers(output);
                 float toxicity = getModifierOrDefault("toxicity", compound, output);
                 if (toxicity > 0)
@@ -347,7 +381,7 @@ public class CraftingRegistry {
         });
         stillRecipes.add(new RecipeStillModifier(allDrinks, new OreIngredient("cropNetherWart"), 1) {
             @Override
-            public void modifyOutput(World world, TileEntityStillBase tile, FluidStack output) {
+            public void modifyOutput(TileEntityStillBase tile, FluidStack output) {
                 NBTTagCompound compound = FluidUtil.createModifiers(output);
                 float health = getModifierOrDefault("health", compound, output);
                 float hunger = getModifierOrDefault("hunger", compound, output);
@@ -364,7 +398,7 @@ public class CraftingRegistry {
         });
         stillRecipes.add(new RecipeStillModifier(allDrinks, Ingredient.fromStacks(new ItemStack(Blocks.ICE)), 1) {
             @Override
-            public void modifyOutput(World world, TileEntityStillBase tile, FluidStack output) {
+            public void modifyOutput(TileEntityStillBase tile, FluidStack output) {
                 NBTTagCompound compound = FluidUtil.createModifiers(output);
                 float heat = getModifierOrDefault("heat", compound, output);
                 if (heat > 200)
@@ -381,8 +415,8 @@ public class CraftingRegistry {
         stillRecipes.add(new RecipeStillModifierFood(allSoups, new OreIngredient("cropCarrot"), 1, 1, 0.2f));
         stillRecipes.add(new RecipeStillModifierFood(allSoups, new OreIngredient("cropWheat"), 1, 4, 0.6f) {
             @Override
-            public void modifyOutput(World world, TileEntityStillBase tile, FluidStack output) {
-                super.modifyOutput(world, tile, output);
+            public void modifyOutput(TileEntityStillBase tile, FluidStack output) {
+                super.modifyOutput(tile, output);
                 NBTTagCompound compound = FluidUtil.createModifiers(output);
                 float viscosity = getModifierOrDefault("viscosity", compound, output);
                 compound.setFloat("viscosity", viscosity + 1000);
@@ -525,11 +559,11 @@ public class CraftingRegistry {
         return matchedRecipe;
     }
 
-    public static RecipeStill getStillRecipe(FluidStack stack, ItemStack catalyst) {
+    public static RecipeStill getStillRecipe(TileEntityStillBase tile,FluidStack stack, ItemStack catalyst) {
         RecipeStill matchedRecipe = null;
 
         for (RecipeStill recipe : stillRecipes) {
-            if (recipe.matches(stack, catalyst) && (matchedRecipe == null || matchedRecipe.input == null || matchedRecipe.catalystInput.apply(ItemStack.EMPTY)))
+            if (recipe.matches(tile, stack, catalyst) && (matchedRecipe == null || matchedRecipe.input == null || matchedRecipe.catalystInput.apply(ItemStack.EMPTY)))
                 matchedRecipe = recipe;
         }
 

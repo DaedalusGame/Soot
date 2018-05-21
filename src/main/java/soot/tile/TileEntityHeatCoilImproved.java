@@ -3,7 +3,6 @@ package soot.tile;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
@@ -35,6 +34,7 @@ public class TileEntityHeatCoilImproved extends TileEntityHeatCoil {
     private Random random = new Random();
     private int ticksExisted;
     private double heat;
+    public List<IUpgradeProvider> upgrades;
 
     public double getHeat()
     {
@@ -63,10 +63,10 @@ public class TileEntityHeatCoilImproved extends TileEntityHeatCoil {
     public void update() {
         ticksExisted ++;
 
-        List<IUpgradeProvider> upgrades = UpgradeUtil.getUpgradesForMultiblock(world,pos,new EnumFacing[] {EnumFacing.DOWN}); //TODO: Cache both of these calls
+        upgrades = UpgradeUtil.getUpgradesForMultiblock(world,pos,new EnumFacing[] {EnumFacing.DOWN}); //TODO: Cache both of these calls
         UpgradeUtil.verifyUpgrades(this,upgrades);
 
-        float cost_multiplier = UpgradeUtil.getTotalEmberFuelEfficiency(this,upgrades);
+        double cost_multiplier = UpgradeUtil.getTotalEmberConsumption(this,upgrades);
         if (capability.getEmber() >= EMBER_COST * cost_multiplier){
             capability.removeAmount(EMBER_COST * cost_multiplier, true);
             if (ticksExisted % 20 == 0){
@@ -82,7 +82,7 @@ public class TileEntityHeatCoilImproved extends TileEntityHeatCoil {
         heat = MathHelper.clamp(heat,0, maxHeat);
 
         boolean cancel = UpgradeUtil.doWork(this,upgrades);
-        int cookTime = (int)MathHelper.clampedLerp(MIN_COOK_TIME,MAX_COOK_TIME,1.0-(heat / maxHeat));
+        int cookTime = (int)Math.ceil(MathHelper.clampedLerp(MIN_COOK_TIME,MAX_COOK_TIME,1.0-(heat / maxHeat)) * (1.0/UpgradeUtil.getTotalSpeedModifier(this,upgrades)));
         if (!cancel && heat > 0 && ticksExisted % cookTime == 0 && !getWorld().isRemote){
             List<EntityItem> items = getWorld().getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(getPos().getX()-1,getPos().getY(),getPos().getZ()-1,getPos().getX()+2,getPos().getY()+2,getPos().getZ()+2));
             for (EntityItem item : items) {
@@ -119,8 +119,10 @@ public class TileEntityHeatCoilImproved extends TileEntityHeatCoil {
     }
 
     public void depleteItem(EntityItem entityItem, int inputCount) {
-        entityItem.getItem().shrink(inputCount);
-        if (entityItem.getItem().isEmpty()) {
+        ItemStack stack = entityItem.getItem();
+        stack.shrink(inputCount);
+        entityItem.setItem(stack);
+        if (stack.isEmpty()) {
             entityItem.setDead();
             for (int j = 0; j < 3; j++) {
                 if (random.nextBoolean()) {

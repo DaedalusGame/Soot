@@ -1,0 +1,18 @@
+{
+  "result": {
+    "item": "soot:archaic_big_bricks",
+    "count": 4,
+    "data": 0
+  },
+  "pattern": [
+    "AA",
+    "AA"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "A": {
+      "item": "embers:archaic_tile",
+      "data": 0
+    }
+  }
+}

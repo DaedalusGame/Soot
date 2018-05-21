@@ -25,7 +25,7 @@ public class RecipeStillModifierFood extends RecipeStillModifier {
     }
 
     @Override
-    public void modifyOutput(World world, TileEntityStillBase tile, FluidStack output) {
+    public void modifyOutput(TileEntityStillBase tile, FluidStack output) {
         NBTTagCompound compound = FluidUtil.createModifiers(output);
         float hunger = getModifierOrDefault("hunger",compound,output);
         float saturation = getModifierOrDefault("saturation",compound,output);

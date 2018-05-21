@@ -49,12 +49,12 @@ public class RecipeStill {
         return input != null ? input.amount : 0;
     }
 
-    public boolean matches(FluidStack stack, ItemStack catalyst)
+    public boolean matches(TileEntityStillBase tile, FluidStack stack, ItemStack catalyst)
     {
-        return catalystInput.apply(catalyst) && (input == null || (stack != null && (exactMatch ? input.isFluidEqual(stack) : input.getFluid() == stack.getFluid())));
+        return catalystInput.apply(catalyst) && (input == null || (stack != null && (exactMatch ? input.isFluidEqual(stack) : input.getFluid() == stack.getFluid()) && stack.amount >= getInputConsumed()));
     }
 
-    public FluidStack getOutput(World world, TileEntityStillBase tile, FluidStack input)
+    public FluidStack getOutput(TileEntityStillBase tile, FluidStack input)
     {
         return output.copy();
     }

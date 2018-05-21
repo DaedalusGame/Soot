@@ -1,0 +1,23 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "textures": {
+      "end": "embers:blocks/archaic_tile",
+      "side": "soot:blocks/gargantuan_archaic1"
+    },
+    "model": "cube_column",
+    "transform": "forge:default-block"
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{ "model": "betterwithaddons:wood_lamp_bottom" }],
+    "facing": {
+      "down":  { "textures": {"side": "soot:blocks/gargantuan_archaic2"} },
+      "up":    { },
+      "north": { "x": 90 },
+      "south": { "textures": {"side": "soot:blocks/gargantuan_archaic2"}, "x": 90 },
+      "west":  { "textures": {"side": "soot:blocks/gargantuan_archaic2"}, "x": 90, "y": 90 },
+      "east":  { "x": 90, "y": 90 }
+    }
+  }
+}

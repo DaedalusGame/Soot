@@ -1,0 +1,18 @@
+{
+  "result": {
+    "item": "soot:wrought_platform",
+    "count": 1,
+    "data": 0
+  },
+  "type": "forge:ore_shapeless",
+  "ingredients": [
+    {
+      "item": "soot:wrought_platform_slab",
+      "data": 0
+    },
+    {
+      "item": "soot:wrought_platform_slab",
+      "data": 0
+    }
+  ]
+}

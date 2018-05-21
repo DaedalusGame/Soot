@@ -1,0 +1,20 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "minecraft:half_slab",
+    "textures": {
+      "bottom": "soot:blocks/polished_sealed_wood",
+      "top": "soot:blocks/polished_sealed_wood",
+      "side": "soot:blocks/polished_sealed_wood"
+    },
+    "transform": "forge:default-block"
+  },
+  "variants": {
+    "half=top": [{
+      "x": 180,
+      "uvlock": true
+    }],
+    "half=bottom": [{}],
+    "inventory": [{}]
+  }
+}

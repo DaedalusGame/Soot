@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "soot:sealed_planks_slab",
+    "count": 6,
+    "data": 0
+  },
+  "pattern": [
+    "CCC"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "C": {
+      "item": "embers:sealed_planks",
+      "data": 0
+    }
+  }
+}

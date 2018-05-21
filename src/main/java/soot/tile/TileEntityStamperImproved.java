@@ -29,10 +29,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TileEntityStamperImproved extends TileEntityStamper {
-
     public static final double EMBER_CONSUMPTION = 80.0;
     public static final int STAMP_TIME = 70;
     public static final int RETRACT_TIME = 10;
+
+    public List<IUpgradeProvider> upgrades;
 
     public RecipeStamper getRecipe(ItemStack input, FluidStack fluid, ItemStack stamp) {
         return CraftingRegistry.getStamperRecipe(input, fluid, stamp);
@@ -45,11 +46,12 @@ public class TileEntityStamperImproved extends TileEntityStamper {
         EnumFacing face = getWorld().getBlockState(getPos()).getValue(BlockStamper.facing);
         BlockPos basePos = getPos().offset(face, 2);
         if (getWorld().getBlockState(basePos).getBlock() == RegistryManager.stamp_base) {
-            List<IUpgradeProvider> upgrades = UpgradeUtil.getUpgrades(world, pos, EnumFacing.VALUES); //TODO: Cache both of these calls
+            upgrades = UpgradeUtil.getUpgrades(world, pos, EnumFacing.VALUES); //TODO: Cache both of these calls
             UpgradeUtil.verifyUpgrades(this, upgrades);
-            int stampTime = (int) (STAMP_TIME * (1 / UpgradeUtil.getTotalSpeedModifier(this, upgrades)));
-            int retractTime = (int) (RETRACT_TIME * (1 / UpgradeUtil.getTotalSpeedModifier(this, upgrades)));
-            if (!powered && !getWorld().isRemote && this.ticksExisted >= stampTime) {
+            boolean cancel = UpgradeUtil.doWork(this,upgrades);
+            int stampTime = (int) Math.ceil(STAMP_TIME * (1 / UpgradeUtil.getTotalSpeedModifier(this, upgrades)));
+            int retractTime = (int) Math.ceil(RETRACT_TIME * (1 / UpgradeUtil.getTotalSpeedModifier(this, upgrades)));
+            if (!cancel && !powered && !getWorld().isRemote && this.ticksExisted >= stampTime) {
                 TileEntityStampBase stamp = (TileEntityStampBase) getWorld().getTileEntity(basePos);
                 FluidStack fluid = null;
                 if (stamp != null) {
@@ -58,7 +60,7 @@ public class TileEntityStamperImproved extends TileEntityStamper {
                         fluid = handler.drain(stamp.getCapacity(), false); //God please kill me
                     RecipeStamper recipe = getRecipe(stamp.inputs.getStackInSlot(0), fluid, this.stamp.getStackInSlot(0));
                     if (recipe != null) {
-                        float cost_multiplier = UpgradeUtil.getTotalEmberFuelEfficiency(this, upgrades);
+                        double cost_multiplier = UpgradeUtil.getTotalEmberConsumption(this, upgrades);
                         double consumedEmber = EMBER_CONSUMPTION * cost_multiplier;
                         if (this.capability.getEmber() > consumedEmber) {
                             this.capability.removeAmount(consumedEmber, true);
@@ -98,13 +100,14 @@ public class TileEntityStamperImproved extends TileEntityStamper {
                     }
                 }
                 markDirty();
-            } else if (powered && !getWorld().isRemote && this.ticksExisted >= retractTime) {
+            } else if (!cancel && powered && !getWorld().isRemote && this.ticksExisted >= retractTime) {
                 powered = false;
                 this.ticksExisted = 0;
                 markDirty();
             }
         } else if (powered) {
             powered = false;
+            this.ticksExisted = 0;
             markDirty();
         }
     }

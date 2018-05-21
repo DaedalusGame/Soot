@@ -19,7 +19,6 @@ import soot.tile.TileEntityAlchemyGlobe;
 import soot.tile.TileEntityMixerBottomImproved;
 import soot.util.AlchemyResult;
 import soot.util.UpgradeUtil;
-import teamroots.embers.particle.ParticleUtil;
 import teamroots.embers.tileentity.TileEntityMixerTop;
 
 import javax.annotation.Nullable;
@@ -60,7 +59,7 @@ public class UpgradeAlchemyGlobe extends CapabilityUpgradeProvider {
         World world = bottom.getWorld();
         TileEntityMixerTop top = (TileEntityMixerTop) world.getTileEntity(bottom.getPos().up());
         if (top != null) {
-            double emberCost = 2.0 * UpgradeUtil.getTotalEmberFuelEfficiency(bottom,upgrades);
+            double emberCost = 2.0 * UpgradeUtil.getTotalEmberConsumption(bottom,upgrades);
             if (top.capability.getEmber() >= emberCost) {
                 ArrayList<FluidStack> fluids = bottom.getFluids();
                 RecipeAlchemicalMixer recipe = CraftingRegistry.getAlchemicalMixingRecipe(fluids);
@@ -73,7 +72,7 @@ public class UpgradeAlchemyGlobe extends CapabilityUpgradeProvider {
                         if (amount != 0) {
                             tank.fill(output, true);
                             bottom.consumeFluids(fluids, recipe);
-                            top.capability.removeAmount(emberCost * UpgradeUtil.getTotalEmberFuelEfficiency(bottom, upgrades), true);
+                            top.capability.removeAmount(emberCost * UpgradeUtil.getTotalEmberConsumption(bottom, upgrades), true);
                             bottom.markDirty();
                             top.markDirty();
                         }
@@ -84,7 +83,7 @@ public class UpgradeAlchemyGlobe extends CapabilityUpgradeProvider {
                         BlockPos topPos = top.getPos();
                         ejectFailure(world, topPos,failure,EnumFacing.HORIZONTALS);
                         bottom.consumeFluids(fluids, recipe);
-                        top.capability.removeAmount(emberCost * UpgradeUtil.getTotalEmberFuelEfficiency(bottom, upgrades), true);
+                        top.capability.removeAmount(emberCost * UpgradeUtil.getTotalEmberConsumption(bottom, upgrades), true);
                         fail(world.rand.nextInt(100)+200);
                         globe.consumeAsh();
                     }

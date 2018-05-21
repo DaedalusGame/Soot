@@ -64,6 +64,7 @@ public class CaskManager {
 
             float duration_modifier = FluidUtil.getModifier(compound, internal, "duration");
             boolean concentrated = FluidUtil.getModifier(compound, internal,"concentration") >= 100;
+            boolean showParticles = FluidUtil.getModifier(compound, internal,"concentration") >= 50;
 
             for (CaskPotionEffect effect : effects)
             {
@@ -84,7 +85,7 @@ public class CaskManager {
                         if(amplifier != currentStack.getAmplifier())
                             duration += currentStack.getDuration();
                     }
-                    PotionEffect newStack = new PotionEffect(potioneffect.getPotion(),duration,amplifier,false,false); //TODO: curative item?? alchemical hangover cure???
+                    PotionEffect newStack = new PotionEffect(potioneffect.getPotion(),duration,amplifier,false, showParticles); //TODO: curative item?? alchemical hangover cure???
                     target.addPotionEffect(newStack);
                 }
             }

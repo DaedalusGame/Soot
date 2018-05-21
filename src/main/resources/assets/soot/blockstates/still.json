@@ -4,7 +4,6 @@
     "transform": "forge:default-block"
   },
   "variants":{
-    "inventory":[{ "model": "soot:kettle" }],
     "part":{
       "0":  { "model": "soot:kettle" },
       "1":  { "model": "soot:still1" },

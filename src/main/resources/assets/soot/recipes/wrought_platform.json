@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "soot:wrought_platform",
+    "count": 12,
+    "data": 0
+  },
+  "pattern": [
+    "BBB",
+    "CCC"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "B": {
+      "type": "forge:ore_dict",
+      "ore": "plateIron"
+    },
+    "C": {
+      "item": "minecraft:iron_bars",
+      "data": 0
+    }
+  }
+}

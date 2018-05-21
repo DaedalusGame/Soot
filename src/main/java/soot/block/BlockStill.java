@@ -13,6 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
@@ -34,7 +35,7 @@ public class BlockStill extends Block {
     }
 
     @Override
-    public boolean isFullBlock(IBlockState state) {
+    public boolean isFullCube(IBlockState state) {
         return false;
     }
 
@@ -56,6 +57,32 @@ public class BlockStill extends Block {
     @Override
     public IBlockState getStateFromMeta(int meta){
         return getDefaultState().withProperty(FACING, EnumFacing.getHorizontal(meta & 3)).withProperty(PART, meta >> 2);
+    }
+
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+        int part = state.getValue(PART);
+        EnumFacing facing = state.getValue(FACING);
+        switch (part) {
+            case (2):
+                switch (facing) {
+                    case NORTH:
+                        return new AxisAlignedBB(0.3125, 0, 0.3125, 0.6875, 0.875, 1.0);
+                    case SOUTH:
+                        return new AxisAlignedBB(0.3125, 0, 0.0, 0.6875, 0.875, 0.6875);
+                    case EAST:
+                        return new AxisAlignedBB(0.0, 0, 0.3125, 0.6875, 0.875, 0.6875);
+                    case WEST:
+                        return new AxisAlignedBB(0.3125, 0, 0.3125, 1.0, 0.875, 0.6875);
+                    default:
+                        return new AxisAlignedBB(0.3125, 0, 0.3125, 0.6875, 0.875, 0.6875);
+                }
+
+            case (1):
+                return new AxisAlignedBB(0.1875, 0, 0.1875, 0.8125, 0.875, 0.8125);
+            default:
+                return FULL_BLOCK_AABB;
+        }
     }
 
     @Override

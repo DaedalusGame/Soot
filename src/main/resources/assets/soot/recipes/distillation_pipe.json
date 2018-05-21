@@ -1,0 +1,30 @@
+{
+  "result": {
+    "item": "soot:distillation_pipe",
+    "data": 0
+  },
+  "pattern": [
+    "DP ",
+    "CIC",
+    "DP "
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "D": {
+      "type": "forge:ore_dict",
+      "ore": "ingotDawnstone"
+    },
+    "P": {
+      "type": "forge:ore_dict",
+      "ore": "plateDawnstone"
+    },
+    "C": {
+      "item": "minecraft:iron_bars",
+      "data": 0
+    },
+    "I": {
+      "item": "embers:pipe",
+      "data": 0
+    }
+  }
+}

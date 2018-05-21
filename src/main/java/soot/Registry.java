@@ -1,7 +1,10 @@
 package soot;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -12,6 +15,8 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -27,15 +32,19 @@ import soot.capability.IUpgradeProvider;
 import soot.entity.EntityFireCloud;
 import soot.fluids.FluidBooze;
 import soot.fluids.FluidMolten;
+import soot.item.ItemBlockSlab;
 import soot.item.ItemMug;
 import soot.item.ItemStill;
 import soot.potion.*;
 import soot.tile.*;
+import soot.upgrade.UpgradeCatalyticPlug;
 import soot.util.CaskManager;
 import soot.util.CaskManager.CaskLiquid;
+import soot.util.HeatManager;
+import soot.util.IHeatProvider;
 import soot.util.Nope;
 import teamroots.embers.Embers;
-import teamroots.embers.block.BlockHeatCoil;
+import teamroots.embers.RegistryManager;
 import teamroots.embers.tileentity.*;
 
 import javax.annotation.Nullable;
@@ -51,6 +60,16 @@ public class Registry {
     public static BlockAlchemyGlobe ALCHEMY_GLOBE;
     @GameRegistry.ObjectHolder("soot:still")
     public static BlockStill STILL;
+    @GameRegistry.ObjectHolder("soot:catalytic_plug")
+    public static BlockCatalyticPlug CATALYTIC_PLUG;
+
+    @GameRegistry.ObjectHolder("soot:heat_coil")
+    public static BlockHeatCoilImproved HEAT_COIL_OVERRIDE;
+
+    @GameRegistry.ObjectHolder("soot:caminite_clay")
+    public static Block CAMINITE_CLAY;
+    @GameRegistry.ObjectHolder("soot:caminite_large_tile")
+    public static Block CAMINITE_LARGE_TILE;
 
     @GameRegistry.ObjectHolder("soot:signet_antimony")
     public static Item SIGNET_ANTIMONY;
@@ -91,11 +110,6 @@ public class Registry {
     public static Fluid ROOT_BEER;
     public static Fluid AUBERGINE_LIQUOR;
 
-    //Alchemy
-    public static Fluid MOLTEN_ANTIMONY;
-    public static Fluid MOLTEN_SUGAR;
-    public static Fluid MOLTEN_REDSTONE;
-
     public static void preInit() {
         MinecraftForge.EVENT_BUS.register(Registry.class);
         registerBlocks();
@@ -103,11 +117,26 @@ public class Registry {
         registerEntities();
         registerFluids();
         registerCapabilities();
+        Soot.proxy.addResourceOverride(Embers.MODID,"models","item","pipe","json");
+        Soot.proxy.addResourceOverride(Embers.MODID,"models","item","item_pipe","json");
     }
 
     public static void init() {
         registerCaskLiquids();
         registerAccessorTiles();
+
+        HeatManager.register(RegistryManager.archaic_light,20);
+        HeatManager.register(Blocks.FIRE,10);
+        HeatManager.register(HEAT_COIL_OVERRIDE, (world, pos, state) -> {
+            TileEntity tile = world.getTileEntity(pos);
+            if(tile instanceof TileEntityHeatCoilImproved) {
+                double heat = ((TileEntityHeatCoilImproved) tile).getHeat();
+                return heat > TileEntityHeatCoilImproved.MAX_HEAT / 2 ? heat : 0;
+            }
+            return 0;
+        });
+
+        UpgradeCatalyticPlug.registerBlacklistedTile(TileEntityStillBase.class);
     }
 
     public static void registerCaskLiquids() {
@@ -155,8 +184,20 @@ public class Registry {
         registerBlock("ember_burst", emberBurst, new ItemBlock(emberBurst));
         registerBlock("ember_funnel", emberFunnel, new ItemBlock(emberFunnel));
 
-        BlockAlchemyGlobe alchemyGlobe = (BlockAlchemyGlobe) new BlockAlchemyGlobe(Material.ROCK).setCreativeTab(Soot.creativeTab);
+        BlockRedstoneBin redstoneBin = (BlockRedstoneBin) new BlockRedstoneBin(Material.IRON,"redstone_bin").setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe",0).setHardness(1f).setCreativeTab(Soot.creativeTab);
+        registerBlock("redstone_bin", redstoneBin, new ItemBlock(redstoneBin));
+
+        BlockAlchemyGlobe alchemyGlobe = (BlockAlchemyGlobe) new BlockAlchemyGlobe(Material.ROCK).setHardness(1.6f).setLightOpacity(0).setCreativeTab(Soot.creativeTab);
         registerBlock("alchemy_globe", alchemyGlobe, new ItemBlock(alchemyGlobe));
+        BlockCatalyticPlug catalyticPlug = (BlockCatalyticPlug) new BlockCatalyticPlug(Material.IRON).setHardness(1.6f).setLightOpacity(0).setCreativeTab(Soot.creativeTab);
+        registerBlock("catalytic_plug", catalyticPlug, new ItemBlock(catalyticPlug));
+        BlockInsulation insulation = (BlockInsulation) new BlockInsulation(Material.ROCK).setHardness(1.6f).setLightOpacity(1).setCreativeTab(Soot.creativeTab);
+        registerBlock("insulation", insulation, new ItemBlock(insulation));
+        BlockDistillationPipe distillationPipe = (BlockDistillationPipe) new BlockDistillationPipe(Material.IRON).setHardness(1.6f).setLightOpacity(1).setCreativeTab(Soot.creativeTab);
+        registerBlock("distillation_pipe", distillationPipe, new ItemBlock(distillationPipe));
+
+        BlockAlchemyGauge alchemyGauge = (BlockAlchemyGauge) new BlockAlchemyGauge(Material.IRON).setHardness(1.6f).setLightOpacity(0).setCreativeTab(Soot.creativeTab);
+        registerBlock("alchemy_gauge", alchemyGauge, new ItemBlock(alchemyGauge));
 
         registerItem("signet_antimony", new Item().setCreativeTab(Soot.creativeTab));
         registerItem("ingot_antimony", new Item().setCreativeTab(Soot.creativeTab));
@@ -164,6 +205,54 @@ public class Registry {
 
         BlockStill still = (BlockStill) new BlockStill().setHardness(1.6f).setLightOpacity(0).setCreativeTab(Soot.creativeTab);
         registerBlock("still", still, new ItemStill(still));
+
+        Block caminiteClay = new Block(Material.CLAY, MapColor.WHITE_STAINED_HARDENED_CLAY).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
+        registerBlock("caminite_clay",caminiteClay,new ItemBlock(caminiteClay));
+
+        Block caminiteTiles = new Block(Material.ROCK, MapColor.WHITE_STAINED_HARDENED_CLAY).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
+        Block caminiteTilesSlab = new BlockModSlab(Material.ROCK, MapColor.WHITE_STAINED_HARDENED_CLAY).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
+        Block caminiteTilesStairs = new BlockModStairs(caminiteTiles.getDefaultState()).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
+        registerBlock("caminite_tiles",caminiteTiles,new ItemBlock(caminiteTiles));
+        registerBlock("caminite_tiles_slab",caminiteTilesSlab,new ItemBlockSlab(caminiteTilesSlab,caminiteTiles));
+        registerBlock("caminite_tiles_stairs",caminiteTilesStairs,new ItemBlock(caminiteTilesStairs));
+
+        Block caminiteLargeTile = new Block(Material.ROCK, MapColor.WHITE_STAINED_HARDENED_CLAY).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
+        Block caminiteLargeTileSlab = new BlockModSlab(Material.ROCK, MapColor.WHITE_STAINED_HARDENED_CLAY).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
+        Block caminiteLargeTileStairs = new BlockModStairs(caminiteLargeTile.getDefaultState()).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
+        registerBlock("caminite_large_tile",caminiteLargeTile,new ItemBlock(caminiteLargeTile));
+        registerBlock("caminite_large_tile_slab",caminiteLargeTileSlab,new ItemBlockSlab(caminiteLargeTileSlab,caminiteLargeTile));
+        registerBlock("caminite_large_tile_stairs",caminiteLargeTileStairs,new ItemBlock(caminiteLargeTileStairs));
+
+        Block archaicBigBrick = new Block(Material.ROCK, MapColor.BROWN_STAINED_HARDENED_CLAY).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
+        Block archaicBigBrickSlab = new BlockModSlab(Material.ROCK, MapColor.BROWN_STAINED_HARDENED_CLAY).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
+        Block archaicBigBrickStairs = new BlockModStairs(archaicBigBrick.getDefaultState()).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
+        registerBlock("archaic_big_bricks",archaicBigBrick,new ItemBlock(archaicBigBrick));
+        registerBlock("archaic_big_bricks_slab",archaicBigBrickSlab,new ItemBlockSlab(archaicBigBrickSlab,archaicBigBrick));
+        registerBlock("archaic_big_bricks_stairs",archaicBigBrickStairs,new ItemBlock(archaicBigBrickStairs));
+
+        Block sealedPlanksSlab = new BlockModSlab(Material.WOOD, MapColor.BROWN_STAINED_HARDENED_CLAY).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
+        Block sealedPlanksStairs = new BlockModStairs(RegistryManager.sealed_planks.getDefaultState()).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
+        registerBlock("sealed_planks_slab",sealedPlanksSlab,new ItemBlockSlab(sealedPlanksSlab, RegistryManager.sealed_planks));
+        registerBlock("sealed_planks_stairs",sealedPlanksStairs,new ItemBlock(sealedPlanksStairs));
+
+        Block sealedTile = new Block(Material.WOOD, MapColor.BROWN_STAINED_HARDENED_CLAY).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
+        Block sealedTileSlab = new BlockModSlab(Material.WOOD, MapColor.BROWN_STAINED_HARDENED_CLAY).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
+        Block sealedTileStairs = new BlockModStairs(sealedTile.getDefaultState()).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
+        registerBlock("sealed_tile",sealedTile,new ItemBlock(sealedTile));
+        registerBlock("sealed_tile_slab",sealedTileSlab,new ItemBlockSlab(sealedTileSlab,sealedTile));
+        registerBlock("sealed_tile_stairs",sealedTileStairs,new ItemBlock(sealedTileStairs));
+
+        Block sealedKeg = new BlockPillar(Material.WOOD, MapColor.BROWN_STAINED_HARDENED_CLAY).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
+        Block sealedPillar = new BlockPillar(Material.WOOD, MapColor.BROWN_STAINED_HARDENED_CLAY).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
+        registerBlock("sealed_keg",sealedKeg,new ItemBlock(sealedKeg));
+        registerBlock("sealed_pillar",sealedPillar,new ItemBlock(sealedPillar));
+
+        Block wroughtTile = new Block(Material.IRON, MapColor.GRAY).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
+        Block wroughtPlatform = new Block(Material.IRON, MapColor.GRAY).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
+        Block wroughtPlatformSlab = new BlockModSlab(Material.IRON, MapColor.GRAY).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
+        registerBlock("wrought_tile",wroughtTile,new ItemBlock(wroughtTile));
+        registerBlock("wrought_platform",wroughtPlatform,new ItemBlock(wroughtPlatform));
+        registerBlock("wrought_platform_slab",wroughtPlatformSlab,new ItemBlockSlab(wroughtPlatformSlab,wroughtPlatform));
     }
 
     public static void registerOverrides() {
@@ -243,10 +332,15 @@ public class Registry {
     }
 
     public static void registerBlock(String id, Block block, ItemBlock itemBlock) {
-        block.setRegistryName(Soot.MODID, id);
+        registerBlock(id, block);
+        registerItem(id, itemBlock);
+    }
+
+    public static void registerBlock(String id, Block block) {
+        if(block.getRegistryName() == null)
+            block.setRegistryName(Soot.MODID, id);
         block.setUnlocalizedName(id);
         registerBlock(block, true);
-        registerItem(id, itemBlock);
     }
 
     public static void registerBlock(Block block, boolean hasmodel) {
@@ -271,7 +365,8 @@ public class Registry {
         registerTileEntity(TileEntityEmberBurst.class);
         registerTileEntity(TileEntityEmberFunnel.class);
 
-        registerTileEntity(TileEntityAlchemyGlobe.class);
+        registerTileEntity(TileEntityRedstoneBin.class);
+
         registerTileEntity(TileEntityStillBase.class);
         registerTileEntity(TileEntityStillTip.class);
 
@@ -282,6 +377,11 @@ public class Registry {
         registerTileEntity(TileEntityAlchemyTabletImproved.class);
         registerTileEntity(TileEntityAlchemyPedestalImproved.class);
         registerTileEntity(TileEntityMechAccessorImproved.class);
+
+        registerTileEntity(TileEntityAlchemyGlobe.class);
+        registerTileEntity(TileEntityInsulation.class);
+        registerTileEntity(TileEntityCatalyticPlug.class);
+        registerTileEntity(TileEntityDistillationPipe.class);
     }
 
     private static void registerEntities() {

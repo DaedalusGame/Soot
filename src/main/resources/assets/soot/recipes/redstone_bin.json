@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "soot:redstone_bin",
+    "data": 0
+  },
+  "pattern": [
+    "I I",
+    "I I",
+    "ITI"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "I": {
+      "type": "forge:ore_dict",
+      "ore": "ingotIron"
+    },
+    "T": {
+      "item": "minecraft:iron_trapdoor",
+      "data": 0
+    }
+  }
+}

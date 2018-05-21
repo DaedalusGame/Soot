@@ -1,0 +1,14 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "soot:bin_closed",
+    "transform": "forge:default-block"
+  },
+  "variants":{
+    "inventory":[{}],
+    "open":{
+      "true": { "model": "soot:bin_open" },
+      "false": { }
+    }
+  }
+}

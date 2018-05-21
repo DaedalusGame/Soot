@@ -1,0 +1,15 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "textures": {
+      "end": "soot:blocks/metal_platform",
+      "side": "soot:blocks/metal_slab"
+    },
+    "model": "cube_column",
+    "transform": "forge:default-block"
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}]
+  }
+}

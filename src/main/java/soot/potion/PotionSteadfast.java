@@ -20,6 +20,5 @@ public class PotionSteadfast extends PotionBase {
     @Override
     public void performEffect(EntityLivingBase entityLivingBaseIn, int amplifier) {
         super.performEffect(entityLivingBaseIn, amplifier);
-        //Increase Alcohol Resistance over time (We obviously don't want that)
     }
 }
