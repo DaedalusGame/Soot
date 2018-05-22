@@ -1,4 +1,4 @@
-package soot.tile;
+package soot.tile.overrides;
 
 import net.minecraft.item.ItemStack;
 import soot.recipe.CraftingRegistry;

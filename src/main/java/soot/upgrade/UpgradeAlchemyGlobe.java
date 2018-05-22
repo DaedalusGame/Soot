@@ -16,7 +16,7 @@ import soot.capability.IUpgradeProvider;
 import soot.recipe.RecipeAlchemicalMixer;
 import soot.recipe.CraftingRegistry;
 import soot.tile.TileEntityAlchemyGlobe;
-import soot.tile.TileEntityMixerBottomImproved;
+import soot.tile.overrides.TileEntityMixerBottomImproved;
 import soot.util.AlchemyResult;
 import soot.util.UpgradeUtil;
 import teamroots.embers.tileentity.TileEntityMixerTop;

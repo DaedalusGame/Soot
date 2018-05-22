@@ -21,16 +21,16 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import soot.block.IBlockVariants;
 import soot.entity.EntityCustomCloud;
 import soot.tile.*;
+import soot.tile.overrides.TileEntityStamperImproved;
+import soot.tile.overrides.TileEntityStamperImprovedRenderer;
 import soot.util.IBlockColored;
 import soot.util.IItemColored;
 import soot.util.ResourceProxy;
-import teamroots.embers.block.IBlock;
 import teamroots.embers.tileentity.TileEntityBinRenderer;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class ClientProxy implements IProxy {
     ArrayList<IBlockColored> COLOR_BLOCKS = new ArrayList<>();

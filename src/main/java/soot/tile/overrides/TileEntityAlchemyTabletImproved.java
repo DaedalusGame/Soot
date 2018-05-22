@@ -1,4 +1,4 @@
-package soot.tile;
+package soot.tile.overrides;
 
 import com.google.common.collect.Lists;
 import net.minecraft.entity.item.EntityItem;

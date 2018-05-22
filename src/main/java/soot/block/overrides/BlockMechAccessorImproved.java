@@ -1,4 +1,4 @@
-package soot.block;
+package soot.block.overrides;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -8,7 +8,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import soot.tile.TileEntityMechAccessorImproved;
+import soot.tile.overrides.TileEntityMechAccessorImproved;
 import soot.util.EmberUtil;
 import teamroots.embers.block.BlockMechAccessor;
 

@@ -1,14 +1,9 @@
-package soot.block;
+package soot.block.overrides;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
-import net.minecraftforge.registries.IForgeRegistryEntry;
-import soot.Soot;
-import soot.tile.TileEntityMixerBottomImproved;
+import soot.tile.overrides.TileEntityMixerBottomImproved;
 import soot.util.EmberUtil;
 import teamroots.embers.block.BlockMixer;
 import teamroots.embers.tileentity.TileEntityMixerTop;

@@ -1,4 +1,4 @@
-package soot.tile;
+package soot.tile.overrides;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;

@@ -2,7 +2,7 @@ package soot.upgrade;
 
 import net.minecraft.tileentity.TileEntity;
 import soot.capability.CapabilityUpgradeProvider;
-import soot.tile.TileEntityHeatCoilImproved;
+import soot.tile.overrides.TileEntityHeatCoilImproved;
 
 public class UpgradeInsulation extends CapabilityUpgradeProvider {
     public UpgradeInsulation(TileEntity tile) {

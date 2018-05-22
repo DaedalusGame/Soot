@@ -1,16 +1,16 @@
-package soot.block;
+package soot.block.overrides;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import soot.tile.TileEntityAlchemyTabletImproved;
+import soot.tile.overrides.TileEntityHeatCoilImproved;
 import soot.util.EmberUtil;
-import teamroots.embers.block.BlockAlchemyTablet;
+import teamroots.embers.block.BlockHeatCoil;
 
 import javax.annotation.Nullable;
 
-public class BlockAlchemyTabletImproved extends BlockAlchemyTablet {
-    public BlockAlchemyTabletImproved(Material material, String name, boolean addToTab) {
+public class BlockHeatCoilImproved extends BlockHeatCoil {
+    public BlockHeatCoilImproved(Material material, String name, boolean addToTab) {
         super(material, name, addToTab);
         EmberUtil.overrideRegistryLocation(this,name);
     }
@@ -18,6 +18,6 @@ public class BlockAlchemyTabletImproved extends BlockAlchemyTablet {
     @Nullable
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return new TileEntityAlchemyTabletImproved();
+        return new TileEntityHeatCoilImproved();
     }
 }

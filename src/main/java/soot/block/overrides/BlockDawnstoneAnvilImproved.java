@@ -1,9 +1,9 @@
-package soot.block;
+package soot.block.overrides;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import soot.tile.TileEntityDawnstoneAnvilImproved;
+import soot.tile.overrides.TileEntityDawnstoneAnvilImproved;
 import soot.util.EmberUtil;
 import teamroots.embers.block.BlockDawnstoneAnvil;
 

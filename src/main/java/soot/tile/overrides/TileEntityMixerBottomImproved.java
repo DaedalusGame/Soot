@@ -1,4 +1,4 @@
-package soot.tile;
+package soot.tile.overrides;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
