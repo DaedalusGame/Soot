@@ -75,6 +75,9 @@ effect.snowpoff=Snowpoff
 effect.steadfast=Steadfast
 
 attribute.name.generic.physicalDamageRate=Physical Damage Taken
+attribute.name.generic.fireDamageRate=Fire Damage Taken
+attribute.name.generic.fireAspect=Fire Aspect
+attribute.name.generic.barehandedPower=Barehanded Attack Damage
 
 distilling.effect.header=Distilling Effects:
 distilling.effect.add=%s +%d

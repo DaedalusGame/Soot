@@ -3,6 +3,7 @@ package soot.tile.overrides;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.biome.Biome;
@@ -23,39 +24,15 @@ public class TileEntityEmberBoreImproved extends TileEntityEmberBore {
 
     public static final int MAX_LEVEL = 7;
     public static final int BORE_TIME = 200;
-    public static final int SLOT_FUEL = 0;
+    public static final int SLOT_FUEL = 8;
 
     Random random = new Random();
     public List<IUpgradeProvider> upgrades;
+    public float lastAngle;
 
     public TileEntityEmberBoreImproved() {
         super();
-        inventory = new ItemStackHandler(9){
-            @Override
-            protected void onContentsChanged(int slot) {
-                TileEntityEmberBoreImproved.this.markDirty();
-            }
-
-            @Override
-            public ItemStack insertItem(int slot, ItemStack stack, boolean simulate){
-                if (slot == SLOT_FUEL && TileEntityFurnace.getItemBurnTime(stack) == 0){
-                    return TileEntityFurnace.getItemBurnTime(stack) != 0 ? super.insertItem(slot, stack, simulate) : stack;
-                }
-                return stack;
-            }
-
-            public ItemStack insertItemInternal(int slot, ItemStack stack, boolean simulate) {
-                return super.insertItem(slot, stack, simulate);
-            }
-
-            @Override
-            public ItemStack extractItem(int slot, int amount, boolean simulate){
-                if (slot == SLOT_FUEL){
-                    return ItemStack.EMPTY;
-                }
-                return super.extractItem(slot, amount, simulate);
-            }
-        };
+        inventory = new EmberBoreInventory(9);
     }
 
     public static void registerBoreOutput(BoreOutput output) {
@@ -76,6 +53,10 @@ public class TileEntityEmberBoreImproved extends TileEntityEmberBore {
         return DEFAULT;
     }
 
+    public EmberBoreInventory getInventory() {
+        return (EmberBoreInventory)inventory;
+    }
+
     @Override
     public void update() {
         upgrades = UpgradeUtil.getUpgradesForMultiblock(world, pos, new EnumFacing[]{EnumFacing.UP}); //TODO: Cache both of these calls
@@ -83,9 +64,11 @@ public class TileEntityEmberBoreImproved extends TileEntityEmberBore {
 
         double speedMod = UpgradeUtil.getTotalSpeedModifier(this, upgrades);
         if (ticksFueled > 0){
+            lastAngle = angle;
             angle += 12.0f * speedMod;
         }
-        if (getPos().getY() <= UpgradeUtil.getOtherParameter(this,"max_level",MAX_LEVEL,upgrades) && !getWorld().isRemote){
+        boolean cancel = UpgradeUtil.doWork(this,upgrades);
+        if (!cancel && getPos().getY() <= UpgradeUtil.getOtherParameter(this,"max_level",MAX_LEVEL,upgrades) && !getWorld().isRemote){
             ticksExisted ++;
             if (ticksFueled > 0){
                 ticksFueled --;
@@ -127,9 +110,8 @@ public class TileEntityEmberBoreImproved extends TileEntityEmberBore {
     public boolean canInsert(ArrayList<ItemStack> returns) {
         for(ItemStack stack : returns) {
             ItemStack returned = stack;
-            int slot = SLOT_FUEL +1;
-            for(int i = slot; i < inventory.getSlots(); i++) {
-                returned = inventory.insertItem(slot,returned,true);
+            for(int slot = 0; slot < getInventory().getSlots()-1; slot++) {
+                returned = getInventory().insertItemInternal(slot,returned,true);
             }
             if(!returned.isEmpty()) {
                 return false;
@@ -141,10 +123,47 @@ public class TileEntityEmberBoreImproved extends TileEntityEmberBore {
     public void insert(ArrayList<ItemStack> returns) {
         for(ItemStack stack : returns) {
             ItemStack returned = stack;
-            int slot = SLOT_FUEL +1;
-            for(int i = slot; i < inventory.getSlots(); i++) {
-                returned = inventory.insertItem(slot,returned,true);
+            for(int slot = 0; slot < getInventory().getSlots()-1; slot++) {
+                returned = getInventory().insertItemInternal(slot,returned,false);
             }
+        }
+    }
+
+    public class EmberBoreInventory extends ItemStackHandler {
+        public EmberBoreInventory() {
+        }
+
+        public EmberBoreInventory(int size) {
+            super(size);
+        }
+
+        public EmberBoreInventory(NonNullList<ItemStack> stacks) {
+            super(stacks);
+        }
+
+        @Override
+        protected void onContentsChanged(int slot) {
+            TileEntityEmberBoreImproved.this.markDirty();
+        }
+
+        @Override
+        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate){
+            if (slot == SLOT_FUEL && TileEntityFurnace.getItemBurnTime(stack) != 0){
+                return super.insertItem(slot, stack, simulate);
+            }
+            return stack;
+        }
+
+        public ItemStack insertItemInternal(int slot, ItemStack stack, boolean simulate){
+            return super.insertItem(slot, stack, simulate);
+        }
+
+        @Override
+        public ItemStack extractItem(int slot, int amount, boolean simulate){
+            if (slot == SLOT_FUEL){
+                return ItemStack.EMPTY;
+            }
+            return super.extractItem(slot, amount, simulate);
         }
     }
 

@@ -24,6 +24,8 @@ import soot.entity.EntityMuse;
 import soot.entity.EntityMuseRenderer;
 import soot.entity.EntitySnowpoff;
 import soot.tile.*;
+import soot.tile.overrides.TileEntityEmberBoreImproved;
+import soot.tile.overrides.TileEntityEmberBoreImprovedRenderer;
 import soot.tile.overrides.TileEntityStamperImproved;
 import soot.tile.overrides.TileEntityStamperImprovedRenderer;
 import soot.util.IBlockColored;
@@ -112,6 +114,7 @@ public class ClientProxy implements IProxy {
     {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityEmberBurst.class, new TileEntityEmberBurstRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAlchemyGlobe.class, new TileEntityAlchemyGlobeRenderer());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityEmberBoreImproved.class, new TileEntityEmberBoreImprovedRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityStamperImproved.class, new TileEntityStamperImprovedRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityRedstoneBin.class, new TileEntityBinRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityStillTip.class, new TileEntityStillTipRenderer());

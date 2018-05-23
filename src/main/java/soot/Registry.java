@@ -353,6 +353,11 @@ public class Registry {
     }
 
     public static void registerOverrides() {
+        if (Config.OVERRIDE_BORE) {
+            BlockEmberBoreImproved boreImproved = (BlockEmberBoreImproved) new BlockEmberBoreImproved(Material.ROCK, "ember_bore", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.0F);
+            registerBlock(boreImproved, false);
+            registerItem(boreImproved.getItemBlock(), false);
+        }
         if (Config.OVERRIDE_STAMPER) {
             BlockStamperImproved stamperImproved = (BlockStamperImproved) new BlockStamperImproved(Material.ROCK, "stamper", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.0F);
             registerBlock(stamperImproved, false);
@@ -467,6 +472,7 @@ public class Registry {
         registerTileEntity(TileEntityStillBase.class);
         registerTileEntity(TileEntityStillTip.class);
 
+        registerTileEntity(TileEntityEmberBoreImproved.class);
         registerTileEntity(TileEntityStamperImproved.class);
         registerTileEntity(TileEntityMixerBottomImproved.class);
         registerTileEntity(TileEntityDawnstoneAnvilImproved.class);

@@ -17,6 +17,7 @@ public class Config {
     public static boolean MIGRATE_STAMPER_RECIPES;
     public static boolean MIGRATE_ALCHEMY_RECIPES;
 
+    public static boolean OVERRIDE_BORE;
     public static boolean OVERRIDE_DAWNSTONE_ANVIL;
     public static boolean OVERRIDE_HEARTH_COIL;
     public static boolean OVERRIDE_MIXER;
@@ -34,6 +35,7 @@ public class Config {
 
         DEBUG_MODE = loadPropBool("debug","Debug","Enables full stack traces when something goes wrong",false);
 
+        OVERRIDE_BORE = loadPropBool("bore","Overrides","Overrides the Ember Bore",true);
         OVERRIDE_STAMPER = loadPropBool("stamper","Overrides","Overrides the Stamper",true);
         OVERRIDE_MECH_ACCESSOR = loadPropBool("mechAccessor","Overrides","Overrides the Mech Accessor",true);
         OVERRIDE_DAWNSTONE_ANVIL = loadPropBool("dawnstoneAnvil","Overrides","Overrides the Dawnstone Anvil",true);
