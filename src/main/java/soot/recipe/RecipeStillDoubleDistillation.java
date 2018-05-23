@@ -37,8 +37,10 @@ public class RecipeStillDoubleDistillation extends RecipeStillModifier {
         NBTTagCompound compound = FluidUtil.createModifiers(output);
         output.amount = 2;
         float concentration = getModifierOrDefault("concentration", compound, output);
+        float volume = getModifierOrDefault("volume", compound, output);
         if (concentration < 120)
             compound.setFloat("concentration", Math.min((concentration + 10) * 1.8f, 120));
+        compound.setFloat("volume", volume * 1.1f);
     }
 
     @Override
@@ -46,6 +48,7 @@ public class RecipeStillDoubleDistillation extends RecipeStillModifier {
         super.modifyTooltip(tooltip);
         tooltip.add(tooltip.size() - 1, TextFormatting.BLUE + Translator.translateToLocalFormatted("distilling.effect.add", Translator.translateToLocal("distilling.modifier.concentration.name"), 10));
         tooltip.add(tooltip.size() - 1, TextFormatting.BLUE + Translator.translateToLocalFormatted("distilling.effect.add_percent", Translator.translateToLocal("distilling.modifier.concentration.name"), 80));
+        tooltip.add(tooltip.size() - 1, TextFormatting.RED + Translator.translateToLocalFormatted("distilling.effect.add_percent", Translator.translateToLocal("distilling.modifier.volume.name"), 10));
         tooltip.add(tooltip.size() - 1, TextFormatting.RED + Translator.translateToLocalFormatted("distilling.effect.loss", 33));
     }
 }

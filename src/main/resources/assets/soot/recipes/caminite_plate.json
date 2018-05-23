@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "embers:plate_caminite_raw",
+    "count": 1,
+    "data": 0
+  },
+  "pattern": [
+    "CC"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "C": {
+      "item": "embers:blend_caminite",
+      "data": 0
+    }
+  }
+}

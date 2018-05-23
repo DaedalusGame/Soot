@@ -1,5 +1,7 @@
 package soot;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -7,12 +9,14 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
@@ -23,30 +27,39 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.oredict.OreDictionary;
 import soot.block.*;
 import soot.block.overrides.*;
 import soot.capability.CapabilityUpgradeProvider;
 import soot.capability.IUpgradeProvider;
 import soot.entity.EntityFireCloud;
+import soot.entity.EntityMuse;
+import soot.entity.EntitySnowpoff;
 import soot.fluids.FluidBooze;
 import soot.fluids.FluidMolten;
 import soot.item.ItemBlockSlab;
+import soot.item.ItemMetallurgicDust;
 import soot.item.ItemMug;
 import soot.item.ItemStill;
 import soot.potion.*;
 import soot.tile.*;
 import soot.tile.overrides.*;
+import soot.tile.overrides.TileEntityEmberBoreImproved.BoreOutput;
+import soot.tile.overrides.TileEntityEmberBoreImproved.WeightedItemStack;
 import soot.upgrade.UpgradeCatalyticPlug;
 import soot.util.CaskManager;
 import soot.util.CaskManager.CaskLiquid;
 import soot.util.HeatManager;
 import soot.util.Nope;
+import soot.util.OreTransmutationManager;
 import teamroots.embers.Embers;
 import teamroots.embers.RegistryManager;
 import teamroots.embers.tileentity.*;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class Registry {
     private static ArrayList<Block> MODELLED_BLOCKS = new ArrayList<>();
@@ -73,6 +86,12 @@ public class Registry {
     public static Item SIGNET_ANTIMONY;
     @GameRegistry.ObjectHolder("soot:ingot_antimony")
     public static Item INGOT_ANTIMONY;
+    @GameRegistry.ObjectHolder("soot:ember_grit")
+    public static Item EMBER_GRIT;
+    @GameRegistry.ObjectHolder("soot:mug")
+    public static ItemMug MUG;
+    @GameRegistry.ObjectHolder("soot:metallurgic_dust")
+    public static Item METALLURGIC_DUST;
 
     @GameRegistry.ObjectHolder("soot:eitr")
     public static ItemSword EITR;
@@ -87,8 +106,14 @@ public class Registry {
     public static Potion POTION_FIRE_LUNG;
     @GameRegistry.ObjectHolder("soot:steadfast")
     public static Potion POTION_STEADFAST;
+    @GameRegistry.ObjectHolder("soot:tipsy")
+    public static Potion POTION_TIPSY;
     @GameRegistry.ObjectHolder("soot:lifedrinker")
     public static Potion POTION_LIFEDRINKER;
+    @GameRegistry.ObjectHolder("soot:snowpoff")
+    public static Potion POTION_SNOWPOFF;
+    @GameRegistry.ObjectHolder("soot:inspiration")
+    public static Potion POTION_INSPIRATION;
 
     public static Fluid BOILING_WORT;
     public static Fluid BOILING_POTATO_JUICE;
@@ -108,6 +133,15 @@ public class Registry {
     public static Fluid ROOT_BEER;
     public static Fluid AUBERGINE_LIQUOR;
 
+    public static final String STONE = "stone";
+    public static final String NETHER = "nether";
+    public static final String END = "end";
+    public static final String SAND = "sand";
+    public static final String BETWEEN_STONE = "betweenlands";
+    public static final String BETWEEN_PIT = "betweenlands_pit";
+    public static final String BETWEEN_GEM = "betweenlands_gem";
+    public static final HashMap<String,String> ALTERNATE_ORES = new HashMap<>();
+
     public static void preInit() {
         MinecraftForge.EVENT_BUS.register(Registry.class);
         registerBlocks();
@@ -123,6 +157,13 @@ public class Registry {
         registerCaskLiquids();
         registerAccessorTiles();
 
+        BoreOutput defaultOutput = new BoreOutput(Sets.newHashSet(), Sets.newHashSet(), Lists.newArrayList(
+                new WeightedItemStack(new ItemStack(RegistryManager.crystal_ember),1),
+                new WeightedItemStack(new ItemStack(RegistryManager.shard_ember),3),
+                new WeightedItemStack(new ItemStack(Registry.EMBER_GRIT),1)
+        ));
+        TileEntityEmberBoreImproved.setDefault(defaultOutput);
+
         HeatManager.register(RegistryManager.archaic_light,20);
         HeatManager.register(Blocks.FIRE,10);
         HeatManager.register(HEAT_COIL_OVERRIDE, (world, pos, state) -> {
@@ -135,6 +176,61 @@ public class Registry {
         });
 
         UpgradeCatalyticPlug.registerBlacklistedTile(TileEntityStillBase.class);
+    }
+
+    public static void postInit() {
+        OreTransmutationManager.registerTransmutationSet(STONE,Blocks.STONE.getDefaultState());
+        OreTransmutationManager.registerTransmutationSet(NETHER,Blocks.NETHERRACK.getDefaultState());
+        OreTransmutationManager.registerTransmutationSet(END,Blocks.END_STONE.getDefaultState());
+        OreTransmutationManager.registerTransmutationSet(SAND,Blocks.SAND.getDefaultState());
+        OreTransmutationManager.registerTransmutationSet(BETWEEN_STONE,new ResourceLocation("thebetweenlands:betweenstone"),0);
+        OreTransmutationManager.registerTransmutationSet(BETWEEN_PIT,new ResourceLocation("thebetweenlands:pitstone"),0);
+        OreTransmutationManager.registerTransmutationSet(BETWEEN_GEM,new ResourceLocation("thebetweenlands:mud"),0);
+
+        OreTransmutationManager.registerOre(STONE,Blocks.LIT_REDSTONE_ORE.getDefaultState()); //workaround for a vanilla issue
+
+        ALTERNATE_ORES.put("minecraft:quartz_ore",NETHER);
+        ALTERNATE_ORES.put("tconstruct:ore",NETHER);
+        ALTERNATE_ORES.put("astralsorcery:blockcustomsandore",SAND);
+        ALTERNATE_ORES.put("thebetweenlands:slimy_bone_ore",BETWEEN_STONE);
+        ALTERNATE_ORES.put("thebetweenlands:sulfur_ore",BETWEEN_STONE);
+        ALTERNATE_ORES.put("thebetweenlands:syrmorite_ore",BETWEEN_STONE);
+        ALTERNATE_ORES.put("thebetweenlands:octine_ore",BETWEEN_STONE);
+        ALTERNATE_ORES.put("thebetweenlands:valonite_ore",BETWEEN_PIT);
+        ALTERNATE_ORES.put("thebetweenlands:scabyst_ore",BETWEEN_PIT);
+        ALTERNATE_ORES.put("thebetweenlands:aqua_middle_gem_ore",BETWEEN_GEM);
+        ALTERNATE_ORES.put("thebetweenlands:crimson_middle_gem_ore",BETWEEN_GEM);
+        ALTERNATE_ORES.put("thebetweenlands:green_middle_gem_ore",BETWEEN_GEM);
+        //How about this
+        //You click the make pr button if you want more support
+
+        gatherOreTransmutations();
+    }
+
+    public static void gatherOreTransmutations() {
+        HashSet<String> existingTags = new HashSet<>();
+
+        for (String orename : OreDictionary.getOreNames()) {
+            if(orename == null || !orename.startsWith("ore"))
+                continue;
+            for (ItemStack stack : OreDictionary.getOres(orename,false)) {
+                Item item = stack.getItem();
+                if(!(item instanceof ItemBlock))
+                    continue;
+                ResourceLocation registryName = item.getRegistryName();
+                if(registryName == null)
+                    continue; //WEE WOO WEE WOO
+                String entry = ALTERNATE_ORES.getOrDefault(registryName.toString(),STONE);
+                String tag = entry+":"+orename;
+                if(existingTags.contains(tag))
+                    continue;
+                if(stack.getMetadata() == OreDictionary.WILDCARD_VALUE)
+                    OreTransmutationManager.registerOre(entry, registryName);
+                else
+                    OreTransmutationManager.registerOre(entry, registryName,stack.getMetadata());
+                existingTags.add(tag);
+            }
+        }
     }
 
     public static void registerCaskLiquids() {
@@ -160,9 +256,9 @@ public class Registry {
         CaskManager.register(new CaskLiquid(VODKA, 1, 0xFFC8EFEF).addEffect(new PotionEffect(POTION_STOUTNESS, 1600, 0), 4));
         CaskManager.register(new CaskLiquid(INNER_FIRE, 2, 0xFFFF4D00).addEffect(new PotionEffect(POTION_INNER_FIRE, 1000, 0), 2));
         CaskManager.register(new CaskLiquid(UMBER_ALE, 2, 0xFF473216));
-        CaskManager.register(new CaskLiquid(ABSINTHE, 1, 0xFF58FF2E));
+        CaskManager.register(new CaskLiquid(ABSINTHE, 1, 0xFF58FF2E).addEffect(new PotionEffect(POTION_INSPIRATION, 400, 0),3));
         CaskManager.register(new CaskLiquid(METHANOL, 1, 0xFF666633).addEffect(new PotionEffect(POTION_FIRE_LUNG, 200, 0), 2));
-        CaskManager.register(new CaskLiquid(SNOWPOFF_VODKA, 2, 0xFFC3E6F7));
+        CaskManager.register(new CaskLiquid(SNOWPOFF_VODKA, 2, 0xFFC3E6F7).addEffect(new PotionEffect(POTION_SNOWPOFF, 1000, 0), 3));
     }
 
     public static void registerAccessorTiles() {
@@ -172,6 +268,7 @@ public class Registry {
         TileEntityMechAccessorImproved.registerAccessibleTile(TileEntityFurnaceBottom.class);
         TileEntityMechAccessorImproved.registerAccessibleTile(TileEntityBoilerBottom.class);
         TileEntityMechAccessorImproved.registerAccessibleTile(TileEntityReactor.class);
+        TileEntityMechAccessorImproved.registerAccessibleTile(TileEntityStillBase.class);
     }
 
     public static void registerBlocks() {
@@ -200,6 +297,8 @@ public class Registry {
         registerItem("signet_antimony", new Item().setCreativeTab(Soot.creativeTab));
         registerItem("ingot_antimony", new Item().setCreativeTab(Soot.creativeTab));
         registerItem("mug", new ItemMug().setCreativeTab(Soot.creativeTab));
+        registerItem("metallurgic_dust", new ItemMetallurgicDust().setCreativeTab(Soot.creativeTab));
+        registerItem("ember_grit", new Item().setCreativeTab(Soot.creativeTab));
 
         BlockStill still = (BlockStill) new BlockStill().setHardness(1.6f).setLightOpacity(0).setCreativeTab(Soot.creativeTab);
         registerBlock("still", still, new ItemStill(still));
@@ -383,7 +482,9 @@ public class Registry {
     }
 
     private static void registerEntities() {
-        EntityRegistry.registerModEntity(new ResourceLocation(Soot.MODID, "fireCloud"), EntityFireCloud.class, "fireCloud", 0, Soot.instance, 80, 1, true);
+        EntityRegistry.registerModEntity(new ResourceLocation(Soot.MODID, "firecloud"), EntityFireCloud.class, "firecloud", 0, Soot.instance, 80, 1, true);
+        EntityRegistry.registerModEntity(new ResourceLocation(Soot.MODID, "snowpoff"), EntitySnowpoff.class, "snowpoff", 1, Soot.instance, 80, 1, true);
+        EntityRegistry.registerModEntity(new ResourceLocation(Soot.MODID, "muse"), EntityMuse.class, "muse", 2, Soot.instance, 80, 1, true);
     }
 
     public static void registerCapabilities() {
@@ -420,11 +521,14 @@ public class Registry {
     @SubscribeEvent
     public static void registerPotions(RegistryEvent.Register<Potion> event) {
         event.getRegistry().register(new PotionAle().setRegistryName(Soot.MODID, "ale"));
+        event.getRegistry().register(new PotionTipsy().setRegistryName(Soot.MODID, "tipsy"));
         event.getRegistry().register(new PotionStoutness().setRegistryName(Soot.MODID, "stoutness"));
         event.getRegistry().register(new PotionInnerFire().setRegistryName(Soot.MODID, "inner_fire"));
         event.getRegistry().register(new PotionFireLung().setRegistryName(Soot.MODID, "fire_lung"));
         event.getRegistry().register(new PotionSteadfast().setRegistryName(Soot.MODID, "steadfast"));
         event.getRegistry().register(new PotionLifedrinker().setRegistryName(Soot.MODID, "lifedrinker"));
+        event.getRegistry().register(new PotionSnowpoff().setRegistryName(Soot.MODID, "snowpoff"));
+        event.getRegistry().register(new PotionInspiration().setRegistryName(Soot.MODID, "inspiration"));
     }
 
     private static void registerTileEntity(Class<? extends TileEntity> tile) {

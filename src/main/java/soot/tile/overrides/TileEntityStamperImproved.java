@@ -49,8 +49,9 @@ public class TileEntityStamperImproved extends TileEntityStamper {
             upgrades = UpgradeUtil.getUpgrades(world, pos, EnumFacing.VALUES); //TODO: Cache both of these calls
             UpgradeUtil.verifyUpgrades(this, upgrades);
             boolean cancel = UpgradeUtil.doWork(this,upgrades);
-            int stampTime = (int) Math.ceil(STAMP_TIME * (1 / UpgradeUtil.getTotalSpeedModifier(this, upgrades)));
-            int retractTime = (int) Math.ceil(RETRACT_TIME * (1 / UpgradeUtil.getTotalSpeedModifier(this, upgrades)));
+            double speedMod = UpgradeUtil.getTotalSpeedModifier(this, upgrades);
+            int stampTime = (int) Math.ceil(STAMP_TIME * (1 / speedMod));
+            int retractTime = (int) Math.ceil(RETRACT_TIME * (1 / speedMod));
             if (!cancel && !powered && !getWorld().isRemote && this.ticksExisted >= stampTime) {
                 TileEntityStampBase stamp = (TileEntityStampBase) getWorld().getTileEntity(basePos);
                 FluidStack fluid = null;

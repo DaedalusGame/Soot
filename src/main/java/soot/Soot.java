@@ -12,10 +12,12 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Logger;
 import soot.handler.FluidFixHandler;
+import soot.handler.FuelHandler;
 import soot.handler.GolemHandler;
 import soot.handler.VillagerAntimonyHandler;
 import soot.recipe.CraftingRegistry;
 import soot.util.Attributes;
+import soot.util.OreTransmutationManager;
 import teamroots.embers.RegistryManager;
 
 @Mod(modid = Soot.MODID, acceptedMinecraftVersions = "[1.12, 1.13)", dependencies = "required-after:embers")
@@ -57,6 +59,8 @@ public class Soot
         proxy.preInit();
         MinecraftForge.EVENT_BUS.register(Attributes.class);
         MinecraftForge.EVENT_BUS.register(FluidFixHandler.class);
+        MinecraftForge.EVENT_BUS.register(OreTransmutationManager.class);
+        MinecraftForge.EVENT_BUS.register(FuelHandler.class);
         if(Config.TRADING_ANTIMONY)
             MinecraftForge.EVENT_BUS.register(VillagerAntimonyHandler.class);
         if(Config.GOLEMS_POISON_IMMUNE || Config.GOLEMS_TYRFING_WEAK)
@@ -73,6 +77,7 @@ public class Soot
     @EventHandler
     public void postInit(FMLPostInitializationEvent event)
     {
+        Registry.postInit();
         proxy.postInit();
     }
 }

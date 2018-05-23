@@ -20,6 +20,9 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import soot.block.IBlockVariants;
 import soot.entity.EntityCustomCloud;
+import soot.entity.EntityMuse;
+import soot.entity.EntityMuseRenderer;
+import soot.entity.EntitySnowpoff;
 import soot.tile.*;
 import soot.tile.overrides.TileEntityStamperImproved;
 import soot.tile.overrides.TileEntityStamperImprovedRenderer;
@@ -81,6 +84,7 @@ public class ClientProxy implements IProxy {
                 return null;
             }
         });
+        RenderingRegistry.registerEntityRenderingHandler(EntityMuse.class, EntityMuseRenderer::new);
     }
 
     @Override
@@ -110,6 +114,7 @@ public class ClientProxy implements IProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAlchemyGlobe.class, new TileEntityAlchemyGlobeRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityStamperImproved.class, new TileEntityStamperImprovedRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityRedstoneBin.class, new TileEntityBinRenderer());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityStillTip.class, new TileEntityStillTipRenderer());
     }
 
     @Override

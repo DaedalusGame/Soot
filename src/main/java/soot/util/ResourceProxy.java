@@ -69,7 +69,7 @@ public class ResourceProxy extends AbstractResourcePack {
 
     @Override
     public String getPackName() {
-        return "bwa-texture-proxy";
+        return "soot-texture-proxy";
     }
 
 }

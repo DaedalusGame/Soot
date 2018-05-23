@@ -49,7 +49,7 @@ public class PotionFireLung extends PotionBase {
         World world = event.getWorld();
         EntityLivingBase living = event.getEntityLiving();
         ItemStack stack = event.getItemStack();
-        PotionEffect effect = living.getActivePotionEffect(Registry.POTION_FIRE_LUNG);
+        PotionEffect effect = living.getActivePotionEffect(this);
 
         if(ItemUtil.matchesOreDict(stack,"torch") && effect != null)
         {

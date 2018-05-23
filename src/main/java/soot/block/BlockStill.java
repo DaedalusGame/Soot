@@ -86,6 +86,20 @@ public class BlockStill extends Block {
     }
 
     @Override
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
+        updateConnections(state, worldIn, pos);
+        super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
+    }
+
+    public void updateConnections(IBlockState state, World worldIn, BlockPos pos) {
+        TileEntity tile = worldIn.getTileEntity(pos);
+        if(tile instanceof TileEntityStillTip) {
+            TileEntityStillTip tip = (TileEntityStillTip) tile;
+            tip.updateConnections();
+        }
+    }
+
+    @Override
     public void onBlockExploded(World world, BlockPos pos, Explosion explosion){
         if (!world.isRemote){
             world.spawnEntity(new EntityItem(world,pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5,new ItemStack(this,1,0)));
@@ -169,6 +183,7 @@ public class BlockStill extends Block {
         if(part != 0) world.setBlockState(base,state.withProperty(PART,0));
         if(part != 1) world.setBlockState(base.up(),state.withProperty(PART,1));
         if(part != 2) world.setBlockState(base.up().offset(facing),state.withProperty(PART,2));
+        updateConnections(state,world,pos);
     }
 
     @Override

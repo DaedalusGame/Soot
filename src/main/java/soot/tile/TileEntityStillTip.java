@@ -57,10 +57,30 @@ public class TileEntityStillTip extends TileEntity implements ITileEntityBase, I
 
     public int catalystAmount = 0;
     private Random random = new Random();
+    public boolean connectUp, connectNorth, connectSouth, connectEast, connectWest;
+
+    public void updateConnections() {
+        connectUp = canConnectTo(EnumFacing.UP);
+        connectNorth = canConnectTo(EnumFacing.NORTH);
+        connectSouth = canConnectTo(EnumFacing.SOUTH);
+        connectEast = canConnectTo(EnumFacing.EAST);
+        connectWest = canConnectTo(EnumFacing.WEST);
+        markDirty();
+    }
+
+    public boolean canConnectTo(EnumFacing facing) {
+        TileEntity tile = world.getTileEntity(pos.offset(facing));
+        return tile != null && tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite());
+    }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag){
         super.writeToNBT(tag);
+        tag.setBoolean("up",connectUp);
+        tag.setBoolean("north",connectNorth);
+        tag.setBoolean("south",connectSouth);
+        tag.setBoolean("east",connectEast);
+        tag.setBoolean("west",connectWest);
         tag.setTag("inventory", inventory.serializeNBT());
         return tag;
     }
@@ -68,6 +88,11 @@ public class TileEntityStillTip extends TileEntity implements ITileEntityBase, I
     @Override
     public void readFromNBT(NBTTagCompound tag){
         super.readFromNBT(tag);
+        connectUp = tag.getBoolean("up");
+        connectNorth = tag.getBoolean("north");
+        connectSouth = tag.getBoolean("south");
+        connectEast = tag.getBoolean("east");
+        connectWest = tag.getBoolean("west");
         inventory.deserializeNBT(tag.getCompoundTag("inventory"));
     }
 

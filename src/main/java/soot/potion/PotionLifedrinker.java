@@ -19,7 +19,7 @@ public class PotionLifedrinker extends PotionBase {
     public PotionLifedrinker() {
         super(false, new Color(90,20,20).getRGB());
         setPotionName("effect.lifedrinker");
-        setIconIndex(5,0);
+        setIconIndex(7,0);
         setBeneficial();
         MinecraftForge.EVENT_BUS.register(this);
     }

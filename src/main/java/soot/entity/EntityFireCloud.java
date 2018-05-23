@@ -17,7 +17,7 @@ public class EntityFireCloud extends EntityCustomCloud {
         if(entitylivingbase.isImmuneToFire())
             return false;
 
-        entitylivingbase.setFire(10*20);
+        entitylivingbase.setFire(200);
         return true;
     }
 }
