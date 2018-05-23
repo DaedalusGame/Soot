@@ -1,6 +1,7 @@
 package soot;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 
 public class ServerProxy implements IProxy {
@@ -32,6 +33,11 @@ public class ServerProxy implements IProxy {
     @Override
     public void registerResourcePack() {
 
+    }
+
+    @Override
+    public EntityPlayer getMainPlayer() {
+        return null;
     }
 
     @Override

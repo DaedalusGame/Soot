@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.resources.IResourcePack;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.util.ResourceLocation;
@@ -51,6 +52,11 @@ public class ClientProxy implements IProxy {
     public void registerResourcePack() {
         List<IResourcePack> packs = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), "aD", "field_110449_ao", "defaultResourcePacks");
         packs.add(resourceProxy);
+    }
+
+    @Override
+    public EntityPlayer getMainPlayer() {
+        return Minecraft.getMinecraft().player;
     }
 
     @Override

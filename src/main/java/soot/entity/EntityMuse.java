@@ -20,6 +20,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import soot.Registry;
+import soot.Soot;
 import teamroots.embers.particle.ParticleUtil;
 
 import javax.annotation.Nullable;
@@ -55,7 +56,8 @@ public class EntityMuse extends EntityMob {
         this.setNoGravity(true);
 
         if(world.isRemote) {
-            if(canEntityBeSeen(Minecraft.getMinecraft().player)) {
+            EntityPlayer mainPlayer = Soot.proxy.getMainPlayer();
+            if(mainPlayer != null && isVisibleTo(mainPlayer)) {
                 ParticleUtil.spawnParticleGlow(world, (float) this.posX + (rand.nextFloat() - 0.5f) * 0.4f, (float) this.posY + 1.0f + (rand.nextFloat() - 0.5f) * 0.4f, (float) this.posZ + (rand.nextFloat() - 0.5f) * 0.4f, (rand.nextFloat() - 0.5f) * 0.1f, rand.nextFloat() * 0.1f, (rand.nextFloat() - 0.5f) * 0.1f, 64, 255, 64, 16, 10.0f, 50);
             }
         }

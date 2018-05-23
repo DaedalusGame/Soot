@@ -1,6 +1,7 @@
 package soot;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 
 public interface IProxy {
@@ -15,6 +16,8 @@ public interface IProxy {
     void registerItemModel(Item item);
 
     void registerResourcePack();
+
+    EntityPlayer getMainPlayer();
 
     void addResourceOverride(String space, String dir, String file, String ext);
 
