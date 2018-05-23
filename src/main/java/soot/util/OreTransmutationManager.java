@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 public class OreTransmutationManager {
     public static final int ITERATIONS_PER_TICK = 10;
+    public static final int MAX_BLOCKS = 16;
     static LinkedHashMap<String,TransmutationSet> REGISTRY = new LinkedHashMap<>();
     static ArrayList<TransmutationIterator> iterators = new ArrayList<>();
     static int iteratorIndex;
@@ -76,7 +77,7 @@ public class OreTransmutationManager {
             if(replacements.isEmpty())
                 return false;
             IBlockState toReplace = replacements.get(random.nextInt(replacements.size()));
-            iterators.add(new TransmutationIterator(world,pos,fromReplace,toReplace,set.failure,80));
+            iterators.add(new TransmutationIterator(world,pos,fromReplace,toReplace,set.failure, MAX_BLOCKS));
             return true;
         }
         return false;

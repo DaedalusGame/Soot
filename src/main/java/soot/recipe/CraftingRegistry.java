@@ -111,6 +111,7 @@ public class CraftingRegistry {
         convertIngredient.put(new ItemStack(Items.ENDER_PEARL), new OreIngredient("enderpearl"));
         convertIngredient.put(new ItemStack(RegistryManager.sword_lead, 1, OreDictionary.WILDCARD_VALUE), new IngredientMaterialTool("sword", "lead"));
 
+        OreIngredient ingotAntimony = new OreIngredient("ingotAntimony");
         OreIngredient ingotLead = new OreIngredient("ingotLead");
         OreIngredient ingotSilver = new OreIngredient("ingotSilver");
         OreIngredient blankGlass = new OreIngredient("blockGlassColorless");
@@ -119,7 +120,7 @@ public class CraftingRegistry {
         Ingredient fluidPipe = Ingredient.fromStacks(new ItemStack(RegistryManager.pipe));
         addAlchemyTabletRecipe(new ItemStack(Registry.ALCHEMY_GLOBE), blankGlass, ingotLead, Ingredient.fromItem(RegistryManager.aspectus_lead), ingotLead, Ingredient.fromItem(RegistryManager.archaic_circuit), new AspectRangeList(AspectList.createStandard(0, 0, 16, 0, 32), AspectList.createStandard(0, 0, 32, 0, 64)));
         addAlchemyTabletRecipe(new ItemStack(Registry.CATALYTIC_PLUG), ingotSilver, fluidPipe, glass, fluidPipe, redstoneBlock, new AspectRangeList(AspectList.createStandard(0, 20, 0, 32, 0), AspectList.createStandard(0, 30, 0, 64, 0)));
-        addAlchemyTabletRecipe(new ItemStack(Registry.METALLURGIC_DUST), Ingredient.fromItem(RegistryManager.ancient_motive_core), Ingredient.fromItem(Registry.EMBER_GRIT), new OreIngredient("dustAsh"), new OreIngredient("dustRedstone"), Ingredient.EMPTY, new AspectRangeList(AspectList.createStandard(0, 0, 0, 0, 0), AspectList.createStandard(16, 16, 16, 16, 16)));
+        addAlchemyTabletRecipe(new ItemStack(Registry.METALLURGIC_DUST,3), ingotAntimony, Ingredient.fromItem(Registry.EMBER_GRIT), new OreIngredient("dustRedstone"), Ingredient.EMPTY, Ingredient.EMPTY, new AspectRangeList(AspectList.createStandard(0, 0, 0, 0, 0), AspectList.createStandard(16, 16, 16, 16, 16)));
 
         removeRecipe(new ResourceLocation(Embers.MODID,"archaic_bricks_2")); //Remove conflicting recipe
         removeRecipe(new ResourceLocation(Embers.MODID,"plate_caminite_raw"));
