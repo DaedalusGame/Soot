@@ -354,7 +354,6 @@ public class CraftingRegistry {
         stillRecipes.add(new RecipeStill(new FluidStack(boiling_wort, 1), Ingredient.EMPTY, 0, new FluidStack(ale, 1)));
         stillRecipes.add(new RecipeStill(new FluidStack(boiling_potato_juice, 3), Ingredient.EMPTY, 0, new FluidStack(vodka, 2)));
         stillRecipes.add(new RecipeStill(new FluidStack(vodka,1),Ingredient.fromItem(Items.SNOWBALL),1,new FluidStack(snowpoff,1)));
-        stillRecipes.add(new RecipeStill(new FluidStack(vodka,1),Ingredient.fromItem(Items.SNOWBALL),1,new FluidStack(snowpoff,1)));
         stillRecipes.add(new RecipeStill(new FluidStack(boiling_verdigris, 1), Ingredient.fromItem(Items.SUGAR), 0, new FluidStack(absinthe, 1)));
         stillRecipes.add(new RecipeStill(null, new OreIngredient("logWood"), 1, new FluidStack(methanol, 1)));
 
