@@ -245,7 +245,7 @@ public class Registry {
         UMBER_ALE = FluidRegistry.getFluid("umber_ale");
         ABSINTHE = FluidRegistry.getFluid("absinthe");
         METHANOL = FluidRegistry.getFluid("methanol");
-        SNOWPOFF_VODKA = FluidRegistry.getFluid("methanol");
+        SNOWPOFF_VODKA = FluidRegistry.getFluid("snowpoff");
 
         CaskManager.register(new CaskLiquid(BOILING_WORT, 1, 0xFF898516));
         CaskManager.register(new CaskLiquid(BOILING_POTATO_JUICE, 1, 0xFFECEAA7));
