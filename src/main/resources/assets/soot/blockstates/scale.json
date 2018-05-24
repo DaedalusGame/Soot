@@ -1,0 +1,16 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "transform": "forge:default-block"
+  },
+  "variants":{
+    "top":{
+      "true":  { "model": "soot:scale_top" },
+      "false":  { "model": "soot:scale_bottom" }
+    },
+    "horizontal":{
+      "true": { "y": 90 },
+      "false": {}
+    }
+  }
+}

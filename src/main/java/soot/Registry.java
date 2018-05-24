@@ -92,6 +92,18 @@ public class Registry {
     public static ItemMug MUG;
     @GameRegistry.ObjectHolder("soot:metallurgic_dust")
     public static Item METALLURGIC_DUST;
+    @GameRegistry.ObjectHolder("soot:stamp_text_raw")
+    public static Item STAMP_TEXT_RAW;
+    @GameRegistry.ObjectHolder("soot:stamp_text")
+    public static Item STAMP_TEXT;
+    @GameRegistry.ObjectHolder("soot:stamp_nugget_raw")
+    public static Item STAMP_NUGGET_RAW;
+    @GameRegistry.ObjectHolder("soot:stamp_nugget")
+    public static Item STAMP_NUGGET;
+    @GameRegistry.ObjectHolder("soot:sulfur")
+    public static Item SULFUR;
+    @GameRegistry.ObjectHolder("soot:sulfur_clump")
+    public static Item SULFUR_CLUMP;
 
     @GameRegistry.ObjectHolder("soot:eitr")
     public static ItemSword EITR;
@@ -281,6 +293,8 @@ public class Registry {
 
         BlockRedstoneBin redstoneBin = (BlockRedstoneBin) new BlockRedstoneBin(Material.IRON,"redstone_bin").setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe",0).setHardness(1f).setCreativeTab(Soot.creativeTab);
         registerBlock("redstone_bin", redstoneBin, new ItemBlock(redstoneBin));
+        BlockScale scale = (BlockScale) new BlockScale(Material.IRON).setHardness(1.6f).setLightOpacity(0).setCreativeTab(Soot.creativeTab);
+        registerBlock("scale", scale, new ItemBlock(scale));
 
         BlockAlchemyGlobe alchemyGlobe = (BlockAlchemyGlobe) new BlockAlchemyGlobe(Material.ROCK).setHardness(1.6f).setLightOpacity(0).setCreativeTab(Soot.creativeTab);
         registerBlock("alchemy_globe", alchemyGlobe, new ItemBlock(alchemyGlobe));
@@ -468,6 +482,7 @@ public class Registry {
         registerTileEntity(TileEntityEmberFunnel.class);
 
         registerTileEntity(TileEntityRedstoneBin.class);
+        registerTileEntity(TileEntityScale.class);
 
         registerTileEntity(TileEntityStillBase.class);
         registerTileEntity(TileEntityStillTip.class);
