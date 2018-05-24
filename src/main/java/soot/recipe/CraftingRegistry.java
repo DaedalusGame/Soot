@@ -111,6 +111,16 @@ public class CraftingRegistry {
         convertIngredient.put(new ItemStack(Items.ENDER_PEARL), new OreIngredient("enderpearl"));
         convertIngredient.put(new ItemStack(RegistryManager.sword_lead, 1, OreDictionary.WILDCARD_VALUE), new IngredientMaterialTool("sword", "lead"));
 
+        ListIterator<ItemMeltingOreRecipe> iterator = RecipeRegistry.meltingOreRecipes.listIterator();
+        while(iterator.hasNext()) {
+            ItemMeltingOreRecipe recipe = iterator.next();
+            if(recipe.getOreName().startsWith("ore")) {
+                FluidStack fluid = recipe.getFluid().copy();
+                fluid.amount = Config.MELTER_ORE_AMOUNT * 2;
+                iterator.set(new ItemMeltingOreRecipe(recipe.getOreName(),fluid));
+            }
+        }
+
         OreIngredient ingotAntimony = new OreIngredient("ingotAntimony");
         OreIngredient ingotLead = new OreIngredient("ingotLead");
         OreIngredient ingotSilver = new OreIngredient("ingotSilver");

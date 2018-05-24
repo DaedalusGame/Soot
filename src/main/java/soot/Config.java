@@ -16,6 +16,7 @@ public class Config {
     public static boolean ASH_FIRST;
     public static boolean MIGRATE_STAMPER_RECIPES;
     public static boolean MIGRATE_ALCHEMY_RECIPES;
+    public static int MELTER_ORE_AMOUNT;
 
     public static boolean OVERRIDE_BORE;
     public static boolean OVERRIDE_DAWNSTONE_ANVIL;
@@ -53,9 +54,9 @@ public class Config {
         MIGRATE_ALCHEMY_RECIPES = loadPropBool("migrateAlchemyRecipes","Features","Disabling this will clear all alchemy recipes if the alchemy tablet override is enabled.",true);
         FIX_MATH_ERROR_A = loadPropBool("fixMathErrorA","Features","If two aspect ranges are the same size on an alchemy recipe, they will no longer have the same exact value.",true);
         FIX_MATH_ERROR_B = loadPropBool("fixMathErrorB","Features","If two aspect ranges are the same size on two alchemy recipes, they will no longer have the same exact value.",true);
+        MELTER_ORE_AMOUNT = loadPropInt("melterOreAmount","Features","How many mb of fluid are obtained per ore output in the melter. This is multiplied by the amount of output a melter would produce, so by default 144mb * 2 ingots.",144);
 
-        if (configuration.hasChanged())
-        {
+        if (configuration.hasChanged()) {
             configuration.save();
         }
     }
@@ -65,5 +66,12 @@ public class Config {
         prop.setComment(desc);
 
         return prop.getBoolean(default_);
+    }
+
+    public static int loadPropInt(String propName, String category, String desc, int default_) {
+        Property prop = configuration.get(category, propName, default_);
+        prop.setComment(desc);
+
+        return prop.getInt(default_);
     }
 }
