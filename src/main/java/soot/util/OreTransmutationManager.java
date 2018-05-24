@@ -2,7 +2,10 @@ package soot.util;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -42,8 +45,10 @@ public class OreTransmutationManager {
     public static void registerOre(String name, Block ore) {
         TransmutationSet set = REGISTRY.get(name);
         if(set != null) {
-            for (int meta = 0; meta < 16; meta++) {
-                set.ores.add(ore.getStateFromMeta(meta));
+            NonNullList<ItemStack> stacks = NonNullList.create();
+            ore.getSubBlocks(CreativeTabs.SEARCH,stacks);
+            for (ItemStack stack : stacks) {
+                set.ores.add(ore.getStateFromMeta(stack.getMetadata()));
             }
         }
     }

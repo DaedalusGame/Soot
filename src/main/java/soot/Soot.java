@@ -11,10 +11,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Logger;
-import soot.handler.FluidFixHandler;
-import soot.handler.FuelHandler;
-import soot.handler.GolemHandler;
-import soot.handler.VillagerAntimonyHandler;
+import soot.handler.*;
 import soot.recipe.CraftingRegistry;
 import soot.util.Attributes;
 import soot.util.OreTransmutationManager;
@@ -60,6 +57,7 @@ public class Soot
         MinecraftForge.EVENT_BUS.register(Attributes.class);
         MinecraftForge.EVENT_BUS.register(FluidFixHandler.class);
         MinecraftForge.EVENT_BUS.register(OreTransmutationManager.class);
+        MinecraftForge.EVENT_BUS.register(AnvilHandler.class);
         MinecraftForge.EVENT_BUS.register(FuelHandler.class);
         if(Config.TRADING_ANTIMONY)
             MinecraftForge.EVENT_BUS.register(VillagerAntimonyHandler.class);

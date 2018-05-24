@@ -135,6 +135,8 @@ public class CraftingRegistry {
         removeRecipe(new ResourceLocation(Embers.MODID,"archaic_bricks_2")); //Remove conflicting recipe
         removeRecipe(new ResourceLocation(Embers.MODID,"plate_caminite_raw"));
 
+        FurnaceRecipes.instance().addSmeltingRecipe(new ItemStack(Registry.STAMP_NUGGET_RAW),new ItemStack(Registry.STAMP_NUGGET),0.1f);
+        FurnaceRecipes.instance().addSmeltingRecipe(new ItemStack(Registry.STAMP_TEXT_RAW),new ItemStack(Registry.STAMP_TEXT),0.1f);
         FurnaceRecipes.instance().addSmeltingRecipe(new ItemStack(Registry.CAMINITE_CLAY),new ItemStack(Registry.CAMINITE_LARGE_TILE),0.1f);
 
         RecipeRegistry.meltingRecipes.add(new ItemMeltingRecipe(new ItemStack(Items.SUGAR), FluidRegistry.getFluidStack("sugar", 16), false, false)); //Nugget size -> you can combine sugar and lead into antimony without remainder and 1000 sugar store nicely in a fluid vessel

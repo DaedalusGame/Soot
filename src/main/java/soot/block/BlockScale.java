@@ -54,15 +54,12 @@ public class BlockScale extends Block {
     @Override
     public int getWeakPower(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
         EnumFacing.Axis axis = getAxis(state);
-        if(axis == EnumFacing.Axis.X)
-            axis = EnumFacing.Axis.Z;
-        else
-            axis = EnumFacing.Axis.X;
-        if(!state.getValue(TOP) && axis.apply(side)) {
+        EnumFacing rotatedSide = side.rotateY();
+        if(!state.getValue(TOP) && axis.apply(rotatedSide)) {
             TileEntity tile = world.getTileEntity(pos.up());
             if(tile instanceof TileEntityScale) {
                 int diff = ((TileEntityScale) tile).getWeightDifference();
-                return (side.getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE && diff <= 0) || (side.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE && diff >= 0) ? 15 : 0;
+                return (rotatedSide.getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE && diff <= 0) || (rotatedSide.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE && diff >= 0) ? 15 : 0;
             }
         }
         return 0;

@@ -313,6 +313,10 @@ public class Registry {
         registerItem("mug", new ItemMug().setCreativeTab(Soot.creativeTab));
         registerItem("metallurgic_dust", new ItemMetallurgicDust().setCreativeTab(Soot.creativeTab));
         registerItem("ember_grit", new Item().setCreativeTab(Soot.creativeTab));
+        registerItem("stamp_text_raw", new Item().setCreativeTab(Soot.creativeTab));
+        registerItem("stamp_text", new Item().setCreativeTab(Soot.creativeTab));
+        registerItem("stamp_nugget_raw", new Item().setCreativeTab(Soot.creativeTab));
+        registerItem("stamp_nugget", new Item().setCreativeTab(Soot.creativeTab));
 
         BlockStill still = (BlockStill) new BlockStill().setHardness(1.6f).setLightOpacity(0).setCreativeTab(Soot.creativeTab);
         registerBlock("still", still, new ItemStill(still));
