@@ -1,11 +1,14 @@
 package soot.recipe;
 
+import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import soot.util.IHasSize;
+
+import java.util.List;
 
 public class RecipeStamper {
     public Ingredient input;
@@ -25,6 +28,13 @@ public class RecipeStamper {
     {
         return input instanceof IHasSize ? ((IHasSize) input).getSize() : 1;
     }
+
+    public List<ItemStack> getInputs()
+    {
+        return Lists.newArrayList(input.getMatchingStacks());
+    }
+
+    public List<ItemStack> getOutputs() { return Lists.newArrayList(output); }
 
     public ItemStack getResult(TileEntity tile, ItemStack item, FluidStack fluid, ItemStack stamp) {
         return output.copy();

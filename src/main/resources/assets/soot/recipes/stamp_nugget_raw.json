@@ -1,0 +1,19 @@
+{
+  "result": {
+    "item": "soot:stamp_nugget_raw",
+    "count": 1,
+    "data": 0
+  },
+  "pattern": [
+    "CCC",
+    "C C",
+    " C "
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "C": {
+      "item": "embers:blend_caminite",
+      "data": 0
+    }
+  }
+}

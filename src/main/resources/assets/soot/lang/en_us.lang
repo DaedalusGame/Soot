@@ -1,8 +1,12 @@
 itemGroup.soot=Soot
 
+soot.tooltip.eitr=Degrades armor on hit.
+
 embers.jei.recipe.dawnstone_anvil=Dawnstone Anvil Recipe
 embers.jei.recipe.alchemical_mixer=Alchemical Mixer Recipe
 embers.jei.recipe.still=Still Recipe
+
+tile.sulfur_ore.name=Sulfur Ore
 
 tile.ember_burst.name=Ember Spread Burst
 tile.ember_funnel.name=Ember Funnel
@@ -13,6 +17,7 @@ tile.catalytic_plug.name=Catalytic Plug
 tile.insulation.name=Heat Insulation
 tile.distillation_pipe.name=Auxillary Filter
 
+tile.scale.name=Scales
 tile.redstone_bin.name=Trapdoor Bin
 tile.alchemy_gauge.name=Alchemical Dial
 
@@ -43,6 +48,13 @@ item.signet_antimony.name=Signet of Antimony
 item.ingot_antimony.name=Antimony Ingot
 item.ember_grit.name=Ember Grit
 item.metallurgic_dust.name=Metallurgic Dust
+item.stamp_text_raw.name=Raw Inscription Stamp
+item.stamp_text.name=Inscription Stamp
+item.stamp_nugget_raw.name=Raw Nugget Stamp
+item.stamp_nugget.name=Nugget Stamp
+item.sulfur.name=Sulfur
+item.sulfur_clump.name=Liver of Sulfur
+item.eitr.name=Eitr
 
 fluid.sugar=Molten Sugar
 fluid.antimony=Molten Antimony

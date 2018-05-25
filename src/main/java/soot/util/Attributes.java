@@ -5,12 +5,9 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.event.entity.EntityEvent;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.player.ArrowLooseEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 
@@ -46,7 +43,7 @@ public class Attributes {
 
         if(entity != null && attacker != null) {
             int fire_aspect = (int) entity.getEntityAttribute(FIRE_ASPECT).getAttributeValue();
-            if(isBarehandedDamage(damageSource,attacker))
+            if(MiscUtil.isBarehandedDamage(damageSource,attacker))
                 damage *= entity.getEntityAttribute(BAREHANDED_POWER).getAttributeValue();
             if(fire_aspect > 0)
                 entity.setFire(fire_aspect);
@@ -64,7 +61,7 @@ public class Attributes {
         if(entity != null)
         {
             IAttributeInstance damageRate = null;
-            if(isPhysicalDamage(damageSource))
+            if(MiscUtil.isPhysicalDamage(damageSource))
                 damageRate = entity.getEntityAttribute(PHYSICAL_DAMAGE_RATE);
             if(damageSource.isFireDamage())
                 damageRate = entity.getEntityAttribute(FIRE_DAMAGE_RATE);
@@ -75,13 +72,4 @@ public class Attributes {
         event.setAmount(damage);
     }
 
-    private static boolean isPhysicalDamage(DamageSource damageSource)
-    {
-        return damageSource.getImmediateSource() != null && !damageSource.isProjectile() && !damageSource.isExplosion() && !damageSource.isFireDamage() && !damageSource.isMagicDamage() && !damageSource.isDamageAbsolute();
-    }
-
-    private static boolean isBarehandedDamage(DamageSource damageSource, EntityLivingBase attacker)
-    {
-        return attacker.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND).isEmpty() && isPhysicalDamage(damageSource);
-    }
 }

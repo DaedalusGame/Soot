@@ -112,12 +112,12 @@ public class CraftingRegistry {
         convertIngredient.put(new ItemStack(RegistryManager.sword_lead, 1, OreDictionary.WILDCARD_VALUE), new IngredientMaterialTool("sword", "lead"));
 
         ListIterator<ItemMeltingOreRecipe> iterator = RecipeRegistry.meltingOreRecipes.listIterator();
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             ItemMeltingOreRecipe recipe = iterator.next();
-            if(recipe.getOreName().startsWith("ore")) {
+            if (recipe.getOreName().startsWith("ore")) {
                 FluidStack fluid = recipe.getFluid().copy();
                 fluid.amount = Config.MELTER_ORE_AMOUNT * 2;
-                iterator.set(new ItemMeltingOreRecipe(recipe.getOreName(),fluid));
+                iterator.set(new ItemMeltingOreRecipe(recipe.getOreName(), fluid));
             }
         }
 
@@ -128,27 +128,50 @@ public class CraftingRegistry {
         OreIngredient redstoneBlock = new OreIngredient("blockRedstone");
         OreIngredient glass = new OreIngredient("blockGlass");
         Ingredient fluidPipe = Ingredient.fromStacks(new ItemStack(RegistryManager.pipe));
+        Ingredient leadPickaxe = new IngredientMaterialTool("pickaxe", "lead");
         addAlchemyTabletRecipe(new ItemStack(Registry.ALCHEMY_GLOBE), blankGlass, ingotLead, Ingredient.fromItem(RegistryManager.aspectus_lead), ingotLead, Ingredient.fromItem(RegistryManager.archaic_circuit), new AspectRangeList(AspectList.createStandard(0, 0, 16, 0, 32), AspectList.createStandard(0, 0, 32, 0, 64)));
         addAlchemyTabletRecipe(new ItemStack(Registry.CATALYTIC_PLUG), ingotSilver, fluidPipe, glass, fluidPipe, redstoneBlock, new AspectRangeList(AspectList.createStandard(0, 20, 0, 32, 0), AspectList.createStandard(0, 30, 0, 64, 0)));
-        addAlchemyTabletRecipe(new ItemStack(Registry.METALLURGIC_DUST,3), ingotAntimony, Ingredient.fromItem(Registry.EMBER_GRIT), new OreIngredient("dustRedstone"), Ingredient.EMPTY, Ingredient.EMPTY, new AspectRangeList(AspectList.createStandard(0, 0, 0, 0, 0), AspectList.createStandard(16, 16, 16, 16, 16)));
+        addAlchemyTabletRecipe(new ItemStack(Registry.METALLURGIC_DUST, 3), ingotAntimony, Ingredient.fromItem(Registry.EMBER_GRIT), new OreIngredient("dustRedstone"), Ingredient.EMPTY, Ingredient.EMPTY, new AspectRangeList(AspectList.createStandard(0, 0, 0, 0, 0), AspectList.createStandard(16, 16, 16, 16, 16)));
+        addAlchemyTabletRecipe(new ItemStack(Registry.EITR, 1), leadPickaxe, ingotAntimony, Ingredient.fromItem(Registry.SULFUR_CLUMP), ingotAntimony, Ingredient.fromItem(Registry.SIGNET_ANTIMONY), new AspectRangeList(AspectList.createStandard(64, 0, 0, 0, 64), AspectList.createStandard(96, 0, 0, 0, 96)));
 
-        removeRecipe(new ResourceLocation(Embers.MODID,"archaic_bricks_2")); //Remove conflicting recipe
-        removeRecipe(new ResourceLocation(Embers.MODID,"plate_caminite_raw"));
+        removeRecipe(new ResourceLocation(Embers.MODID, "archaic_bricks_2")); //Remove conflicting recipe
+        removeRecipe(new ResourceLocation(Embers.MODID, "plate_caminite_raw"));
 
-        FurnaceRecipes.instance().addSmeltingRecipe(new ItemStack(Registry.STAMP_NUGGET_RAW),new ItemStack(Registry.STAMP_NUGGET),0.1f);
-        FurnaceRecipes.instance().addSmeltingRecipe(new ItemStack(Registry.STAMP_TEXT_RAW),new ItemStack(Registry.STAMP_TEXT),0.1f);
-        FurnaceRecipes.instance().addSmeltingRecipe(new ItemStack(Registry.CAMINITE_CLAY),new ItemStack(Registry.CAMINITE_LARGE_TILE),0.1f);
+        FurnaceRecipes.instance().addSmeltingRecipe(new ItemStack(Registry.STAMP_NUGGET_RAW), new ItemStack(Registry.STAMP_NUGGET), 0.1f);
+        FurnaceRecipes.instance().addSmeltingRecipe(new ItemStack(Registry.STAMP_TEXT_RAW), new ItemStack(Registry.STAMP_TEXT), 0.1f);
+        FurnaceRecipes.instance().addSmeltingRecipe(new ItemStack(Registry.CAMINITE_CLAY), new ItemStack(Registry.CAMINITE_LARGE_TILE), 0.1f);
+
+        int nuggetSize = 16;
+        addStamperRecipe(new ItemStack(Items.IRON_NUGGET), Ingredient.EMPTY, FluidRegistry.getFluidStack("iron", nuggetSize), Ingredient.fromItem(Registry.STAMP_NUGGET));
+        addStamperRecipe(new ItemStack(Items.GOLD_NUGGET), Ingredient.EMPTY, FluidRegistry.getFluidStack("gold", nuggetSize), Ingredient.fromItem(Registry.STAMP_NUGGET));
+        addStamperRecipe(new ItemStack(RegistryManager.nugget_copper), Ingredient.EMPTY, FluidRegistry.getFluidStack("copper", nuggetSize), Ingredient.fromItem(Registry.STAMP_NUGGET));
+        addStamperRecipe(new ItemStack(RegistryManager.nugget_dawnstone), Ingredient.EMPTY, FluidRegistry.getFluidStack("dawnstone", nuggetSize), Ingredient.fromItem(Registry.STAMP_NUGGET));
+        addStamperRecipe(new ItemStack(RegistryManager.nugget_lead), Ingredient.EMPTY, FluidRegistry.getFluidStack("lead", nuggetSize), Ingredient.fromItem(Registry.STAMP_NUGGET));
+        addStamperRecipe(new ItemStack(RegistryManager.nugget_silver), Ingredient.EMPTY, FluidRegistry.getFluidStack("silver", nuggetSize), Ingredient.fromItem(Registry.STAMP_NUGGET));
+        if (ConfigManager.enableTin)
+            addStamperRecipe(new ItemStack(RegistryManager.nugget_tin), Ingredient.EMPTY, FluidRegistry.getFluidStack("tin", nuggetSize), Ingredient.fromItem(Registry.STAMP_NUGGET));
+        if (ConfigManager.enableAluminum)
+            addStamperRecipe(new ItemStack(RegistryManager.nugget_aluminum), Ingredient.EMPTY, FluidRegistry.getFluidStack("aluminum", nuggetSize), Ingredient.fromItem(Registry.STAMP_NUGGET));
+        if (ConfigManager.enableBronze)
+            addStamperRecipe(new ItemStack(RegistryManager.nugget_bronze), Ingredient.EMPTY, FluidRegistry.getFluidStack("bronze", nuggetSize), Ingredient.fromItem(Registry.STAMP_NUGGET));
+        if (ConfigManager.enableNickel)
+            addStamperRecipe(new ItemStack(RegistryManager.nugget_nickel), Ingredient.EMPTY, FluidRegistry.getFluidStack("nickel", nuggetSize), Ingredient.fromItem(Registry.STAMP_NUGGET));
+        if (ConfigManager.enableElectrum)
+            addStamperRecipe(new ItemStack(RegistryManager.nugget_electrum), Ingredient.EMPTY, FluidRegistry.getFluidStack("electrum", nuggetSize), Ingredient.fromItem(Registry.STAMP_NUGGET));
+
+        addStamperRecipe(new RecipeStamperLiver());
+        addStamperRecipe(new RecipeStamperRename());
 
         RecipeRegistry.meltingRecipes.add(new ItemMeltingRecipe(new ItemStack(Items.SUGAR), FluidRegistry.getFluidStack("sugar", 16), false, false)); //Nugget size -> you can combine sugar and lead into antimony without remainder and 1000 sugar store nicely in a fluid vessel
 
         ArrayList<Fluid> leveledMetals = new ArrayList<>();
-        leveledMetals.add(RegistryManager.fluid_molten_lead);
+        leveledMetals.add(FluidRegistry.getFluid("lead"));
         if (ConfigManager.enableTin) //Tin sometimes doesn't exist.
-            leveledMetals.add(RegistryManager.fluid_molten_tin);
-        leveledMetals.add(RegistryManager.fluid_molten_iron);
-        leveledMetals.add(RegistryManager.fluid_molten_copper);
-        leveledMetals.add(RegistryManager.fluid_molten_silver);
-        leveledMetals.add(RegistryManager.fluid_molten_gold);
+            leveledMetals.add(FluidRegistry.getFluid("tin"));
+        leveledMetals.add(FluidRegistry.getFluid("iron"));
+        leveledMetals.add(FluidRegistry.getFluid("copper"));
+        leveledMetals.add(FluidRegistry.getFluid("silver"));
+        leveledMetals.add(FluidRegistry.getFluid("gold"));
         //Nickel and Aluminium are mundane materials
 
         for (int i = 0; i < leveledMetals.size() - 1; i++) {
@@ -158,7 +181,7 @@ public class CraftingRegistry {
             addAlchemicalMixingRecipe(nextLevel, new FluidStack[]{currentLevel, FluidRegistry.getFluidStack("alchemical_redstone", 3)}, new AspectRangeList(AspectList.createStandard(0, 0, 0, 0, (e * e) * 4), AspectList.createStandard(0, 0, 0, 0, (e * e) * 8)));
         }
 
-        addAlchemicalMixingRecipe(FluidRegistry.getFluidStack("antimony", 12), new FluidStack[]{new FluidStack(RegistryManager.fluid_molten_lead, 8), FluidRegistry.getFluidStack("sugar", 4)}, new AspectRangeList(AspectList.createStandard(0, 16, 0, 16, 0), AspectList.createStandard(0, 32, 0, 24, 0)));
+        addAlchemicalMixingRecipe(FluidRegistry.getFluidStack("antimony", 12), new FluidStack[]{FluidRegistry.getFluidStack("lead", 8), FluidRegistry.getFluidStack("sugar", 4)}, new AspectRangeList(AspectList.createStandard(0, 16, 0, 16, 0), AspectList.createStandard(0, 32, 0, 24, 0)));
         RecipeRegistry.stampingRecipes.add(new ItemStampingRecipe(new ItemStack(RegistryManager.shard_ember), FluidRegistry.getFluidStack("antimony", 144), EnumStampType.TYPE_BAR, new ItemStack(Registry.SIGNET_ANTIMONY), false, false));
         RecipeRegistry.stampingRecipes.add(new ItemStampingRecipe(ItemStack.EMPTY, FluidRegistry.getFluidStack("antimony", 144), EnumStampType.TYPE_BAR, new ItemStack(Registry.INGOT_ANTIMONY), false, false));
         RecipeRegistry.meltingRecipes.add(new ItemMeltingRecipe(new ItemStack(Registry.INGOT_ANTIMONY), FluidRegistry.getFluidStack("antimony", 144), false, false));
@@ -191,14 +214,14 @@ public class CraftingRegistry {
     }
 
     private static void initAlcoholRecipes() {
-        FluidUtil.registerModifier(new FluidModifier("viscosity", 1000){
+        FluidUtil.registerModifier(new FluidModifier("viscosity", 1000) {
             @Override
             public String getFormattedText(NBTTagCompound compound, Fluid fluid) {
                 float value = getOrDefault(compound, fluid);
-                if(value > 1000)
-                    return I18n.format("distilling.modifier.dial.slower_chugging",value);
+                if (value > 1000)
+                    return I18n.format("distilling.modifier.dial.slower_chugging", value);
                 else
-                    return I18n.format("distilling.modifier.dial.faster_chugging",value);
+                    return I18n.format("distilling.modifier.dial.faster_chugging", value);
             }
         });
         FluidUtil.registerModifier(new FluidModifier("light", 0).setFormatType(FluidModifier.FormatType.NAME_ONLY));
@@ -214,18 +237,18 @@ public class CraftingRegistry {
 
             @Override
             public String getFormattedText(NBTTagCompound compound, Fluid fluid) {
-                int value = (int)Math.ceil(getOrDefault(compound, fluid) / 2);
-                if(value >= 0)
-                    return I18n.format("distilling.modifier.dial.add_health",value);
+                int value = (int) Math.ceil(getOrDefault(compound, fluid) / 2);
+                if (value >= 0)
+                    return I18n.format("distilling.modifier.dial.add_health", value);
                 else
-                    return I18n.format("distilling.modifier.dial.sub_health",value);
+                    return I18n.format("distilling.modifier.dial.sub_health", value);
             }
         });
         FluidUtil.registerModifier(new FluidModifier("hunger", 0) {
             @Override
             public void applyEffect(EntityLivingBase target, NBTTagCompound compound, Fluid fluid) {
                 if (target instanceof EntityPlayer) {
-                    int hunger = (int)compound.getFloat("hunger");
+                    int hunger = (int) compound.getFloat("hunger");
                     float saturation = compound.getFloat("saturation");
                     ((EntityPlayer) target).getFoodStats().addStats(hunger, saturation);
                 }
@@ -233,11 +256,11 @@ public class CraftingRegistry {
 
             @Override
             public String getFormattedText(NBTTagCompound compound, Fluid fluid) {
-                int value = (int)Math.ceil(getOrDefault(compound, fluid) / 2);
-                if(value >= 0)
-                    return I18n.format("distilling.modifier.dial.add_hunger",value);
+                int value = (int) Math.ceil(getOrDefault(compound, fluid) / 2);
+                if (value >= 0)
+                    return I18n.format("distilling.modifier.dial.add_hunger", value);
                 else
-                    return I18n.format("distilling.modifier.dial.sub_hunger",value);
+                    return I18n.format("distilling.modifier.dial.sub_hunger", value);
             }
         });
         FluidUtil.registerModifier(new FluidModifier("saturation", 0).setFormatType(FluidModifier.FormatType.NONE)); //Saturation is a classic hidden value
@@ -272,7 +295,7 @@ public class CraftingRegistry {
             @Override
             public void applyEffect(EntityLivingBase target, NBTTagCompound compound, Fluid fluid) {
                 float value = getOrDefault(compound, fluid);
-                if (target.getRNG().nextDouble()*100 < value)
+                if (target.getRNG().nextDouble() * 100 < value)
                     target.addPotionEffect(new PotionEffect(Registry.POTION_TIPSY, (int) value * 20));
             }
         }.setFormatType(FluidModifier.FormatType.PERCENTAGE));
@@ -295,11 +318,11 @@ public class CraftingRegistry {
         FluidUtil.registerModifier(new FluidModifier("fuel", 0) {
             @Override
             public String getFormattedText(NBTTagCompound compound, Fluid fluid) {
-                int burntime = (int)getOrDefault(compound, fluid);
-                if(burntime > 0)
-                    return super.getFormattedText(compound,fluid);
+                int burntime = (int) getOrDefault(compound, fluid);
+                if (burntime > 0)
+                    return super.getFormattedText(compound, fluid);
                 else
-                    return I18n.format("distilling.modifier.dial.fire_retardant",burntime);
+                    return I18n.format("distilling.modifier.dial.fire_retardant", burntime);
             }
         });
 
@@ -355,7 +378,7 @@ public class CraftingRegistry {
 
         stillRecipes.add(new RecipeStill(new FluidStack(boiling_wort, 1), Ingredient.EMPTY, 0, new FluidStack(ale, 1)));
         stillRecipes.add(new RecipeStill(new FluidStack(boiling_potato_juice, 3), Ingredient.EMPTY, 0, new FluidStack(vodka, 2)));
-        stillRecipes.add(new RecipeStill(new FluidStack(vodka,1),Ingredient.fromItem(Items.SNOWBALL),1,new FluidStack(snowpoff,1)));
+        stillRecipes.add(new RecipeStill(new FluidStack(vodka, 1), Ingredient.fromItem(Items.SNOWBALL), 1, new FluidStack(snowpoff, 1)));
         stillRecipes.add(new RecipeStill(new FluidStack(boiling_verdigris, 1), Ingredient.fromItem(Items.SUGAR), 0, new FluidStack(absinthe, 1)));
         stillRecipes.add(new RecipeStill(null, new OreIngredient("logWood"), 1, new FluidStack(methanol, 1)));
 
@@ -520,7 +543,21 @@ public class CraftingRegistry {
                 stamp = Ingredient.fromItem(RegistryManager.stamp_plate);
                 break;
         }
-        addStamperRecipe(recipe.result, convertToIngredient(recipe.getStack()), recipe.getFluid(), stamp);
+        Ingredient input = convertToIngredient(recipe.getStack());
+        if (recipe.getClass() == ItemStampingRecipe.class)
+            addStamperRecipe(recipe.result, input, recipe.getFluid(), stamp);
+        else
+            addStamperRecipe(new RecipeStamper(input, recipe.getFluid(), recipe.result, stamp) {
+                @Override
+                public boolean matches(ItemStack item, FluidStack fluid, ItemStack stamp) {
+                    return recipe.matches(item, fluid, EnumStampType.getType(stamp));
+                }
+
+                @Override
+                public ItemStack getResult(TileEntity tile, ItemStack item, FluidStack fluid, ItemStack stamp) {
+                    return recipe.getResult(item, fluid, EnumStampType.getType(stamp));
+                }
+            }); //We need to wrap certain recipes.
     }
 
     private static void convertAlchemyRecipe(AlchemyRecipe recipe) {
@@ -554,16 +591,25 @@ public class CraftingRegistry {
         stamperRecipes.add(new RecipeStamper(input, fluid, output, stamp));
     }
 
+    public static void addStamperRecipe(RecipeStamper recipe) {
+        stamperRecipes.add(recipe);
+    }
+
     public static void addAlchemyTabletRecipe(ItemStack output, Ingredient center, Ingredient east, Ingredient west, Ingredient north, Ingredient south, AspectRangeList aspects) {
         addAlchemyTabletRecipe(output, center, Lists.newArrayList(east, west, north, south), aspects);
     }
 
     public static void addAlchemyTabletRecipe(ItemStack output, Ingredient center, List<Ingredient> outside, AspectRangeList aspects) {
+        RecipeAlchemyTablet recipe = new RecipeAlchemyTablet(output, center, outside, aspects);
+        addAlchemyTabletRecipe(recipe);
+    }
+
+    public static void addAlchemyTabletRecipe(RecipeAlchemyTablet recipe) {
         if (Config.FIX_MATH_ERROR_A)
-            aspects.fixMathematicalError();
+            recipe.aspectRange.fixMathematicalError();
         if (Config.FIX_MATH_ERROR_B)
-            aspects.setSeedOffset(alchemyTabletRecipes.size());
-        alchemyTabletRecipes.add(new RecipeAlchemyTablet(output, center, outside, aspects));
+            recipe.aspectRange.setSeedOffset(alchemyTabletRecipes.size());
+        alchemyTabletRecipes.add(recipe);
     }
 
     public static RecipeAlchemyTablet getAlchemyTabletRecipe(ItemStack center, List<ItemStack> outside) {
@@ -636,7 +682,7 @@ public class CraftingRegistry {
         return matchedRecipe;
     }
 
-    public static RecipeStill getStillRecipe(TileEntityStillBase tile,FluidStack stack, ItemStack catalyst) {
+    public static RecipeStill getStillRecipe(TileEntityStillBase tile, FluidStack stack, ItemStack catalyst) {
         RecipeStill matchedRecipe = null;
 
         for (RecipeStill recipe : stillRecipes) {

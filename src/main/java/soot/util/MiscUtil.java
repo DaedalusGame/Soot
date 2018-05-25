@@ -2,9 +2,14 @@ package soot.util;
 
 import com.google.common.collect.Lists;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttribute;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
@@ -13,7 +18,9 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import soot.Registry;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -104,5 +111,56 @@ public class MiscUtil {
     {
         if(entity.attackEntityFrom(source,amount))
             entity.hurtResistantTime = 0;
+    }
+
+    public static void degradeEquipment(EntityLivingBase entity, int amt) {
+        for (ItemStack armor : entity.getArmorInventoryList()) {
+            if(armor.isItemStackDamageable())
+                armor.damageItem(amt, entity);
+        }
+    }
+
+    public static boolean isPhysicalDamage(DamageSource damageSource)
+    {
+        return damageSource.getImmediateSource() != null && !damageSource.isProjectile() && !damageSource.isExplosion() && !damageSource.isFireDamage() && !damageSource.isMagicDamage() && !damageSource.isDamageAbsolute();
+    }
+
+    public static boolean isBarehandedDamage(DamageSource damageSource, EntityLivingBase attacker)
+    {
+        return attacker.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND).isEmpty() && isPhysicalDamage(damageSource);
+    }
+
+    public static boolean isEitrDamage(DamageSource damageSource, EntityLivingBase attacker)
+    {
+        return attacker.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND).getItem() == Registry.EITR && isPhysicalDamage(damageSource);
+    }
+
+    public static void setLore(List<String> addedLore, NBTTagCompound compound, boolean append) {
+        if(compound != null && compound.hasKey("display",10)) {
+            NBTTagCompound display = compound.getCompoundTag("display");
+            NBTTagList lore;
+            if(display.hasKey("Lore",9) && append)
+                lore = display.getTagList("Lore", 8);
+            else {
+                lore = new NBTTagList();
+                display.setTag("Lore",lore);
+            }
+            for(String loreString : addedLore)
+                lore.appendTag(new NBTTagString(loreString));
+        }
+    }
+
+    public static List<String> getLore(NBTTagCompound compound) {
+        ArrayList<String> addedLore = new ArrayList<>();
+        if(compound != null && compound.hasKey("display",10)) {
+            NBTTagCompound display = compound.getCompoundTag("display");
+            if(display.hasKey("Lore",9)) {
+                NBTTagList lore = display.getTagList("Lore",8);
+                if(!lore.hasNoTags())
+                    for (int i = 0; i < lore.tagCount(); ++i)
+                        addedLore.add(lore.getStringTagAt(i));
+            }
+        }
+        return addedLore;
     }
 }

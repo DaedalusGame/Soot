@@ -59,10 +59,12 @@ public class Soot
         MinecraftForge.EVENT_BUS.register(OreTransmutationManager.class);
         MinecraftForge.EVENT_BUS.register(AnvilHandler.class);
         MinecraftForge.EVENT_BUS.register(FuelHandler.class);
+        MinecraftForge.EVENT_BUS.register(EitrHandler.class);
         if(Config.TRADING_ANTIMONY)
             MinecraftForge.EVENT_BUS.register(VillagerAntimonyHandler.class);
         if(Config.GOLEMS_POISON_IMMUNE || Config.GOLEMS_TYRFING_WEAK)
             MinecraftForge.EVENT_BUS.register(GolemHandler.class);
+        MinecraftForge.ORE_GEN_BUS.register(GenerationHandler.class);
     }
 
     @EventHandler

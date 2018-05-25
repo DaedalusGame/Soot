@@ -1,0 +1,26 @@
+{
+  "result": {
+    "item": "soot:scale",
+    "data": 0
+  },
+  "pattern": [
+    "ICI",
+    " I ",
+    " S "
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "I": {
+      "type": "forge:ore_dict",
+      "ore": "ingotSilver"
+    },
+    "S": {
+      "item": "embers:block_caminite_brick_slab",
+      "data": 0
+    },
+    "C": {
+      "item": "minecraft:compass",
+      "data": 0
+    }
+  }
+}

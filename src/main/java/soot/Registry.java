@@ -5,6 +5,7 @@ import com.google.common.collect.Sets;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
@@ -21,6 +22,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -37,10 +39,7 @@ import soot.entity.EntityMuse;
 import soot.entity.EntitySnowpoff;
 import soot.fluids.FluidBooze;
 import soot.fluids.FluidMolten;
-import soot.item.ItemBlockSlab;
-import soot.item.ItemMetallurgicDust;
-import soot.item.ItemMug;
-import soot.item.ItemStill;
+import soot.item.*;
 import soot.potion.*;
 import soot.tile.*;
 import soot.tile.overrides.*;
@@ -67,6 +66,8 @@ public class Registry {
     private static ArrayList<Block> BLOCKS = new ArrayList<>();
     private static ArrayList<Item> ITEMS = new ArrayList<>();
 
+    public static Item.ToolMaterial EITR_TOOL_MATERIAL = EnumHelper.addToolMaterial(Soot.MODID+":eitr", 2, 512, 7.5f, 0.0f, 24);
+
     @GameRegistry.ObjectHolder("soot:alchemy_globe")
     public static BlockAlchemyGlobe ALCHEMY_GLOBE;
     @GameRegistry.ObjectHolder("soot:still")
@@ -77,6 +78,8 @@ public class Registry {
     @GameRegistry.ObjectHolder("soot:heat_coil")
     public static BlockHeatCoilImproved HEAT_COIL_OVERRIDE;
 
+    @GameRegistry.ObjectHolder("soot:sulfur_ore")
+    public static BlockSulfurOre SULFUR_ORE;
     @GameRegistry.ObjectHolder("soot:caminite_clay")
     public static Block CAMINITE_CLAY;
     @GameRegistry.ObjectHolder("soot:caminite_large_tile")
@@ -103,10 +106,10 @@ public class Registry {
     @GameRegistry.ObjectHolder("soot:sulfur")
     public static Item SULFUR;
     @GameRegistry.ObjectHolder("soot:sulfur_clump")
-    public static Item SULFUR_CLUMP;
+    public static ItemSulfurClump SULFUR_CLUMP;
 
     @GameRegistry.ObjectHolder("soot:eitr")
-    public static ItemSword EITR;
+    public static ItemEitr EITR;
 
     @GameRegistry.ObjectHolder("soot:ale")
     public static Potion POTION_ALE;
@@ -186,6 +189,8 @@ public class Registry {
             }
             return 0;
         });
+
+        EITR_TOOL_MATERIAL.setRepairItem(new ItemStack(SULFUR));
 
         UpgradeCatalyticPlug.registerBlacklistedTile(TileEntityStillBase.class);
     }
@@ -286,6 +291,9 @@ public class Registry {
     public static void registerBlocks() {
         Nope.shutupForge(Registry::registerOverrides);
 
+        BlockSulfurOre sulfurOre = (BlockSulfurOre) new BlockSulfurOre(Material.ROCK).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
+        registerBlock("sulfur_ore", sulfurOre, new ItemBlock(sulfurOre));
+
         BlockEmberBurst emberBurst = (BlockEmberBurst) new BlockEmberBurst(Material.ROCK).setCreativeTab(Soot.creativeTab);
         BlockEmberFunnel emberFunnel = (BlockEmberFunnel) new BlockEmberFunnel(Material.ROCK).setCreativeTab(Soot.creativeTab);
         registerBlock("ember_burst", emberBurst, new ItemBlock(emberBurst));
@@ -317,6 +325,9 @@ public class Registry {
         registerItem("stamp_text", new Item().setCreativeTab(Soot.creativeTab));
         registerItem("stamp_nugget_raw", new Item().setCreativeTab(Soot.creativeTab));
         registerItem("stamp_nugget", new Item().setCreativeTab(Soot.creativeTab));
+        registerItem("sulfur", new Item().setCreativeTab(Soot.creativeTab));
+        registerItem("sulfur_clump", new ItemSulfurClump().setCreativeTab(Soot.creativeTab));
+        registerItem("eitr", new ItemEitr(EITR_TOOL_MATERIAL).setCreativeTab(Soot.creativeTab));
 
         BlockStill still = (BlockStill) new BlockStill().setHardness(1.6f).setLightOpacity(0).setCreativeTab(Soot.creativeTab);
         registerBlock("still", still, new ItemStill(still));
@@ -482,6 +493,8 @@ public class Registry {
     }
 
     public static void registerTileEntities() {
+        registerTileEntity(TileEntitySulfurOre.class);
+
         registerTileEntity(TileEntityEmberBurst.class);
         registerTileEntity(TileEntityEmberFunnel.class);
 

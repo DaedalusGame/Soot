@@ -9,6 +9,7 @@ import teamroots.embers.compat.jei.StampingRecipeWrapper;
 import teamroots.embers.recipe.ItemStampingRecipe;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class StamperWrapper extends StampingRecipeWrapper {
     RecipeStamper recipe;
@@ -20,10 +21,11 @@ public class StamperWrapper extends StampingRecipeWrapper {
 
     @Override
     public void getIngredients(IIngredients ingredients) {
-        ArrayList<ItemStack> inputStacks = Lists.newArrayList(recipe.input.getMatchingStacks());
+        List<ItemStack> inputStacks = recipe.getInputs();
         ArrayList<ItemStack> stampStacks = Lists.newArrayList(recipe.stamp.getMatchingStacks());
+        List<ItemStack> outputStacks = recipe.getOutputs();
         ingredients.setInputLists(ItemStack.class, Lists.newArrayList(inputStacks,stampStacks));
         ingredients.setInput(FluidStack.class, recipe.inputFluid);
-        ingredients.setOutput(ItemStack.class, recipe.output);
+        ingredients.setOutputLists(ItemStack.class, Lists.<List<ItemStack>>newArrayList(outputStacks));
     }
 }
