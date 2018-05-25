@@ -16,6 +16,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import soot.Config;
 import soot.recipe.CraftingRegistry;
 import soot.recipe.RecipeStamper;
+import soot.util.CTUtil;
 import soot.util.IngredientCraftTweaker;
 import stanhebben.zenscript.annotations.NotNull;
 import stanhebben.zenscript.annotations.Optional;
@@ -46,7 +47,7 @@ public class Stamper {
     }
 
     private static void addInternal(IItemStack output, ILiquidStack liquid, IIngredient stamp, IIngredient input) {
-        RecipeStamper recipe = new RecipeStamper(new IngredientCraftTweaker(input),InputHelper.toFluid(liquid),InputHelper.toStack(output),new IngredientCraftTweaker(stamp));
+        RecipeStamper recipe = new RecipeStamper(CTUtil.toIngredient(input),InputHelper.toFluid(liquid),InputHelper.toStack(output),CTUtil.toIngredient(stamp));
         CraftTweakerAPI.apply(new Add(recipe));
     }
 

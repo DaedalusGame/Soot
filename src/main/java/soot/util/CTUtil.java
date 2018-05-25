@@ -1,12 +1,18 @@
 package soot.util;
 
+import com.blamejared.mtlib.helpers.InputHelper;
 import crafttweaker.api.item.IIngredient;
+import crafttweaker.api.item.IItemStack;
+import crafttweaker.api.oredict.IngredientOreDict;
 import net.minecraft.item.crafting.Ingredient;
 import stanhebben.zenscript.value.IntRange;
 
 public class CTUtil {
-    public static Ingredient toIngredient(IIngredient ingredient)
-    {
+    public static Ingredient toIngredient(IIngredient ingredient) {
+        if(ingredient == null)
+            return Ingredient.EMPTY;
+        if(ingredient instanceof IItemStack)
+            return Ingredient.fromStacks(InputHelper.toStack((IItemStack) ingredient));
         return new IngredientCraftTweaker(ingredient);
     }
 
