@@ -188,6 +188,7 @@ public class CraftingRegistry {
         RecipeRegistry.meltingRecipes.add(new ItemMeltingRecipe(new ItemStack(Items.REDSTONE), FluidRegistry.getFluidStack("alchemical_redstone", 144), false, false));
 
         OreDictionary.registerOre("ingotAntimony", new ItemStack(Registry.INGOT_ANTIMONY));
+        OreDictionary.registerOre("dustSulfur", new ItemStack(Registry.SULFUR));
 
         AlchemyUtil.registerAspect("iron", Ingredient.fromItem(RegistryManager.aspectus_iron));
         AlchemyUtil.registerAspect("copper", Ingredient.fromItem(RegistryManager.aspectus_copper));
