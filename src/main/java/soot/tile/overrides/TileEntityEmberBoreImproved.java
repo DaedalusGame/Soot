@@ -148,8 +148,11 @@ public class TileEntityEmberBoreImproved extends TileEntityEmberBore {
 
         @Override
         public ItemStack insertItem(int slot, ItemStack stack, boolean simulate){
-            if (slot == SLOT_FUEL && TileEntityFurnace.getItemBurnTime(stack) != 0){
+            int burntime = TileEntityFurnace.getItemBurnTime(stack);
+            if (slot == SLOT_FUEL && burntime != 0){
                 return super.insertItem(slot, stack, simulate);
+            } else if(burntime != 0) {
+                return super.insertItem(SLOT_FUEL, stack, simulate);
             }
             return stack;
         }
