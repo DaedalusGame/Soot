@@ -234,7 +234,7 @@ public class Registry {
 
         gatherOreTransmutations();
 
-        initResearches();
+        //initResearches();
     }
 
     public static void initResearches() {
