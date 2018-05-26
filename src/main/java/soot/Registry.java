@@ -5,19 +5,17 @@ import com.google.common.collect.Sets;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
@@ -27,6 +25,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
@@ -39,6 +38,7 @@ import soot.entity.EntityMuse;
 import soot.entity.EntitySnowpoff;
 import soot.fluids.FluidBooze;
 import soot.fluids.FluidMolten;
+import soot.handler.GuiHandler;
 import soot.item.*;
 import soot.potion.*;
 import soot.tile.*;
@@ -62,6 +62,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Random;
 
 public class Registry {
     private static ArrayList<Block> MODELLED_BLOCKS = new ArrayList<>();
@@ -79,6 +80,10 @@ public class Registry {
     public static BlockCatalyticPlug CATALYTIC_PLUG;
     @GameRegistry.ObjectHolder("soot:ember_burst")
     public static BlockEmberBurst EMBER_BURST;
+    @GameRegistry.ObjectHolder("soot:distillation_pipe")
+    public static BlockDistillationPipe DISTILLATION_PIPE;
+    @GameRegistry.ObjectHolder("soot:insulation")
+    public static BlockInsulation INSULATION;
 
     @GameRegistry.ObjectHolder("soot:redstone_bin")
     public static BlockRedstoneBin REDSTONE_BIN;
@@ -234,7 +239,8 @@ public class Registry {
 
         gatherOreTransmutations();
 
-        //initResearches();
+        initResearches();
+        NetworkRegistry.INSTANCE.registerGuiHandler(Embers.instance, new GuiHandler());
     }
 
     public static void initResearches() {
@@ -243,7 +249,7 @@ public class Registry {
         ResearchCategory categoryMetallurgy = null;
         ResearchCategory categoryAlchemy = null;
         ResearchCategory categorySmithing = null;
-        ResearchCategory brewing = new ResearchCategory("Brewing",new ResourceLocation(Soot.MODID,"textures/gui/codex_index.png"), 224.0, 16.0);
+        ResearchCategory categoryBrewing = new ResearchCategory("brewing",new ResourceLocation(Soot.MODID,"textures/gui/codex_index.png"), 192.0, 16.0);
 
         for(ResearchCategory category : ResearchManager.researches) {
             if(category.name.equals("world"))
@@ -257,13 +263,28 @@ public class Registry {
             if(category.name.equals("smithing"))
                 categorySmithing = category;
         }
-        ResearchManager.researches.add(brewing);
+        ResearchManager.researches.add(categoryBrewing);
         categoryWorld.addResearch(new ResearchBase("sulfur",new ItemStack(SULFUR_CLUMP),12.0,0.0));
         categoryWorld.addResearch(new ResearchBase("redstone_bin",new ItemStack(REDSTONE_BIN),12.0,5.0));
-        //categoryWorld.addResearch(new ResearchBase("sulfur",new ItemStack(SULFUR_CLUMP),12.0,0.0));
+        categoryMechanisms.addResearch(new ResearchBase("insulation",new ItemStack(INSULATION), 12.0D, 0.0D).addAncestor(ResearchManager.hearth_coil));
+        categoryMetallurgy.addResearch(new ResearchBase("advanced_emitters",new ItemStack(EMBER_BURST),0.0D, 4.0D));
+        categoryMetallurgy.addResearch(new ResearchBase("catalytic_plug",new ItemStack(CATALYTIC_PLUG),12.0D, 3.0D).addAncestor(ResearchManager.alchemy));
         categoryMetallurgy.addResearch(new ResearchBase("scale",new ItemStack(SCALE),12.0D, 5.0D).addAncestor(ResearchManager.alchemy));
         categoryAlchemy.addResearch(new ResearchBase("eitr",new ItemStack(EITR), 4.0, 4.0).addAncestor(ResearchManager.waste));
-        categoryMetallurgy.addResearch(new ResearchBase("advanced_emitters",new ItemStack(EMBER_BURST),0.0D, 4.0D));
+        ResearchBase still = new ResearchBase("still", new ItemStack(STILL), 6.0D, 4.0D);
+        categoryBrewing.addResearch(still);
+        categoryBrewing.addResearch(new ResearchBase("distillation_pipe",new ItemStack(DISTILLATION_PIPE), 8.0D, 7.0D).addAncestor(still));
+        categoryBrewing.addResearch(new ResearchBase("still_fuel",new ItemStack(RegistryManager.archaic_light), 6.0D, 7.0D).addAncestor(still));
+        Random random = new Random();
+        CaskLiquid liquid = CaskManager.liquids.get(random.nextInt(CaskManager.liquids.size()));
+        categoryBrewing.addResearch(new ResearchBase("drinks",MUG.getFilled(liquid), 4.0D, 7.0D));
+        categoryBrewing.addResearch(new ResearchBase("lifedrinker",new ItemStack(Items.GHAST_TEAR), 1.0D, 7.0D).addAncestor(still));
+        categoryBrewing.addResearch(new ResearchBase("steadfast",new ItemStack(Items.GOLDEN_CARROT), 0.0D, 5.0D).addAncestor(still));
+        categoryBrewing.addResearch(new ResearchBase("duration",new ItemStack(Items.REDSTONE), 0.0D, 3.0D).addAncestor(still));
+        categoryBrewing.addResearch(new ResearchBase("purification",new ItemStack(Items.PRISMARINE_CRYSTALS), 1.0D, 1.0D).addAncestor(still));
+        categoryBrewing.addResearch(new ResearchBase("healing",new ItemStack(Items.NETHER_WART), 11.0D, 1.0D).addAncestor(still));
+        categoryBrewing.addResearch(new ResearchBase("cooling",new ItemStack(Blocks.ICE), 12.0D, 3.0D).addAncestor(still));
+        categoryBrewing.addResearch(new ResearchBase("stew",new ItemStack(Items.POTATO), 12.0D, 5.0D).addAncestor(still));
     }
 
     public static void gatherOreTransmutations() {
