@@ -4,6 +4,9 @@ import com.google.common.collect.Lists;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.items.CapabilityItemHandler;
 import soot.recipe.CraftingRegistry;
 import soot.recipe.RecipeAlchemyTablet;
 import soot.util.AlchemyResult;
@@ -46,6 +49,11 @@ public class TileEntityAlchemyTabletImproved extends TileEntityAlchemyTablet {
         this.east.deserializeNBT(compound.getCompoundTag("east"));
         this.west.deserializeNBT(compound.getCompoundTag("west"));
         this.center.deserializeNBT(compound.getCompoundTag("center"));
+    }
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        return !(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing == null) && super.hasCapability(capability, facing);
     }
 
     @Override
