@@ -53,8 +53,8 @@ public class BlockScale extends Block {
 
     @Override
     public int getWeakPower(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
-        if(side == null)
-            return 0; //Go away mcjty
+        if(side == null || side.getAxis().isVertical())
+            return 0; //NOOOOOOOO
         EnumFacing.Axis axis = getAxis(state);
         EnumFacing rotatedSide = side.rotateY();
         if(!state.getValue(TOP) && axis.apply(rotatedSide)) {

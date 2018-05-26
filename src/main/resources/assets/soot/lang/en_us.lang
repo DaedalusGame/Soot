@@ -16,7 +16,7 @@ embers.research.world.redstone_bin.desc=Sometimes one might want to drop a whole
 
 embers.research.mechanisms.insulation=Insulation
 embers.research.mechanisms.insulation.title=Heat Conservation
-embers.research.mechanisms.insulation.desc=The Hearth Coil is a spectacular machine. And just as spectacular is its Ember consumption to stay lit. These new Insulation upgrades may just help that a little. Each Insulation upgrade increases the maximum heat of the coil significantly and additionally reduces the cooling speed by 30%. With some redstone design you may be able to significantly increase the efficiency of the coil this way...
+embers.research.mechanisms.insulation.desc=The Hearth Coil is a spectacular machine. And just as spectacular is its Ember consumption to stay lit. These new Insulation upgrades may just help that a little. Each Insulation upgrade increases the maximum heat of the coil significantly and additionally reduces the cooling speed by 30%%. With some redstone design you may be able to significantly increase the efficiency of the coil this way...
 
 embers.research.metallurgy.scale=Scales
 embers.research.metallurgy.scale.title=Measuring Cups
