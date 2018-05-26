@@ -53,6 +53,9 @@ import soot.util.Nope;
 import soot.util.OreTransmutationManager;
 import teamroots.embers.Embers;
 import teamroots.embers.RegistryManager;
+import teamroots.embers.research.ResearchBase;
+import teamroots.embers.research.ResearchCategory;
+import teamroots.embers.research.ResearchManager;
 import teamroots.embers.tileentity.*;
 
 import javax.annotation.Nullable;
@@ -74,6 +77,13 @@ public class Registry {
     public static BlockStill STILL;
     @GameRegistry.ObjectHolder("soot:catalytic_plug")
     public static BlockCatalyticPlug CATALYTIC_PLUG;
+    @GameRegistry.ObjectHolder("soot:ember_burst")
+    public static BlockEmberBurst EMBER_BURST;
+
+    @GameRegistry.ObjectHolder("soot:redstone_bin")
+    public static BlockRedstoneBin REDSTONE_BIN;
+    @GameRegistry.ObjectHolder("soot:scale")
+    public static BlockScale SCALE;
 
     @GameRegistry.ObjectHolder("soot:heat_coil")
     public static BlockHeatCoilImproved HEAT_COIL_OVERRIDE;
@@ -164,6 +174,7 @@ public class Registry {
         registerEntities();
         registerFluids();
         registerCapabilities();
+        Soot.proxy.addResourceOverride(Embers.MODID,"textures","gui","codex_index","png"); //Yeah yeah i know it's selfish.
         Soot.proxy.addResourceOverride(Embers.MODID,"models","item","pipe","json");
         Soot.proxy.addResourceOverride(Embers.MODID,"models","item","item_pipe","json");
     }
@@ -222,6 +233,37 @@ public class Registry {
         //You click the make pr button if you want more support
 
         gatherOreTransmutations();
+
+        initResearches();
+    }
+
+    public static void initResearches() {
+        ResearchCategory categoryWorld = null;
+        ResearchCategory categoryMechanisms = null;
+        ResearchCategory categoryMetallurgy = null;
+        ResearchCategory categoryAlchemy = null;
+        ResearchCategory categorySmithing = null;
+        ResearchCategory brewing = new ResearchCategory("Brewing",new ResourceLocation(Soot.MODID,"textures/gui/codex_index.png"), 224.0, 16.0);
+
+        for(ResearchCategory category : ResearchManager.researches) {
+            if(category.name.equals("world"))
+                categoryWorld = category;
+            if(category.name.equals("mechanisms"))
+                categoryMechanisms = category;
+            if(category.name.equals("metallurgy"))
+                categoryMetallurgy = category;
+            if(category.name.equals("alchemy"))
+                categoryAlchemy = category;
+            if(category.name.equals("smithing"))
+                categorySmithing = category;
+        }
+        ResearchManager.researches.add(brewing);
+        categoryWorld.addResearch(new ResearchBase("sulfur",new ItemStack(SULFUR_CLUMP),12.0,0.0));
+        categoryWorld.addResearch(new ResearchBase("redstone_bin",new ItemStack(REDSTONE_BIN),12.0,5.0));
+        //categoryWorld.addResearch(new ResearchBase("sulfur",new ItemStack(SULFUR_CLUMP),12.0,0.0));
+        categoryMetallurgy.addResearch(new ResearchBase("scale",new ItemStack(SCALE),12.0D, 5.0D).addAncestor(ResearchManager.alchemy));
+        categoryAlchemy.addResearch(new ResearchBase("eitr",new ItemStack(EITR), 4.0, 4.0).addAncestor(ResearchManager.waste));
+        categoryMetallurgy.addResearch(new ResearchBase("advanced_emitters",new ItemStack(EMBER_BURST),0.0D, 4.0D));
     }
 
     public static void gatherOreTransmutations() {

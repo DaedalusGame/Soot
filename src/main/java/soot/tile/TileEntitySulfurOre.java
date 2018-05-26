@@ -34,10 +34,11 @@ public class TileEntitySulfurOre extends TileEntity implements ITickable {
                 aabb = new AxisAlignedBB(x - 0.5, y, z - 0.5, x + 0.5, y + 2.0, z + 0.5);
             } else {
                 aabb = new AxisAlignedBB(x - 1.5, y, z - 1.5, x + 1.5, y + 3.0, z + 1.5);
+                if(world.isRemote)
                 for(int i = 0; i < 8; i++)
                 ParticleUtil.spawnParticleGlow(getWorld(), (float)x + (random.nextFloat()-0.5f)*3.0f, (float)y + (random.nextFloat()-0.5f)*3.0f + 2.0f, (float)z + (random.nextFloat()-0.5f)*3.0f, (random.nextFloat()-0.5f)*0.1f, (random.nextFloat()-0.5f)*0.1f, (random.nextFloat()-0.5f)*0.1f, 64, 64, 16, 4.0f+random.nextFloat()*4.0f, 24);
             }
-            if(lifetime < 25)
+            if(lifetime < 25 && world.isRemote)
                 ParticleUtil.spawnParticleGlow(getWorld(), (float)x, (float)y + 0.7f, (float)z, (random.nextFloat()-0.5f)*0.04f, 0.1f, (random.nextFloat()-0.5f)*0.04f, 64, 64, 16, 3.0f, 48);
 
             if(lifetime % 5 == 0 && !world.isRemote) {
