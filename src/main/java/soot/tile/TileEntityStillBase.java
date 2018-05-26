@@ -96,7 +96,7 @@ public class TileEntityStillBase extends TileEntity implements ITileEntityBase, 
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing.getAxis() != EnumFacing.Axis.Y) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && (facing == null || facing.getAxis() != EnumFacing.Axis.Y)) {
             return true;
         }
         return super.hasCapability(capability, facing);
@@ -104,7 +104,7 @@ public class TileEntityStillBase extends TileEntity implements ITileEntityBase, 
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing.getAxis() != EnumFacing.Axis.Y) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && (facing == null || facing.getAxis() != EnumFacing.Axis.Y)) {
             return (T) tank;
         }
         return super.getCapability(capability, facing);
