@@ -76,6 +76,8 @@ public class Registry {
     public static BlockAlchemyGlobe ALCHEMY_GLOBE;
     @GameRegistry.ObjectHolder("soot:still")
     public static BlockStill STILL;
+    @GameRegistry.ObjectHolder("soot:alchemy_gauge")
+    public static BlockAlchemyGauge ALCHEMY_GAUGE;
     @GameRegistry.ObjectHolder("soot:catalytic_plug")
     public static BlockCatalyticPlug CATALYTIC_PLUG;
     @GameRegistry.ObjectHolder("soot:ember_burst")
@@ -275,10 +277,13 @@ public class Registry {
         categoryBrewing.addResearch(still);
         categoryBrewing.addResearch(new ResearchBase("distillation_pipe",new ItemStack(DISTILLATION_PIPE), 8.0D, 7.0D).addAncestor(still));
         categoryBrewing.addResearch(new ResearchBase("still_fuel",new ItemStack(RegistryManager.archaic_light), 6.0D, 7.0D).addAncestor(still));
+        categoryBrewing.addResearch(new ResearchBase("alchemy_dial",new ItemStack(ALCHEMY_GAUGE), 7.0D, 2.0D).addAncestor(still));
         Random random = new Random();
         CaskLiquid liquid = CaskManager.liquids.get(random.nextInt(CaskManager.liquids.size()));
-        categoryBrewing.addResearch(new ResearchBase("drinks",MUG.getFilled(liquid), 4.0D, 7.0D));
-        categoryBrewing.addResearch(new ResearchBase("lifedrinker",new ItemStack(Items.GHAST_TEAR), 1.0D, 7.0D).addAncestor(still));
+        ResearchBase drinks = new ResearchBase("drinks", MUG.getFilled(liquid), 4.0D, 7.0D);
+        categoryBrewing.addResearch(drinks);
+        categoryBrewing.addResearch(new ResearchBase("rename",new ItemStack(Items.SIGN), 1.0D, 7.0D).addAncestor(drinks));
+        categoryBrewing.addResearch(new ResearchBase("lifedrinker",new ItemStack(Items.GHAST_TEAR), 11.0D, 7.0D).addAncestor(still));
         categoryBrewing.addResearch(new ResearchBase("steadfast",new ItemStack(Items.GOLDEN_CARROT), 0.0D, 5.0D).addAncestor(still));
         categoryBrewing.addResearch(new ResearchBase("duration",new ItemStack(Items.REDSTONE), 0.0D, 3.0D).addAncestor(still));
         categoryBrewing.addResearch(new ResearchBase("purification",new ItemStack(Items.PRISMARINE_CRYSTALS), 1.0D, 1.0D).addAncestor(still));
@@ -465,6 +470,11 @@ public class Registry {
             registerBlock(dawnstoneAnvilImproved, false);
             registerItem(dawnstoneAnvilImproved.getItemBlock(), false);
         }
+        if (Config.OVERRIDE_BEAM_CANNON) {
+            BlockBeamCannonImproved beamCannonImproved = (BlockBeamCannonImproved) new BlockBeamCannonImproved(Material.ROCK, "beam_cannon", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.6F);
+            registerBlock(beamCannonImproved, false);
+            registerItem(beamCannonImproved.getItemBlock(), false);
+        }
         if (Config.OVERRIDE_ALCHEMY_TABLET) {
             BlockAlchemyTabletImproved alchemyTabletImproved = (BlockAlchemyTabletImproved) new BlockAlchemyTabletImproved(Material.ROCK, "alchemy_tablet", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.6F);
             registerBlock(alchemyTabletImproved, false);
@@ -484,6 +494,11 @@ public class Registry {
             BlockMechAccessorImproved accessorImproved = (BlockMechAccessorImproved) new BlockMechAccessorImproved(Material.ROCK, "mech_accessor", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.0F);
             registerBlock(accessorImproved, false);
             registerItem(accessorImproved.getItemBlock(), false);
+        }
+        if (Config.OVERRIDE_CRYSTAL_CELL) {
+            BlockCrystalCellImproved crystalCellImproved = (BlockCrystalCellImproved) new BlockCrystalCellImproved(Material.ROCK, "crystal_cell", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.0F);
+            registerBlock(crystalCellImproved, false);
+            registerItem(crystalCellImproved.getItemBlock(), false);
         }
     }
 
@@ -572,9 +587,11 @@ public class Registry {
         registerTileEntity(TileEntityMixerBottomImproved.class);
         registerTileEntity(TileEntityDawnstoneAnvilImproved.class);
         registerTileEntity(TileEntityHeatCoilImproved.class);
+        registerTileEntity(TileEntityBeamCannonImproved.class);
         registerTileEntity(TileEntityAlchemyTabletImproved.class);
         registerTileEntity(TileEntityAlchemyPedestalImproved.class);
         registerTileEntity(TileEntityMechAccessorImproved.class);
+        registerTileEntity(TileEntityCrystalCellImproved.class);
 
         registerTileEntity(TileEntityAlchemyGlobe.class);
         registerTileEntity(TileEntityInsulation.class);

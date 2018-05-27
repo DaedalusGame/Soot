@@ -5,18 +5,26 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.items.ItemStackHandler;
+import soot.Soot;
+import soot.SoundEvents;
+import soot.util.ISoundController;
 import soot.util.ItemUtil;
 import teamroots.embers.tileentity.TileEntityAlchemyPedestal;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
 
-public class TileEntityAlchemyPedestalImproved extends TileEntityAlchemyPedestal {
+public class TileEntityAlchemyPedestalImproved extends TileEntityAlchemyPedestal implements ISoundController {
+    public static final int SOUND_NONE = 0;
+    public static final int SOUND_LOOP = 1;
     Field fieldAngle;
     boolean noSpin = false;
+    int active = 0;
 
     public TileEntityAlchemyPedestalImproved()
     {
@@ -26,10 +34,22 @@ public class TileEntityAlchemyPedestalImproved extends TileEntityAlchemyPedestal
                 markDirty();
             }
 
-            public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+            @Nonnull
+            public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
                 return slot == 0 && !ItemUtil.matchesOreDict(stack,"dustAsh") ? this.insertItem(slot + 1, stack, simulate) : super.insertItem(slot, stack, simulate);
             }
         };
+    }
+
+    public void setActive(int time) {
+        if(active <= 0 && time > 0 && world.isRemote)
+            Soot.proxy.playMachineSound(this, SOUND_LOOP, SoundEvents.PEDESTAL_LOOP, SoundCategory.BLOCKS, 0.1f, 1.0f, true, (float)pos.getX() + 0.5f, (float)pos.getY() + 0.5f, (float)pos.getZ() + 0.5f);
+        active = time;
+    }
+
+    @Override
+    public int getCurrentSoundType() {
+        return active > 0 ? SOUND_LOOP : SOUND_NONE;
     }
 
     @Override
@@ -68,6 +88,9 @@ public class TileEntityAlchemyPedestalImproved extends TileEntityAlchemyPedestal
 
     @Override
     public void update() {
+        if(active > 0)
+            active--;
+
         if(noSpin)
             return;
         try {

@@ -23,11 +23,13 @@ public class Config {
     public static boolean OVERRIDE_HEARTH_COIL;
     public static boolean OVERRIDE_MIXER;
     public static boolean OVERRIDE_STAMPER;
+    public static boolean OVERRIDE_BEAM_CANNON;
     public static boolean OVERRIDE_ALCHEMY_TABLET;
     public static boolean FIX_MATH_ERROR_A;
     public static boolean FIX_MATH_ERROR_B;
     public static boolean OVERRIDE_MECH_ACCESSOR;
     public static boolean OVERRIDE_ALCHEMY_PEDESTAL;
+    public static boolean OVERRIDE_CRYSTAL_CELL;
 
     public static void preInit(FMLPreInitializationEvent event)
     {
@@ -42,8 +44,10 @@ public class Config {
         OVERRIDE_DAWNSTONE_ANVIL = loadPropBool("dawnstoneAnvil","Overrides","Overrides the Dawnstone Anvil",true);
         OVERRIDE_HEARTH_COIL = loadPropBool("hearthCoil","Overrides","Overrides the Hearth Coil",true);
         OVERRIDE_MIXER = loadPropBool("mixer","Overrides","Overrides the Mixer Centrifuge",true);
+        OVERRIDE_BEAM_CANNON = loadPropBool("beamCannon","Overrides","Overrides the Beam Cannon",true);
         OVERRIDE_ALCHEMY_TABLET = loadPropBool("alchemyTablet","Overrides","Overrides the Exchange Tablet",true);
         OVERRIDE_ALCHEMY_PEDESTAL = loadPropBool("alchemyPedestal","Overrides","Overrides the Alchemy Pedestal",true);
+        OVERRIDE_CRYSTAL_CELL = loadPropBool("crystalCell","Overrides","Overrides the Crystal Cell",true);
 
         TRADING_ANTIMONY = loadPropBool("tradingAntimony","Features","Allows trading signet of antimony with villagers instead of emeralds.",true);
         GOLEMS_TYRFING_WEAK = loadPropBool("golemsTyrfingWeak","Features","Golems take extra damage from the Tyrfing.",true);

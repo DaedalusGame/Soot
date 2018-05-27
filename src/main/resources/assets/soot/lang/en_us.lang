@@ -48,9 +48,17 @@ embers.research.brewing.distillation_pipe=Auxiliary Filter
 embers.research.brewing.distillation_pipe.title=Double Distilled
 embers.research.brewing.distillation_pipe.desc=As opposed to Hedge Alchemy, glowstone will not increase the power of booze effects. Instead, you found that adding an Auxiliary Filter upgrade enables the still to distill alcohol again and again, concentrating it. Concentration will remove particles from the effect, and can also increase the magnitude of the effect by 1. The downside is that after concentrating, the drink will be more alcoholic and more likely to make you tipsy...
 
+embers.research.brewing.alchemy_dial=Alchemy Dial
+embers.research.brewing.alchemy_dial.title=In-depth Analysis
+embers.research.brewing.alchemy_dial.desc=Experienced brewers may analyse brewing outputs by instinct, but rookies are often left in the dust. This Alchemy Dial will help with that. Attaching it to a fluid tank containing a brew will identify all properties thereof. Considering the steep cost of this measurement device, more uses must surely exist... Perhaps they will reveal themselves soon.
+
 embers.research.brewing.drinks=Drinks
 embers.research.brewing.drinks.title=A Primer
 embers.research.brewing.drinks.desc=There are a number of drinks available for brewing: Ale, which increases damage dealt and taken significantly; Potato Vodka, which does the opposite; Inner Fire Ale, which grants resilience to fire and flaming attacks; Absinthe, which rapidly grants inspiration at the cost of sanity; Snowpoff Vodka, which grants a form of icy thorns effect; and Wood Spirit, which allows the imbiber to spit fire using a torch.
+
+embers.research.brewing.rename=Renaming
+embers.research.brewing.rename.title=Fame and Glory
+embers.research.brewing.rename.desc=Discerning which mug contains which brew can be quite difficult if you've created a large amount of different brews. To this end, you can be a bit more organized about your brewing. If a sign is attached on any side of the lower portion of the Still, the output of the Still will be named after what is written on the sign. This will be very useful for labelling your brews - and bragging I guess...
 
 embers.research.brewing.lifedrinker=Lifedrinker
 embers.research.brewing.lifedrinker.title=CR 25

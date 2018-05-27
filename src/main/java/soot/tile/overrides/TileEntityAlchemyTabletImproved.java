@@ -5,13 +5,19 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
+import soot.Soot;
+import soot.SoundEvents;
 import soot.recipe.CraftingRegistry;
 import soot.recipe.RecipeAlchemyTablet;
 import soot.util.AlchemyResult;
 import soot.util.AlchemyUtil;
 import soot.util.AspectList;
+import soot.util.ISoundController;
+import teamroots.embers.item.ItemAlchemicWaste;
 import teamroots.embers.network.PacketHandler;
 import teamroots.embers.network.message.MessageEmberSphereFX;
 import teamroots.embers.particle.ParticleUtil;
@@ -21,8 +27,10 @@ import teamroots.embers.tileentity.TileEntityAlchemyTablet;
 import java.util.List;
 import java.util.Random;
 
-public class TileEntityAlchemyTabletImproved extends TileEntityAlchemyTablet {
-    private float angle;
+public class TileEntityAlchemyTabletImproved extends TileEntityAlchemyTablet implements ISoundController {
+    public static final int SOUND_NONE = 0;
+    public static final int SOUND_LOOP = 1;
+    public float angle;
     private Random random = new Random();
     private AspectList aspects = new AspectList();
 
@@ -71,7 +79,15 @@ public class TileEntityAlchemyTabletImproved extends TileEntityAlchemyTablet {
             aspects.reset();
             progress = 1;
             markDirty();
+            world.playSound(null,pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5,SoundEvents.ALCHEMY_START, SoundCategory.BLOCKS, 1.0f, 1.0f);
+            if(world.isRemote)
+                Soot.proxy.playMachineSound(this, SOUND_LOOP, SoundEvents.ALCHEMY_LOOP, SoundCategory.BLOCKS, 1.5f, 1.0f, true, (float)pos.getX() + 0.5f, (float)pos.getY() + 0.5f, (float)pos.getZ() + 0.5f);
         }
+    }
+
+    @Override
+    public int getCurrentSoundType() {
+        return progress > 0 ? SOUND_LOOP : SOUND_NONE;
     }
 
     public RecipeAlchemyTablet getRecipe() {
@@ -88,6 +104,8 @@ public class TileEntityAlchemyTabletImproved extends TileEntityAlchemyTablet {
             List<TileEntityAlchemyPedestal> pedestals = AlchemyUtil.getNearbyPedestals(getWorld(),getPos());
             if (getWorld().isRemote){
                 for (TileEntityAlchemyPedestal pedestal : pedestals) {
+                    if(pedestal instanceof TileEntityAlchemyPedestalImproved)
+                        ((TileEntityAlchemyPedestalImproved) pedestal).setActive(3);
                     ParticleUtil.spawnParticleStar(getWorld(), pedestal.getPos().getX() + 0.5f, pedestal.getPos().getY() + 1.0f, pedestal.getPos().getZ() + 0.5f, 0.0125f * (random.nextFloat() - 0.5f), 0.0125f * (random.nextFloat() - 0.5f), 0.0125f * (random.nextFloat() - 0.5f), 255, 64, 16, 3.5f + 0.5f * random.nextFloat(), 40);
                     for (int j = 0; j < 8; j++) {
                         float coeff = random.nextFloat();
@@ -125,6 +143,8 @@ public class TileEntityAlchemyTabletImproved extends TileEntityAlchemyTablet {
                     if (recipe != null && !getWorld().isRemote){
                         ItemStack stack = recipe.getResult(this, aspects);
                         if (!getWorld().isRemote){
+                            SoundEvent finishSound = stack.getItem() instanceof ItemAlchemicWaste ? SoundEvents.ALCHEMY_FAIL : SoundEvents.ALCHEMY_SUCCESS;
+                            world.playSound(null,pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5, finishSound, SoundCategory.BLOCKS, 1.0f, 1.0f);
                             getWorld().spawnEntity(new EntityItem(getWorld(),getPos().getX()+0.5,getPos().getY()+1.0f,getPos().getZ()+0.5,stack));
                             PacketHandler.INSTANCE.sendToAll(new MessageEmberSphereFX(getPos().getX()+0.5,getPos().getY()+0.875,getPos().getZ()+0.5));
                         }

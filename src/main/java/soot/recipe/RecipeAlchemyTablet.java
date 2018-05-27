@@ -21,37 +21,37 @@ public class RecipeAlchemyTablet implements IHasAspects {
     public ItemStack output;
     public AspectList.AspectRangeList aspectRange;
 
-    public RecipeAlchemyTablet(ItemStack output, Ingredient center, List<Ingredient> outside, AspectList.AspectRangeList range)
-    {
+    public RecipeAlchemyTablet(ItemStack output, Ingredient center, List<Ingredient> outside, AspectList.AspectRangeList range) {
         this.output = output;
         this.centerInput = center;
         this.inputs = outside;
         this.aspectRange = range;
     }
 
-    public AlchemyResult matchAshes(AspectList list, World world)
-    {
-        return AlchemyResult.create(list,aspectRange,world);
+    public AlchemyResult matchAshes(AspectList list, World world) {
+        return AlchemyResult.create(list, aspectRange, world);
     }
 
-    public ItemStack getResult(TileEntity tile, AspectList aspects)
-    {
+    public ItemStack getResult(TileEntity tile, AspectList aspects) {
         World world = tile.getWorld();
-        AlchemyResult result = matchAshes(aspects,world);
-        if(result.getAccuracy() == 1.0)
+        AlchemyResult result = matchAshes(aspects, world);
+        if (result.getAccuracy() == 1.0)
             return output.copy();
         else
             return result.createFailure();
     }
 
     public boolean matches(ItemStack center, List<ItemStack> test) {
-        if(!centerInput.apply(center))
+        if (!centerInput.apply(center))
             return false;
 
         ArrayList<Ingredient> ingredients = new ArrayList<>(inputs);
+        while (test.size() > ingredients.size()) {
+            ingredients.add(Ingredient.EMPTY);
+        }
         for (ItemStack stack : test) {
             Optional<Ingredient> found = ingredients.stream().filter(x -> x.apply(stack)).findFirst();
-            if(found.isPresent())
+            if (found.isPresent())
                 ingredients.remove(found.get());
             else
                 return false;

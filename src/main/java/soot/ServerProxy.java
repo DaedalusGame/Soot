@@ -3,6 +3,9 @@ package soot;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 
 public class ServerProxy implements IProxy {
     @Override
@@ -38,6 +41,11 @@ public class ServerProxy implements IProxy {
     @Override
     public EntityPlayer getMainPlayer() {
         return null;
+    }
+
+    @Override
+    public void playMachineSound(TileEntity tile, int id, SoundEvent soundIn, SoundCategory categoryIn, float volumeIn, float pitchIn, boolean repeatIn, float xIn, float yIn, float zIn) {
+
     }
 
     @Override

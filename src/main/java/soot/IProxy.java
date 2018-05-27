@@ -3,6 +3,9 @@ package soot;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 
 public interface IProxy {
     void preInit();
@@ -18,6 +21,8 @@ public interface IProxy {
     void registerResourcePack();
 
     EntityPlayer getMainPlayer();
+
+    void playMachineSound(TileEntity tile, int id, SoundEvent soundIn, SoundCategory categoryIn, float volumeIn, float pitchIn, boolean repeatIn, float xIn, float yIn, float zIn);
 
     void addResourceOverride(String space, String dir, String file, String ext);
 
