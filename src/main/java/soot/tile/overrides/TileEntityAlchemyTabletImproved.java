@@ -104,7 +104,7 @@ public class TileEntityAlchemyTabletImproved extends TileEntityAlchemyTablet imp
             List<TileEntityAlchemyPedestal> pedestals = AlchemyUtil.getNearbyPedestals(getWorld(),getPos());
             if (getWorld().isRemote){
                 for (TileEntityAlchemyPedestal pedestal : pedestals) {
-                    if(pedestal instanceof TileEntityAlchemyPedestalImproved)
+                    if(pedestal instanceof TileEntityAlchemyPedestalImproved && !pedestal.inventory.getStackInSlot(1).isEmpty()) //If there's ash in the pedestal
                         ((TileEntityAlchemyPedestalImproved) pedestal).setActive(3);
                     ParticleUtil.spawnParticleStar(getWorld(), pedestal.getPos().getX() + 0.5f, pedestal.getPos().getY() + 1.0f, pedestal.getPos().getZ() + 0.5f, 0.0125f * (random.nextFloat() - 0.5f), 0.0125f * (random.nextFloat() - 0.5f), 0.0125f * (random.nextFloat() - 0.5f), 255, 64, 16, 3.5f + 0.5f * random.nextFloat(), 40);
                     for (int j = 0; j < 8; j++) {
@@ -119,10 +119,10 @@ public class TileEntityAlchemyTabletImproved extends TileEntityAlchemyTablet imp
             if (angle % 10 == 0){
                 if (getNearbyAsh(pedestals) > 0){
                     TileEntityAlchemyPedestal pedestal = pedestals.get(random.nextInt(pedestals.size()));
-                    while (pedestal.inventory.extractItem(0, 1, true) == ItemStack.EMPTY){
+                    while (pedestal.inventory.extractItem(0, 1, true).isEmpty()){
                         pedestal = pedestals.get(random.nextInt(pedestals.size()));
-                    }
-                    if (pedestal.inventory.getStackInSlot(1) != ItemStack.EMPTY){
+                }
+                    if (!pedestal.inventory.getStackInSlot(1).isEmpty()){
                         if (getWorld().isRemote){
                             for (int j = 0; j < 20; j ++){
                                 float dx = (getPos().getX()+0.5f) - (pedestal.getPos().getX()+0.5f);
