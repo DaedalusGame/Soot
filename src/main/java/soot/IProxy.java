@@ -24,6 +24,8 @@ public interface IProxy {
 
     void playMachineSound(TileEntity tile, int id, SoundEvent soundIn, SoundCategory categoryIn, float volumeIn, float pitchIn, boolean repeatIn, float xIn, float yIn, float zIn);
 
+    void playParallelMachineSound(TileEntity tile, int id, SoundEvent soundIn, SoundCategory categoryIn, float volumeIn, float pitchIn, boolean repeatIn, float xIn, float yIn, float zIn);
+
     void addResourceOverride(String space, String dir, String file, String ext);
 
     void addResourceOverride(String modid, String space, String dir, String file, String ext);

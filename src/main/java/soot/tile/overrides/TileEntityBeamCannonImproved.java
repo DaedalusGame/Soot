@@ -77,6 +77,8 @@ public class TileEntityBeamCannonImproved extends TileEntityBeamCannon {
                 for (int j = 0; j < rawEntities.size(); j ++){
                     rawEntities.get(j).attackEntityFrom(RegistryManager.damage_ember, damage);
                 }
+                if(!doContinue)
+                    world.playSound(null,posX,posY,posZ,SoundEvents.BEAM_CANNON_HIT, SoundCategory.BLOCKS, 1.0f, 1.0f);
             }
             this.capability.setEmber(0);
             markDirty();

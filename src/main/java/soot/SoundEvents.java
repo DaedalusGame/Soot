@@ -21,11 +21,20 @@ public class SoundEvents {
     public static SoundEvent PEDESTAL_LOOP;
     @GameRegistry.ObjectHolder("soot:block.embers.beam_cannon.fire")
     public static SoundEvent BEAM_CANNON_FIRE;
+    @GameRegistry.ObjectHolder("soot:block.embers.beam_cannon.hit")
+    public static SoundEvent BEAM_CANNON_HIT;
     @GameRegistry.ObjectHolder("soot:block.embers.crystalcell")
     public static SoundEvent CRYSTAL_CELL;
     @GameRegistry.ObjectHolder("soot:block.embers.activator")
     public static SoundEvent ACTIVATOR;
-
+    @GameRegistry.ObjectHolder("soot:block.embers.bore.start")
+    public static SoundEvent BORE_START;
+    @GameRegistry.ObjectHolder("soot:block.embers.bore.stop")
+    public static SoundEvent BORE_STOP;
+    @GameRegistry.ObjectHolder("soot:block.embers.bore.loop")
+    public static SoundEvent BORE_LOOP;
+    @GameRegistry.ObjectHolder("soot:block.embers.bore.loop_mine")
+    public static SoundEvent BORE_LOOP_MINE;
 
     @SubscribeEvent
     public static void registerSounds(RegistryEvent.Register<SoundEvent> event) {
@@ -35,8 +44,13 @@ public class SoundEvents {
         event.getRegistry().register(registerSound("block.embers.alchemy.start"));
         event.getRegistry().register(registerSound("block.embers.pedestal.loop"));
         event.getRegistry().register(registerSound("block.embers.beam_cannon.fire"));
+        event.getRegistry().register(registerSound("block.embers.beam_cannon.hit"));
         event.getRegistry().register(registerSound("block.embers.crystalcell"));
         event.getRegistry().register(registerSound("block.embers.activator"));
+        event.getRegistry().register(registerSound("block.embers.bore.start"));
+        event.getRegistry().register(registerSound("block.embers.bore.stop"));
+        event.getRegistry().register(registerSound("block.embers.bore.loop"));
+        event.getRegistry().register(registerSound("block.embers.bore.loop_mine"));
     }
 
     public static SoundEvent registerSound(String soundName) {

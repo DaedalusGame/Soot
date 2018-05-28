@@ -49,6 +49,11 @@ public class ServerProxy implements IProxy {
     }
 
     @Override
+    public void playParallelMachineSound(TileEntity tile, int id, SoundEvent soundIn, SoundCategory categoryIn, float volumeIn, float pitchIn, boolean repeatIn, float xIn, float yIn, float zIn) {
+
+    }
+
+    @Override
     public void addResourceOverride(String space, String dir, String file, String ext) {
 
     }

@@ -34,6 +34,14 @@
     ],
     "subtitle": "subtitles.embers.beam_cannon.fire"
   },
+  "block.embers.beam_cannon.hit": {
+    "category": "block",
+    "sounds": [
+      "soot:beam_cannon_hit_1",
+      "soot:beam_cannon_hit_2"
+    ],
+    "subtitle": "subtitles.embers.beam_cannon.hit"
+  },
   "block.embers.crystalcell": {
     "category": "block",
     "sounds": [
@@ -55,5 +63,32 @@
 	  "soot:ember_activatorplume_alt"
     ],
     "subtitle": "subtitles.embers.activator"
+  },
+  "block.embers.bore.start": {
+    "category": "block",
+    "sounds": [
+      "soot:ember_bore_start_up"
+    ],
+    "subtitle": "subtitles.embers.bore.start"
+  },
+  "block.embers.bore.stop": {
+    "category": "block",
+    "sounds": [
+      "soot:ember_bore_stop"
+    ],
+    "subtitle": "subtitles.embers.bore.stop"
+  },
+  "block.embers.bore.loop": {
+    "category": "block",
+    "sounds": [
+      "soot:ember_bore_run_loop"
+    ],
+    "subtitle": "subtitles.embers.bore.loop"
+  },
+  "block.embers.bore.loop_mine": {
+    "category": "block",
+    "sounds": [
+      "soot:ember_bore_mine_loop"
+    ]
   }
 }

@@ -28,10 +28,7 @@ import soot.entity.EntityMuse;
 import soot.entity.EntityMuseRenderer;
 import soot.tile.*;
 import soot.tile.overrides.*;
-import soot.util.IBlockColored;
-import soot.util.IItemColored;
-import soot.util.MachineSound;
-import soot.util.ResourceProxy;
+import soot.util.*;
 import teamroots.embers.tileentity.TileEntityBinRenderer;
 
 import javax.annotation.Nullable;
@@ -62,6 +59,11 @@ public class ClientProxy implements IProxy {
     @Override
     public void playMachineSound(TileEntity tile, int id, SoundEvent soundIn, SoundCategory categoryIn, float volumeIn, float pitchIn, boolean repeatIn, float xIn, float yIn, float zIn) {
         Minecraft.getMinecraft().getSoundHandler().playSound(new MachineSound(tile, id, soundIn, categoryIn, volumeIn, pitchIn, repeatIn, xIn, yIn, zIn));
+    }
+
+    @Override
+    public void playParallelMachineSound(TileEntity tile, int id, SoundEvent soundIn, SoundCategory categoryIn, float volumeIn, float pitchIn, boolean repeatIn, float xIn, float yIn, float zIn) {
+        Minecraft.getMinecraft().getSoundHandler().playSound(new ParallelMachineSound(tile, id, soundIn, categoryIn, volumeIn, pitchIn, repeatIn, xIn, yIn, zIn));
     }
 
     @Override

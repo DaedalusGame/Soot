@@ -2,13 +2,13 @@ package soot.tile.overrides;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityFurnace;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.WeightedRandom;
+import net.minecraft.util.*;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.items.ItemStackHandler;
+import soot.Soot;
+import soot.SoundEvents;
 import soot.capability.IUpgradeProvider;
+import soot.util.ISoundController;
 import soot.util.UpgradeUtil;
 import teamroots.embers.tileentity.TileEntityEmberBore;
 import teamroots.embers.util.EmberGenUtil;
@@ -18,9 +18,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
-public class TileEntityEmberBoreImproved extends TileEntityEmberBore {
+public class TileEntityEmberBoreImproved extends TileEntityEmberBore implements ISoundController {
     static ArrayList<BoreOutput> REGISTRY = new ArrayList<>();
     public static BoreOutput DEFAULT;
+
+    public static final int SOUND_NONE = 0;
+    public static final int SOUND_ON = 1;
+    public static final int SOUND_ON_DRILL = 2;
 
     public static final int MAX_LEVEL = 7;
     public static final int BORE_TIME = 200;
@@ -29,10 +33,24 @@ public class TileEntityEmberBoreImproved extends TileEntityEmberBore {
     Random random = new Random();
     public List<IUpgradeProvider> upgrades;
     public float lastAngle;
+    boolean isSoundPlaying;
+    boolean isRunning;
 
     public TileEntityEmberBoreImproved() {
         super();
         inventory = new EmberBoreInventory(9);
+    }
+
+    @Override
+    public float getCurrentPitch(float pitch) {
+        return (float) UpgradeUtil.getTotalSpeedModifier(this,upgrades);
+    }
+
+    @Override
+    public int getCurrentSoundType() {
+        if(ticksFueled > 0)
+            return canMine() ? SOUND_ON_DRILL : SOUND_ON;
+        return SOUND_NONE;
     }
 
     public static void registerBoreOutput(BoreOutput output) {
@@ -64,15 +82,19 @@ public class TileEntityEmberBoreImproved extends TileEntityEmberBore {
 
         double speedMod = UpgradeUtil.getTotalSpeedModifier(this, upgrades);
         if (ticksFueled > 0){
+            turnOnSound();
             lastAngle = angle;
             angle += 12.0f * speedMod;
+        } else {
+            turnOffSound();
         }
         boolean cancel = UpgradeUtil.doWork(this,upgrades);
-        if (!cancel && getPos().getY() <= UpgradeUtil.getOtherParameter(this,"max_level",MAX_LEVEL,upgrades) && !getWorld().isRemote){
+        if (!cancel && !getWorld().isRemote){
             ticksExisted ++;
             if (ticksFueled > 0){
                 ticksFueled --;
             }
+
             if (ticksFueled == 0){
                 ItemStack fuel = inventory.getStackInSlot(SLOT_FUEL);
                 if (!fuel.isEmpty()){
@@ -84,8 +106,7 @@ public class TileEntityEmberBoreImproved extends TileEntityEmberBore {
                     }
                     markDirty();
                 }
-            }
-            else {
+            } else if(canMine()) {
                 int boreTime = (int)Math.ceil(BORE_TIME * (1 / speedMod));
                 if (ticksExisted % boreTime == 0){
                     if (random.nextFloat() < EmberGenUtil.getEmberDensity(world.getSeed(), getPos().getX(), getPos().getZ())){
@@ -104,7 +125,34 @@ public class TileEntityEmberBoreImproved extends TileEntityEmberBore {
                     }
                 }
             }
+
+            if (isRunning != ticksFueled > 0) {
+                isRunning = ticksFueled > 0;
+                markDirty();
+            }
         }
+    }
+
+    public void turnOnSound() {
+        if(!isSoundPlaying) {
+            if(world.isRemote) {
+                Soot.proxy.playParallelMachineSound(this, SOUND_ON, SoundEvents.BORE_LOOP, SoundCategory.BLOCKS, 1.0f, 1.0f, true, (float) pos.getX() + 0.5f, (float) pos.getY() - 0.5f, (float) pos.getZ() + 0.5f);
+                Soot.proxy.playParallelMachineSound(this, SOUND_ON_DRILL, SoundEvents.BORE_LOOP_MINE, SoundCategory.BLOCKS, 1.0f, 1.0f, true, (float) pos.getX() + 0.5f, (float) pos.getY() - 0.5f, (float) pos.getZ() + 0.5f);
+            }
+            world.playSound(null,pos.getX()+0.5,pos.getY()-0.5,pos.getZ()+0.5,SoundEvents.BORE_START, SoundCategory.BLOCKS, 1.0f, 1.0f);
+            isSoundPlaying = true;
+        }
+    }
+
+    public void turnOffSound() {
+        if(isSoundPlaying) {
+            world.playSound(null,pos.getX()+0.5,pos.getY()-0.5,pos.getZ()+0.5,SoundEvents.BORE_STOP, SoundCategory.BLOCKS, 1.0f, 1.0f);
+            isSoundPlaying = false;
+        }
+    }
+
+    public boolean canMine() {
+        return getPos().getY() <= UpgradeUtil.getOtherParameter(this,"max_level",MAX_LEVEL,upgrades);
     }
 
     public boolean canInsert(ArrayList<ItemStack> returns) {
