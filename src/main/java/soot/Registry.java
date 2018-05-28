@@ -191,9 +191,9 @@ public class Registry {
         registerAccessorTiles();
 
         BoreOutput defaultOutput = new BoreOutput(Sets.newHashSet(), Sets.newHashSet(), Lists.newArrayList(
-                new WeightedItemStack(new ItemStack(RegistryManager.crystal_ember),1),
-                new WeightedItemStack(new ItemStack(RegistryManager.shard_ember),3),
-                new WeightedItemStack(new ItemStack(Registry.EMBER_GRIT),1)
+                new WeightedItemStack(new ItemStack(RegistryManager.crystal_ember),20),
+                new WeightedItemStack(new ItemStack(RegistryManager.shard_ember),60),
+                new WeightedItemStack(new ItemStack(Registry.EMBER_GRIT),20)
         ));
         TileEntityEmberBoreImproved.setDefault(defaultOutput);
 
@@ -214,7 +214,14 @@ public class Registry {
     }
 
     public static void postInit() {
-        OreTransmutationManager.registerTransmutationSet(STONE,Blocks.STONE.getDefaultState());
+        if(Config.METALLURGICAL_DUST_COLLECT)
+            initMetallurgicalDust();
+        initResearches();
+        NetworkRegistry.INSTANCE.registerGuiHandler(Embers.instance, new GuiHandler());
+    }
+
+    public static void initMetallurgicalDust() {
+        OreTransmutationManager.registerTransmutationSet(STONE, Blocks.STONE.getDefaultState());
         OreTransmutationManager.registerTransmutationSet(NETHER,Blocks.NETHERRACK.getDefaultState());
         OreTransmutationManager.registerTransmutationSet(END,Blocks.END_STONE.getDefaultState());
         OreTransmutationManager.registerTransmutationSet(SAND,Blocks.SAND.getDefaultState());
@@ -240,9 +247,6 @@ public class Registry {
         //You click the make pr button if you want more support
 
         gatherOreTransmutations();
-
-        initResearches();
-        NetworkRegistry.INSTANCE.registerGuiHandler(Embers.instance, new GuiHandler());
     }
 
     public static void initResearches() {
@@ -296,7 +300,7 @@ public class Registry {
         HashSet<String> existingTags = new HashSet<>();
 
         for (String orename : OreDictionary.getOreNames()) {
-            if(orename == null || !orename.startsWith("ore"))
+            if(orename == null || !orename.startsWith("ore") || !isValidOre(orename))
                 continue;
             for (ItemStack stack : OreDictionary.getOres(orename,false)) {
                 Item item = stack.getItem();
@@ -316,6 +320,10 @@ public class Registry {
                 existingTags.add(tag);
             }
         }
+    }
+
+    private static boolean isValidOre(String orename) {
+        return Config.METALLURGICAL_DUST_BLACKLIST.contains(orename) == Config.METALLURGICAL_DUST_IS_WHITELIST;
     }
 
     public static void registerCaskLiquids() {
