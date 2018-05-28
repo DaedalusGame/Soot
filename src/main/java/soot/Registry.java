@@ -190,13 +190,6 @@ public class Registry {
         registerCaskLiquids();
         registerAccessorTiles();
 
-        BoreOutput defaultOutput = new BoreOutput(Sets.newHashSet(), Sets.newHashSet(), Lists.newArrayList(
-                new WeightedItemStack(new ItemStack(RegistryManager.crystal_ember),20),
-                new WeightedItemStack(new ItemStack(RegistryManager.shard_ember),60),
-                new WeightedItemStack(new ItemStack(Registry.EMBER_GRIT),20)
-        ));
-        TileEntityEmberBoreImproved.setDefault(defaultOutput);
-
         HeatManager.register(RegistryManager.archaic_light,20);
         HeatManager.register(Blocks.FIRE,10);
         HeatManager.register(HEAT_COIL_OVERRIDE, (world, pos, state) -> {

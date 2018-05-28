@@ -20,7 +20,7 @@ import java.util.Random;
 
 public class TileEntityEmberBoreImproved extends TileEntityEmberBore {
     static ArrayList<BoreOutput> REGISTRY = new ArrayList<>();
-    static BoreOutput DEFAULT;
+    public static BoreOutput DEFAULT;
 
     public static final int MAX_LEVEL = 7;
     public static final int BORE_TIME = 200;
@@ -174,6 +174,10 @@ public class TileEntityEmberBoreImproved extends TileEntityEmberBore {
         public HashSet<Integer> dimensionIds;
         public HashSet<ResourceLocation> biomeIds;
         public ArrayList<WeightedItemStack> stacks = new ArrayList<>();
+
+        public BoreOutput() {
+            this(new HashSet<>(), new HashSet<>(), new ArrayList<>());
+        }
 
         public BoreOutput(HashSet<Integer> dimensionIds, HashSet<ResourceLocation> biomeIds, ArrayList<WeightedItemStack> stacks) {
             this.dimensionIds = dimensionIds;

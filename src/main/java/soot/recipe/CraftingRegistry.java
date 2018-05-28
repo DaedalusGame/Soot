@@ -1,6 +1,7 @@
 package soot.recipe;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import mezz.jei.util.Translator;
 import net.minecraft.block.BlockDoublePlant;
 import net.minecraft.block.BlockTallGrass;
@@ -34,6 +35,7 @@ import net.minecraftforge.registries.ForgeRegistry;
 import soot.Config;
 import soot.Registry;
 import soot.tile.TileEntityStillBase;
+import soot.tile.overrides.TileEntityEmberBoreImproved;
 import soot.util.*;
 import soot.util.AspectList.AspectRangeList;
 import teamroots.embers.ConfigManager;
@@ -110,6 +112,13 @@ public class CraftingRegistry {
         convertIngredient.put(new ItemStack(Items.STRING), new OreIngredient("string"));
         convertIngredient.put(new ItemStack(Items.ENDER_PEARL), new OreIngredient("enderpearl"));
         convertIngredient.put(new ItemStack(RegistryManager.sword_lead, 1, OreDictionary.WILDCARD_VALUE), new IngredientMaterialTool("sword", "lead"));
+
+        TileEntityEmberBoreImproved.BoreOutput defaultOutput = new TileEntityEmberBoreImproved.BoreOutput(Sets.newHashSet(), Sets.newHashSet(), Lists.newArrayList(
+                new TileEntityEmberBoreImproved.WeightedItemStack(new ItemStack(RegistryManager.crystal_ember),20),
+                new TileEntityEmberBoreImproved.WeightedItemStack(new ItemStack(RegistryManager.shard_ember),60),
+                new TileEntityEmberBoreImproved.WeightedItemStack(new ItemStack(Registry.EMBER_GRIT),20)
+        ));
+        TileEntityEmberBoreImproved.setDefault(defaultOutput);
 
         ListIterator<ItemMeltingOreRecipe> iterator = RecipeRegistry.meltingOreRecipes.listIterator();
         while (iterator.hasNext()) {
