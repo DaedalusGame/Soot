@@ -100,6 +100,7 @@ public class CraftingRegistry {
         convertIngredient.put(new ItemStack(RegistryManager.ingot_dawnstone), new OreIngredient("ingotDawnstone"));
         convertIngredient.put(new ItemStack(Items.DIAMOND), new OreIngredient("gemDiamond"));
         convertIngredient.put(new ItemStack(Items.QUARTZ), new OreIngredient("gemQuartz"));
+        convertIngredient.put(new ItemStack(Blocks.QUARTZ_BLOCK), new OreIngredient("blockQuartz"));
         convertIngredient.put(new ItemStack(Items.DYE, 1, 4), new OreIngredient("gemLapis"));
         convertIngredient.put(new ItemStack(Items.PRISMARINE_SHARD), new OreIngredient("gemPrismarine"));
         convertIngredient.put(new ItemStack(Items.PRISMARINE_CRYSTALS), new OreIngredient("dustPrismarine"));
@@ -107,6 +108,8 @@ public class CraftingRegistry {
         convertIngredient.put(new ItemStack(Items.GUNPOWDER), new OreIngredient("gunpowder"));
         convertIngredient.put(new ItemStack(RegistryManager.dust_ash), new OreIngredient("dustAsh"));
         convertIngredient.put(new ItemStack(RegistryManager.plate_iron), new OreIngredient("plateIron"));
+        convertIngredient.put(new ItemStack(RegistryManager.plate_lead), new OreIngredient("plateLead"));
+        convertIngredient.put(new ItemStack(RegistryManager.plate_silver), new OreIngredient("plateSilver"));
         convertIngredient.put(new ItemStack(RegistryManager.plate_copper), new OreIngredient("plateCopper"));
         convertIngredient.put(new ItemStack(RegistryManager.plate_dawnstone), new OreIngredient("plateDawnstone"));
         convertIngredient.put(new ItemStack(Items.STRING), new OreIngredient("string"));
