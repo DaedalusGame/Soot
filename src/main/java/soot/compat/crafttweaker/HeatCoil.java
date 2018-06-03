@@ -13,7 +13,6 @@ import soot.util.CTUtil;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
-@ZenRegister
 @ZenClass(HeatCoil.clazz)
 public class HeatCoil {
     public static final String clazz = "mods.embers.HeatCoil";

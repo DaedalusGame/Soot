@@ -27,6 +27,19 @@ public class TileEntityMechAccessorImproved extends TileEntityMechAccessor {
     }
 
     @Override
+    public void markDirty() {
+        super.markDirty();
+        IBlockState state = world.getBlockState(pos);
+        if(state.getBlock() instanceof BlockMechAccessor)
+        {
+            EnumFacing accessFace = state.getValue(BlockMechAccessor.facing).getOpposite();
+            TileEntity tile = world.getTileEntity(pos.offset(accessFace));
+            if(tile != null && canAccess(tile))
+                tile.markDirty();
+        }
+    }
+
+    @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
         IBlockState state = world.getBlockState(pos);
         if(state.getBlock() instanceof BlockMechAccessor)

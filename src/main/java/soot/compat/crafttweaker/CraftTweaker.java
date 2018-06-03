@@ -14,7 +14,6 @@ import teamroots.embers.util.ItemModUtil;
 
 public class CraftTweaker {
     @ZenExpansion("crafttweaker.item.IIngredient")
-    @ZenRegister
     public static class IngredientExtensions {
         @ZenMethod
         public static IIngredient anyHeat(IIngredient ingredient)
@@ -100,7 +99,6 @@ public class CraftTweaker {
     }
 
     @ZenExpansion("crafttweaker.item.IItemStack")
-    @ZenRegister
     public static class ItemStackExtensions {
         @ZenGetter("hasHeat")
         public static boolean hasHeat(IItemStack itemStack) {

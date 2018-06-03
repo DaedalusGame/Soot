@@ -2,6 +2,7 @@ package soot.tile.overrides;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.AxisAlignedBB;
 import soot.Soot;
 import soot.SoundEvents;
 import soot.util.ISoundController;
@@ -22,12 +23,23 @@ public class TileEntityCrystalCellImproved extends TileEntityCrystalCell impleme
 
     @Override
     public float getCurrentVolume(float volume) {
-        return (float) (this.capability.getEmberCapacity() / 1440000);
+        return (float) (this.capability.getEmberCapacity() / 1440000) + 0.5f;
     }
 
     @Override
     public float getCurrentPitch(float pitch) {
         return pitch;//(float) (1.5 - this.capability.getEmberCapacity() / 1440000);
+    }
+
+    @Override
+    public AxisAlignedBB getRenderBoundingBox() {
+        double xPos = pos.getX() + 0.5;
+        double yPos = pos.getY() + 0.5;
+        double zPos = pos.getZ() + 0.5;
+        double layerHeight = 0.25;
+        double numLayers = 2+Math.floor(capability.getEmberCapacity()/128000.0);
+        double size = numLayers * layerHeight;
+        return new AxisAlignedBB(xPos-size/2, yPos+0.5, zPos-size/2, xPos+size/2, yPos+0.5+size, zPos+size/2);
     }
 
     @Override
@@ -44,7 +56,7 @@ public class TileEntityCrystalCellImproved extends TileEntityCrystalCell impleme
             if (!getWorld().isRemote && stack != ItemStack.EMPTY){
                 inventory.extractItem(0, 1, false);
                 if (EmberGenUtil.getEmberForItem(stack.getItem()) > 0){
-                    this.capability.setEmberCapacity(Math.min(11440000, this.capability.getEmberCapacity()+EmberGenUtil.getEmberForItem(stack.getItem())*10));
+                    this.capability.setEmberCapacity(Math.min(1440000, this.capability.getEmberCapacity()+EmberGenUtil.getEmberForItem(stack.getItem())*10));
                     markDirty();
                 }
             }

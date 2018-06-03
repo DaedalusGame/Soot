@@ -14,7 +14,6 @@ import soot.util.CTUtil;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
-@ZenRegister
 @ZenClass(DawnstoneAnvil.clazz)
 public class DawnstoneAnvil {
     public static final String clazz = "mods.embers.DawnstoneAnvil";

@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 
-@ZenRegister
 @ZenClass(EmberBore.clazz)
 public class EmberBore {
     public static final String clazz = "mods.embers.EmberBore";

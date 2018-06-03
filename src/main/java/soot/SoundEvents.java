@@ -35,6 +35,32 @@ public class SoundEvents {
     public static SoundEvent BORE_LOOP;
     @GameRegistry.ObjectHolder("soot:block.embers.bore.loop_mine")
     public static SoundEvent BORE_LOOP_MINE;
+    @GameRegistry.ObjectHolder("soot:block.embers.stamper.down")
+    public static SoundEvent STAMPER_DOWN;
+    @GameRegistry.ObjectHolder("soot:block.embers.stamper.up")
+    public static SoundEvent STAMPER_UP;
+    @GameRegistry.ObjectHolder("soot:block.embers.melter.loop")
+    public static SoundEvent MELTER_LOOP;
+    @GameRegistry.ObjectHolder("soot:block.embers.mixer.loop")
+    public static SoundEvent MIXER_LOOP;
+    @GameRegistry.ObjectHolder("soot:block.embers.still.loop")
+    public static SoundEvent STILL_LOOP;
+    @GameRegistry.ObjectHolder("soot:block.embers.still.slow")
+    public static SoundEvent STILL_SLOW;
+    @GameRegistry.ObjectHolder("soot:block.embers.still.fast")
+    public static SoundEvent STILL_FAST;
+    @GameRegistry.ObjectHolder("soot:fireball.big.fire")
+    public static SoundEvent FIREBALL_BIG;
+    @GameRegistry.ObjectHolder("soot:fireball.big.hit")
+    public static SoundEvent FIREBALL_BIG_HIT;
+    @GameRegistry.ObjectHolder("soot:fireball.small.fire")
+    public static SoundEvent FIREBALL;
+    @GameRegistry.ObjectHolder("soot:fireball.small.hit")
+    public static SoundEvent FIREBALL_HIT;
+    @GameRegistry.ObjectHolder("soot:item.blazing_ray.fire")
+    public static SoundEvent BLAZING_RAY_FIRE;
+    @GameRegistry.ObjectHolder("soot:item.blazing_ray.empty")
+    public static SoundEvent BLAZING_RAY_EMPTY;
 
     @SubscribeEvent
     public static void registerSounds(RegistryEvent.Register<SoundEvent> event) {
@@ -51,6 +77,20 @@ public class SoundEvents {
         event.getRegistry().register(registerSound("block.embers.bore.stop"));
         event.getRegistry().register(registerSound("block.embers.bore.loop"));
         event.getRegistry().register(registerSound("block.embers.bore.loop_mine"));
+        event.getRegistry().register(registerSound("block.embers.stamper.down"));
+        event.getRegistry().register(registerSound("block.embers.stamper.up"));
+        event.getRegistry().register(registerSound("block.embers.melter.loop"));
+        event.getRegistry().register(registerSound("block.embers.mixer.loop"));
+        event.getRegistry().register(registerSound("block.embers.plinth.loop"));
+        event.getRegistry().register(registerSound("block.embers.still.loop"));
+        event.getRegistry().register(registerSound("block.embers.still.slow"));
+        event.getRegistry().register(registerSound("block.embers.still.fast"));
+        event.getRegistry().register(registerSound("fireball.small.fire"));
+        event.getRegistry().register(registerSound("fireball.small.hit"));
+        event.getRegistry().register(registerSound("fireball.big.fire"));
+        event.getRegistry().register(registerSound("fireball.big.hit"));
+        event.getRegistry().register(registerSound("item.blazing_ray.fire"));
+        event.getRegistry().register(registerSound("item.blazing_ray.empty"));
     }
 
     public static SoundEvent registerSound(String soundName) {

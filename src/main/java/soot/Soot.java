@@ -64,7 +64,8 @@ public class Soot
             MinecraftForge.EVENT_BUS.register(VillagerAntimonyHandler.class);
         if(Config.GOLEMS_POISON_IMMUNE || Config.GOLEMS_TYRFING_WEAK)
             MinecraftForge.EVENT_BUS.register(GolemHandler.class);
-        MinecraftForge.ORE_GEN_BUS.register(GenerationHandler.class);
+        if(Config.GENERATE_SULFUR_ORE)
+            MinecraftForge.ORE_GEN_BUS.register(GenerationHandler.class);
     }
 
     @EventHandler

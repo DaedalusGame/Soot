@@ -11,6 +11,7 @@ import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
@@ -19,12 +20,15 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import soot.Soot;
+import soot.SoundEvents;
 import soot.block.BlockStill;
 import soot.capability.IUpgradeProvider;
 import soot.recipe.CraftingRegistry;
 import soot.recipe.RecipeStill;
 import soot.util.FluidUtil;
 import soot.util.HeatManager;
+import soot.util.ISoundController;
 import soot.util.UpgradeUtil;
 import teamroots.embers.EventManager;
 import teamroots.embers.tileentity.ITileEntityBase;
@@ -33,10 +37,17 @@ import teamroots.embers.tileentity.TileEntityHeatCoil;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class TileEntityStillBase extends TileEntity implements ITileEntityBase, ITickable {
+public class TileEntityStillBase extends TileEntity implements ITileEntityBase, ITickable, ISoundController {
     public FluidTank tank = new FluidTank(5000);
     public List<IUpgradeProvider> upgrades;
     private int ticksExisted;
+    private boolean isSoundPlaying;
+    private int soundToPlay;
+
+    public static final int SOUND_NONE = 0;
+    public static final int SOUND_HOT = 1;
+    public static final int SOUND_WORK_SLOW = 2;
+    public static final int SOUND_WORK_FAST = 3;
 
     public TileEntityStillBase() {
     }
@@ -145,12 +156,53 @@ public class TileEntityStillBase extends TileEntity implements ITileEntityBase, 
         return null;
     }
 
+    private void setSoundToPlay(int id) {
+        soundToPlay = id;
+    }
+
+    public void turnOnSound() {
+        if(!isSoundPlaying) {
+            if(world.isRemote) {
+                Soot.proxy.playParallelMachineSound(this, SOUND_HOT, SoundEvents.STILL_LOOP, SoundCategory.BLOCKS, 0.1f, 1.0f, true, (float) pos.getX() + 0.5f, (float) pos.getY() + 1.0f, (float) pos.getZ() + 0.5f);
+                Soot.proxy.playParallelMachineSound(this, SOUND_WORK_SLOW, SoundEvents.STILL_SLOW, SoundCategory.BLOCKS, 1.0f, 1.0f, true, (float) pos.getX() + 0.5f, (float) pos.getY() + 1.0f, (float) pos.getZ() + 0.5f);
+                Soot.proxy.playParallelMachineSound(this, SOUND_WORK_FAST, SoundEvents.STILL_FAST, SoundCategory.BLOCKS, 1.0f, 1.0f, true, (float) pos.getX() + 0.5f, (float) pos.getY() + 1.0f, (float) pos.getZ() + 0.5f);
+            }
+            isSoundPlaying = true;
+        }
+    }
+
+    public void turnOffSound() {
+        if(isSoundPlaying) {
+            isSoundPlaying = false;
+        }
+    }
+
+    public void handleSound() {
+        if(soundToPlay != SOUND_NONE)
+            turnOnSound();
+        else
+            turnOffSound();
+    }
+
+    @Override
+    public int getCurrentSoundType() {
+        return soundToPlay;
+    }
+
+    @Override
+    public float getCurrentVolume(float volume) {
+        return 1.0f;
+    }
+
     @Override
     public void update() {
         ticksExisted++;
+        handleSound();
         double heat = HeatManager.getHeat(world, pos.down());
-        if (heat <= 0)
+        if (heat <= 0) {
+            setSoundToPlay(SOUND_NONE);
             return;
+        }
         TileEntityStillTip tip = getTip();
         if (tip != null) {
             upgrades = UpgradeUtil.getUpgrades(world, pos, EnumFacing.HORIZONTALS); //TODO: Cache both of these calls
@@ -163,6 +215,7 @@ public class TileEntityStillBase extends TileEntity implements ITileEntityBase, 
                 FluidStack inputStack = tank.getFluid();
                 RecipeStill recipe = CraftingRegistry.getStillRecipe(this, inputStack, tip.getCurrentCatalyst());
                 if (recipe != null) {
+                    setSoundToPlay(cookTime > 1 ? SOUND_WORK_SLOW : SOUND_WORK_FAST);
                     inputStack = tank.drain(recipe.getInputConsumed(), false);
                     FluidStack outputStack = UpgradeUtil.transformOutput(this, recipe.getOutput(this, inputStack), upgrades);
                     String brewName = getNameFromSign();
@@ -182,7 +235,9 @@ public class TileEntityStillBase extends TileEntity implements ITileEntityBase, 
                         tip.markDirty();
                     }
                 }
-
+                else {
+                    setSoundToPlay(SOUND_HOT);
+                }
             }
         }
     }

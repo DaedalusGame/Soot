@@ -3,6 +3,7 @@ package soot.tile.overrides;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.*;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.items.ItemStackHandler;
 import soot.Soot;
@@ -33,24 +34,18 @@ public class TileEntityEmberBoreImproved extends TileEntityEmberBore implements 
     Random random = new Random();
     public List<IUpgradeProvider> upgrades;
     public float lastAngle;
-    boolean isSoundPlaying;
+    private boolean isSoundPlaying;
+    private int soundToPlay;
     boolean isRunning;
+
+    @Override
+    public AxisAlignedBB getRenderBoundingBox() {
+        return new AxisAlignedBB(pos.add(-1, -2, -1), pos.add(2, 1, 2));
+    }
 
     public TileEntityEmberBoreImproved() {
         super();
         inventory = new EmberBoreInventory(9);
-    }
-
-    @Override
-    public float getCurrentPitch(float pitch) {
-        return (float) UpgradeUtil.getTotalSpeedModifier(this,upgrades);
-    }
-
-    @Override
-    public int getCurrentSoundType() {
-        if(ticksFueled > 0)
-            return canMine() ? SOUND_ON_DRILL : SOUND_ON;
-        return SOUND_NONE;
     }
 
     public static void registerBoreOutput(BoreOutput output) {
@@ -79,15 +74,14 @@ public class TileEntityEmberBoreImproved extends TileEntityEmberBore implements 
     public void update() {
         upgrades = UpgradeUtil.getUpgradesForMultiblock(world, pos, new EnumFacing[]{EnumFacing.UP}); //TODO: Cache both of these calls
         UpgradeUtil.verifyUpgrades(this, upgrades);
+        handleSound();
 
         double speedMod = UpgradeUtil.getTotalSpeedModifier(this, upgrades);
         if (ticksFueled > 0){
-            turnOnSound();
             lastAngle = angle;
             angle += 12.0f * speedMod;
-        } else {
-            turnOffSound();
         }
+        setSoundToPlay(ticksFueled > 0 ? SOUND_ON : SOUND_NONE);
         boolean cancel = UpgradeUtil.doWork(this,upgrades);
         if (!cancel && !getWorld().isRemote){
             ticksExisted ++;
@@ -107,6 +101,7 @@ public class TileEntityEmberBoreImproved extends TileEntityEmberBore implements 
                     markDirty();
                 }
             } else if(canMine()) {
+                setSoundToPlay(SOUND_ON_DRILL);
                 int boreTime = (int)Math.ceil(BORE_TIME * (1 / speedMod));
                 if (ticksExisted % boreTime == 0){
                     if (random.nextFloat() < EmberGenUtil.getEmberDensity(world.getSeed(), getPos().getX(), getPos().getZ())){
@@ -131,6 +126,27 @@ public class TileEntityEmberBoreImproved extends TileEntityEmberBore implements 
                 markDirty();
             }
         }
+    }
+
+    @Override
+    public float getCurrentPitch(float pitch) {
+        return (float) UpgradeUtil.getTotalSpeedModifier(this,upgrades);
+    }
+
+    @Override
+    public int getCurrentSoundType() {
+        return soundToPlay;
+    }
+
+    private void setSoundToPlay(int id) {
+        soundToPlay = id;
+    }
+
+    public void handleSound() {
+        if(soundToPlay != SOUND_NONE)
+            turnOnSound();
+        else
+            turnOffSound();
     }
 
     public void turnOnSound() {

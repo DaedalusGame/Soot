@@ -1,7 +1,6 @@
 package soot;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import crafttweaker.CraftTweakerAPI;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -24,6 +23,7 @@ import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
@@ -33,6 +33,7 @@ import soot.block.*;
 import soot.block.overrides.*;
 import soot.capability.CapabilityUpgradeProvider;
 import soot.capability.IUpgradeProvider;
+import soot.compat.crafttweaker.*;
 import soot.entity.EntityFireCloud;
 import soot.entity.EntityMuse;
 import soot.entity.EntitySnowpoff;
@@ -43,8 +44,6 @@ import soot.item.*;
 import soot.potion.*;
 import soot.tile.*;
 import soot.tile.overrides.*;
-import soot.tile.overrides.TileEntityEmberBoreImproved.BoreOutput;
-import soot.tile.overrides.TileEntityEmberBoreImproved.WeightedItemStack;
 import soot.upgrade.UpgradeCatalyticPlug;
 import soot.util.CaskManager;
 import soot.util.CaskManager.CaskLiquid;
@@ -69,6 +68,7 @@ public class Registry {
     private static ArrayList<Item> MODELLED_ITEMS = new ArrayList<>();
     private static ArrayList<Block> BLOCKS = new ArrayList<>();
     private static ArrayList<Item> ITEMS = new ArrayList<>();
+    private static ArrayList<Runnable> WRITEBACKS = new ArrayList<>();
 
     public static Item.ToolMaterial EITR_TOOL_MATERIAL = EnumHelper.addToolMaterial(Soot.MODID+":eitr", 2, 512, 7.5f, 0.0f, 24);
 
@@ -181,6 +181,8 @@ public class Registry {
         registerEntities();
         registerFluids();
         registerCapabilities();
+        if(Loader.isModLoaded("crafttweaker") && Config.EMBERS_CRAFTTWEAKER_SUPPORT)
+            registerCraftTweakerSupport();
         Soot.proxy.addResourceOverride(Embers.MODID,"textures","gui","codex_index","png"); //Yeah yeah i know it's selfish.
         Soot.proxy.addResourceOverride(Embers.MODID,"models","item","pipe","json");
         Soot.proxy.addResourceOverride(Embers.MODID,"models","item","item_pipe","json");
@@ -210,7 +212,8 @@ public class Registry {
         if(Config.METALLURGICAL_DUST_COLLECT)
             initMetallurgicalDust();
         initResearches();
-        NetworkRegistry.INSTANCE.registerGuiHandler(Embers.instance, new GuiHandler());
+        if(Config.OVERRIDE_CODEX)
+            NetworkRegistry.INSTANCE.registerGuiHandler(Embers.instance, new GuiHandler());
     }
 
     public static void initMetallurgicalDust() {
@@ -315,6 +318,18 @@ public class Registry {
         }
     }
 
+    public static void registerCraftTweakerSupport() {
+        CraftTweakerAPI.registerClass(Alchemy.class);
+        CraftTweakerAPI.registerClass(DawnstoneAnvil.class);
+        CraftTweakerAPI.registerClass(EmberBore.class);
+        CraftTweakerAPI.registerClass(HeatCoil.class);
+        CraftTweakerAPI.registerClass(Melter.class);
+        CraftTweakerAPI.registerClass(Mixer.class);
+        CraftTweakerAPI.registerClass(Stamper.class);
+        CraftTweakerAPI.registerClass(CraftTweaker.IngredientExtensions.class);
+        CraftTweakerAPI.registerClass(CraftTweaker.ItemStackExtensions.class);
+    }
+
     private static boolean isValidOre(String orename) {
         return Config.METALLURGICAL_DUST_BLACKLIST.contains(orename) == Config.METALLURGICAL_DUST_IS_WHITELIST;
     }
@@ -350,8 +365,10 @@ public class Registry {
     public static void registerAccessorTiles() {
         TileEntityMechAccessorImproved.registerAccessibleTile(TileEntityMechCore.class);
         TileEntityMechAccessorImproved.registerAccessibleTile(TileEntityMixerBottom.class);
+        TileEntityMechAccessorImproved.registerAccessibleTile(TileEntityMixerTop.class);
         TileEntityMechAccessorImproved.registerAccessibleTile(TileEntityActivatorBottom.class);
         TileEntityMechAccessorImproved.registerAccessibleTile(TileEntityFurnaceBottom.class);
+        TileEntityMechAccessorImproved.registerAccessibleTile(TileEntityFurnaceTop.class);
         TileEntityMechAccessorImproved.registerAccessibleTile(TileEntityBoilerBottom.class);
         TileEntityMechAccessorImproved.registerAccessibleTile(TileEntityReactor.class);
         TileEntityMechAccessorImproved.registerAccessibleTile(TileEntityStillBase.class);
@@ -635,6 +652,7 @@ public class Registry {
         for (Item item : ITEMS) {
             event.getRegistry().register(item);
         }
+        WRITEBACKS.forEach(Runnable::run); //Have to do this possibly. Another mod may depend on embers items.
     }
 
     @SubscribeEvent

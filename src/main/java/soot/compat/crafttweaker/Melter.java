@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@ZenRegister
 @ZenClass(Melter.clazz)
 public class Melter {
     public static final String clazz = "mods.embers.Melter";

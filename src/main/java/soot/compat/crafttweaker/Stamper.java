@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@ZenRegister
 @ZenClass(Stamper.clazz)
 public class Stamper {
     public static final String clazz = "mods.embers.Stamper";

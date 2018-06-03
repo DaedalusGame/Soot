@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@ZenRegister
 @ZenClass(Mixer.clazz)
 public class Mixer {
     public static final String clazz = "mods.embers.Mixer";

@@ -41,6 +41,8 @@ public class RecipeStamper {
     }
 
     public boolean matches(ItemStack item, FluidStack fluid, ItemStack stamp) {
-        return this.input.apply(item) && this.stamp.apply(stamp) && (inputFluid == null || (fluid != null && (exactMatch ? inputFluid.isFluidEqual(fluid) : inputFluid.getFluid() == fluid.getFluid())));
+        boolean hasEnoughFluid = inputFluid == null || (fluid != null && fluid.amount >= inputFluid.amount);
+        boolean fluidMatches = inputFluid == null || (fluid != null && (exactMatch ? inputFluid.isFluidEqual(fluid) : inputFluid.getFluid() == fluid.getFluid()));
+        return this.input.apply(item) && this.stamp.apply(stamp) && fluidMatches && hasEnoughFluid;
     }
 }

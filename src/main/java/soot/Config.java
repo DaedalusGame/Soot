@@ -36,6 +36,10 @@ public class Config {
     public static boolean OVERRIDE_MECH_ACCESSOR;
     public static boolean OVERRIDE_ALCHEMY_PEDESTAL;
     public static boolean OVERRIDE_CRYSTAL_CELL;
+    public static boolean OVERRIDE_CODEX;
+    public static boolean EMBERS_CRAFTTWEAKER_SUPPORT;
+
+    public static boolean GENERATE_SULFUR_ORE;
 
     public static void preInit(FMLPreInitializationEvent event)
     {
@@ -54,7 +58,9 @@ public class Config {
         OVERRIDE_ALCHEMY_TABLET = loadPropBool("alchemyTablet","Overrides","Overrides the Exchange Tablet",true);
         OVERRIDE_ALCHEMY_PEDESTAL = loadPropBool("alchemyPedestal","Overrides","Overrides the Alchemy Pedestal",true);
         OVERRIDE_CRYSTAL_CELL = loadPropBool("crystalCell","Overrides","Overrides the Crystal Cell",true);
+        OVERRIDE_CODEX = loadPropBool("codex","Overrides","Overrides the Codex gui",true);
 
+        EMBERS_CRAFTTWEAKER_SUPPORT = loadPropBool("embersCraftTweaker","Features","Registers the Crafttweaker Support for Embers.",true);
         TRADING_ANTIMONY = loadPropBool("tradingAntimony","Features","Allows trading signet of antimony with villagers instead of emeralds.",true);
         GOLEMS_TYRFING_WEAK = loadPropBool("golemsTyrfingWeak","Features","Golems take extra damage from the Tyrfing.",true);
         GOLEMS_POISON_IMMUNE = loadPropBool("golemsPoisonImmune","Features","Golems are immune to poison.",true);
@@ -68,6 +74,8 @@ public class Config {
         METALLURGICAL_DUST_COLLECT = loadPropBool("metallurgicalDustCollect","Features","Disabling this will disable filling in the default Metallurgical Dust compatibility. So you can do it all via CT.",true);
         METALLURGICAL_DUST_IS_WHITELIST = loadPropBool("metallurgicalDustIsWhitelist","Features","Whether the blacklist is actually a whitelist.",false);
         METALLURGICAL_DUST_BLACKLIST = loadPropStringSet("metallurgicalDustBlacklist","Features","Ores that should not be affected by metallurgical dust.",new String[]{"rftools:dimensional_shard_ore"});
+
+        GENERATE_SULFUR_ORE = loadPropBool("sulfurOre","Generation","Whether sulfur ore generates in new chunks.",true);
 
         if (configuration.hasChanged()) {
             configuration.save();

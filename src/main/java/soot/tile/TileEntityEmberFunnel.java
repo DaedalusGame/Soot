@@ -77,7 +77,7 @@ public class TileEntityEmberFunnel extends TileEntity implements ITileEntityBase
     public void update() {
         this.ticksExisted ++;
         EnumFacing facing = world.getBlockState(pos).getValue(BlockEmberEmitter.facing);
-        BlockPos attachPos = pos.offset(facing, -1);
+        BlockPos attachPos = pos.offset(facing.getOpposite());
         TileEntity attachTile = world.getTileEntity(attachPos);
         if (ticksExisted % 2 == 0 && attachTile != null){
             if (attachTile.hasCapability(EmberCapabilityProvider.emberCapability, null)){

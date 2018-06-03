@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@ZenRegister
 @ZenClass(Alchemy.clazz)
 public class Alchemy {
     public static final String clazz = "mods.embers.Alchemy";

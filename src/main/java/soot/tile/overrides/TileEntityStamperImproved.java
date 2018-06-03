@@ -8,11 +8,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import soot.SoundEvents;
 import soot.capability.IUpgradeProvider;
 import soot.recipe.CraftingRegistry;
 import soot.recipe.RecipeStamper;
@@ -68,6 +70,7 @@ public class TileEntityStamperImproved extends TileEntityStamper {
                             if (!world.isRemote) {
                                 PacketHandler.INSTANCE.sendToAll(new MessageStamperFX(basePos.getX() + 0.5f, basePos.getY() + 1.0f, basePos.getZ() + 0.5f));
                             }
+                            world.playSound(null,pos.getX()+0.5,pos.getY()-0.5,pos.getZ()+0.5, SoundEvents.STAMPER_DOWN, SoundCategory.BLOCKS, 1.0f, 1.0f);
                             powered = true;
                             this.ticksExisted = 0;
 
@@ -102,15 +105,18 @@ public class TileEntityStamperImproved extends TileEntityStamper {
                 }
                 markDirty();
             } else if (!cancel && powered && !getWorld().isRemote && this.ticksExisted >= retractTime) {
-                powered = false;
-                this.ticksExisted = 0;
-                markDirty();
+                retract();
             }
         } else if (powered) {
-            powered = false;
-            this.ticksExisted = 0;
-            markDirty();
+            retract();
         }
+    }
+
+    public void retract() {
+        powered = false;
+        world.playSound(null,pos.getX()+0.5,pos.getY()-0.5,pos.getZ()+0.5, SoundEvents.STAMPER_UP, SoundCategory.BLOCKS, 1.0f, 1.0f);
+        this.ticksExisted = 0;
+        markDirty();
     }
 
     @Override
