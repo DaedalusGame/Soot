@@ -24,7 +24,10 @@ import teamroots.embers.tileentity.TileEntityBeamCannon;
 import java.util.List;
 
 public class TileEntityBeamCannonImproved extends TileEntityBeamCannon {
+    public static final int COOLDOWN = 10;
+
     public List<IUpgradeProvider> upgrades;
+    public int cooldown = 0;
 
     @Override
     public void update() {
@@ -36,13 +39,15 @@ public class TileEntityBeamCannonImproved extends TileEntityBeamCannon {
         upgrades = UpgradeUtil.getUpgrades(world, pos, new EnumFacing[] {facing.getOpposite()}); //TODO: Cache both of these calls
         UpgradeUtil.verifyUpgrades(this, upgrades);
         ticksExisted++;
+        cooldown--;
         double cost_multiplier = UpgradeUtil.getTotalEmberConsumption(this, upgrades);
         boolean isPowered = getWorld().isBlockIndirectlyGettingPowered(getPos()) != 0;
         //So lets explain why we want to modify the redstone signal value: An upgrade attachment for this block could be
         //a turret base that provides a turret upgrade that auto-aims and auto-fires the cannon, in that case we
         //do not want the player to constantly fire the cannon.
-        if (this.capability.getEmber() >= 400 * cost_multiplier && UpgradeUtil.getOtherParameter(this,"redstone_enabled",isPowered,upgrades)){
+        if (cooldown <= 0 && this.capability.getEmber() >= 400 * cost_multiplier && UpgradeUtil.getOtherParameter(this,"redstone_enabled",isPowered,upgrades)){
             fire();
+            cooldown = UpgradeUtil.getOtherParameter(this,"cooldown",COOLDOWN,upgrades);
         }
     }
 

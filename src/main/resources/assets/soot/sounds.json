@@ -17,8 +17,7 @@
     "category": "block",
     "sounds": [
       "soot:alchemy_mid_loop"
-    ],
-    "subtitle": "subtitles.embers.alchemy.loop"
+    ]
   },
   "block.embers.alchemy.start": {
     "category": "block",
@@ -46,15 +45,13 @@
     "category": "block",
     "sounds": [
       "soot:crystalcell"
-    ],
-    "subtitle": "subtitles.embers.crystalcell"
+    ]
   },
   "block.embers.pedestal.loop": {
     "category": "block",
     "sounds": [
       "soot:pedestal_ashes_loop"
-    ],
-    "subtitle": "subtitles.embers.pedestal.loop"
+    ]
   },
   "block.embers.activator": {
     "category": "block",
@@ -100,8 +97,7 @@
     "category": "block",
     "sounds": [
       "soot:ember_bore_run_loop"
-    ],
-    "subtitle": "subtitles.embers.bore.loop"
+    ]
   },
   "block.embers.bore.loop_mine": {
     "category": "block",
@@ -113,29 +109,25 @@
     "category": "block",
     "sounds": [
       "soot:melter_loop"
-    ],
-    "subtitle": "subtitles.embers.melter.loop"
+    ]
   },
   "block.embers.mixer.loop": {
     "category": "block",
     "sounds": [
       "soot:mixer_loop"
-    ],
-    "subtitle": "subtitles.embers.mixer.loop"
+    ]
   },
   "block.embers.plinth.loop": {
     "category": "block",
     "sounds": [
       "soot:cinder_plinth_loop"
-    ],
-    "subtitle": "subtitles.embers.plinth.loop"
+    ]
   },
   "block.embers.still.loop": {
     "category": "block",
     "sounds": [
       "soot:still_heated_no_brew"
-    ],
-    "subtitle": "subtitles.embers.still.loop"
+    ]
   },
   "block.embers.still.slow": {
     "category": "block",
@@ -148,6 +140,14 @@
     "sounds": [
       "soot:still_brewing_fast"
     ]
+  },
+  "block.sulfur_ore.vent": {
+    "category": "block",
+    "sounds": [
+      "soot:sulfur_vent1",
+      "soot:sulfur_vent2"
+    ],
+    "subtitle": "subtitles.sulfur_ore.vent"
   },
   "fireball.small.fire": {
     "sounds": [
@@ -165,15 +165,15 @@
   },
   "fireball.big.fire": {
     "sounds": [
-      "soot:fireball_small_launch1",
-      "soot:fireball_small_launch2"
+      "soot:fireball_big_launch1",
+      "soot:fireball_big_launch2"
     ],
     "subtitle": "subtitles.fireball.big.fire"
   },
   "fireball.big.hit": {
     "sounds": [
-      "soot:fireball_small_hit1",
-      "soot:fireball_small_hit2"
+      "soot:fireball_big_hit1",
+      "soot:fireball_big_hit2"
     ],
     "subtitle": "subtitles.fireball.big.hit"
   },

@@ -10,10 +10,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import soot.Registry;
+import soot.SoundEvents;
 import soot.tile.TileEntitySulfurOre;
 
 import javax.annotation.Nullable;
@@ -39,21 +41,28 @@ public class BlockSulfurOre extends Block {
         return false;
     }
 
+    public void activateVent(World worldIn, BlockPos pos, IBlockState state) {
+        if(!state.getValue(ACTIVE)) {
+            worldIn.setBlockState(pos, state.withProperty(ACTIVE, true));
+            worldIn.playSound(null,pos, SoundEvents.SULFUR_VENT, SoundCategory.BLOCKS, 1.0f, 1.0f);
+        }
+    }
+
     @Override
     public void randomTick(World worldIn, BlockPos pos, IBlockState state, Random random) {
-        worldIn.setBlockState(pos,state.withProperty(ACTIVE,true));
+        activateVent(worldIn, pos, state);
     }
 
     @Override
     public void onEntityWalk(World worldIn, BlockPos pos, Entity entityIn) {
         IBlockState state = worldIn.getBlockState(pos);
-        worldIn.setBlockState(pos,state.withProperty(ACTIVE,true));
+        activateVent(worldIn, pos, state);
     }
 
     @Override
     public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
         if(blockIn != this)
-            worldIn.setBlockState(pos,state.withProperty(ACTIVE,true));
+            activateVent(worldIn, pos, state);
     }
 
     @Override

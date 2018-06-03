@@ -49,6 +49,8 @@ public class SoundEvents {
     public static SoundEvent STILL_SLOW;
     @GameRegistry.ObjectHolder("soot:block.embers.still.fast")
     public static SoundEvent STILL_FAST;
+    @GameRegistry.ObjectHolder("soot:block.sulfur_ore.vent")
+    public static SoundEvent SULFUR_VENT;
     @GameRegistry.ObjectHolder("soot:fireball.big.fire")
     public static SoundEvent FIREBALL_BIG;
     @GameRegistry.ObjectHolder("soot:fireball.big.hit")
@@ -85,6 +87,7 @@ public class SoundEvents {
         event.getRegistry().register(registerSound("block.embers.still.loop"));
         event.getRegistry().register(registerSound("block.embers.still.slow"));
         event.getRegistry().register(registerSound("block.embers.still.fast"));
+        event.getRegistry().register(registerSound("block.sulfur_ore.vent"));
         event.getRegistry().register(registerSound("fireball.small.fire"));
         event.getRegistry().register(registerSound("fireball.small.hit"));
         event.getRegistry().register(registerSound("fireball.big.fire"));
