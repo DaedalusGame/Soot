@@ -117,6 +117,30 @@
       "soot:mixer_loop"
     ]
   },
+  "block.embers.alchemical_globe.loop": {
+    "category": "block",
+    "sounds": [
+      "soot:alch_globe_hum_loop"
+    ]
+  },
+  "block.embers.alchemical_mixer.success_loop": {
+    "category": "block",
+    "sounds": [
+      "soot:alch_mixer_success_loop"
+    ]
+  },
+  "block.embers.alchemical_mixer.fail_loop": {
+    "category": "block",
+    "sounds": [
+      "soot:alch_mixer_fail_loop"
+    ]
+  },
+  "block.embers.alchemical_mixer.waste": {
+    "category": "block",
+    "sounds": [
+      "soot:alch_mixer_waste"
+    ]
+  },
   "block.embers.plinth.loop": {
     "category": "block",
     "sounds": [
@@ -189,5 +213,31 @@
       "soot:blray_empty"
     ],
     "subtitle": "subtitles.blazing_ray.empty"
+  },
+  "inspiration.start": {
+    "sounds": [
+      "soot:inspiration_start"
+    ]
+  },
+  "inspiration.end": {
+    "sounds": [
+      "soot:inspiration_end"
+    ]
+  },
+  "inspiration.refresh": {
+    "sounds": [
+      "soot:inspiration_refresh"
+    ]
+  },
+  "inspiration.loop": {
+    "sounds": [
+      "soot:inspiration_loop"
+    ]
+  },
+  "inspiration.muse_appear": {
+    "sounds": [
+      "soot:inspiration_muse_appear1",
+      "soot:inspiration_muse_appear2"
+    ]
   }
 }

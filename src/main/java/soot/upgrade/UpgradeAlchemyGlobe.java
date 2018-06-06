@@ -6,13 +6,17 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import soot.SoundEvents;
 import soot.capability.CapabilityUpgradeProvider;
 import soot.capability.IUpgradeProvider;
+import soot.network.PacketHandler;
+import soot.network.message.MessageMixerFailFX;
 import soot.recipe.RecipeAlchemicalMixer;
 import soot.recipe.CraftingRegistry;
 import soot.tile.TileEntityAlchemyGlobe;
@@ -59,7 +63,8 @@ public class UpgradeAlchemyGlobe extends CapabilityUpgradeProvider {
         World world = bottom.getWorld();
         TileEntityMixerTop top = (TileEntityMixerTop) world.getTileEntity(bottom.getPos().up());
         if (top != null) {
-            double emberCost = 2.0 * UpgradeUtil.getTotalEmberConsumption(bottom,upgrades);
+            double costMultiplier = UpgradeUtil.getTotalEmberConsumption(bottom, upgrades);
+            double emberCost = 2.0 * costMultiplier;
             if (top.capability.getEmber() >= emberCost) {
                 ArrayList<FluidStack> fluids = bottom.getFluids();
                 RecipeAlchemicalMixer recipe = CraftingRegistry.getAlchemicalMixingRecipe(fluids);
@@ -72,7 +77,7 @@ public class UpgradeAlchemyGlobe extends CapabilityUpgradeProvider {
                         if (amount != 0) {
                             tank.fill(output, true);
                             bottom.consumeFluids(fluids, recipe);
-                            top.capability.removeAmount(emberCost * UpgradeUtil.getTotalEmberConsumption(bottom, upgrades), true);
+                            top.capability.removeAmount(emberCost, true);
                             bottom.markDirty();
                             top.markDirty();
                         }
@@ -83,7 +88,7 @@ public class UpgradeAlchemyGlobe extends CapabilityUpgradeProvider {
                         BlockPos topPos = top.getPos();
                         ejectFailure(world, topPos,failure,EnumFacing.HORIZONTALS);
                         bottom.consumeFluids(fluids, recipe);
-                        top.capability.removeAmount(emberCost * UpgradeUtil.getTotalEmberConsumption(bottom, upgrades), true);
+                        top.capability.removeAmount(emberCost*200, true);
                         fail(world.rand.nextInt(100)+200);
                         globe.consumeAsh();
                     }
@@ -126,13 +131,8 @@ public class UpgradeAlchemyGlobe extends CapabilityUpgradeProvider {
         float yOff = 0.5F;
         float zOff = world.rand.nextFloat() * 0.05F + 0.475F + zEject * 0.7F;
 
-        /*if(world.isRemote) //Figure this out sometime. Embers probably has packets for this.
-        {
-            for (int i = 0; i < 12; i ++) {
-                float ejectSpeed = world.rand.nextFloat() * 0.1f + 0.1f;
-                ParticleUtil.spawnParticleSmoke(world, pos.getX() + xOff, pos.getY() + yOff, pos.getZ() + zOff, xEject * ejectSpeed, 0, zEject * ejectSpeed, 64, 64, 64, 0.125f, 5.0f + 3.0f * world.rand.nextFloat(), 80);
-            }
-        }*/
+        world.playSound(null,pos.getX() + xOff, pos.getY() + yOff, pos.getZ() + zOff, SoundEvents.ALCHEMICAL_MIXER_WASTE, SoundCategory.BLOCKS, 1.0f, 1.0f);
+        PacketHandler.INSTANCE.sendToAll(new MessageMixerFailFX(pos.getX() + xOff, pos.getY() + yOff, pos.getZ() + zOff, direction));
         EntityItem item = new EntityItem(world, pos.getX() + xOff, pos.getY() + yOff - 0.4f, pos.getZ() + zOff, failure);
         item.motionX = xEject * 0.1f;
         item.motionY = 0.0D;

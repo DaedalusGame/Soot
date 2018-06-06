@@ -435,12 +435,22 @@ public class Registry {
         registerBlock("caminite_large_tile_slab",caminiteLargeTileSlab,new ItemBlockSlab(caminiteLargeTileSlab,caminiteLargeTile));
         registerBlock("caminite_large_tile_stairs",caminiteLargeTileStairs,new ItemBlock(caminiteLargeTileStairs));
 
+        Block archaicTileSlab = new BlockModSlab(Material.ROCK, MapColor.BROWN_STAINED_HARDENED_CLAY).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
+        Block archaicTileStairs = new BlockModStairs(RegistryManager.archaic_tile.getDefaultState()).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
+        registerBlock("archaic_tile_slab",archaicTileSlab,new ItemBlockSlab(archaicTileSlab, RegistryManager.archaic_tile));
+        registerBlock("archaic_tile_stairs",archaicTileStairs,new ItemBlock(archaicTileStairs));
+
         Block archaicBigBrick = new Block(Material.ROCK, MapColor.BROWN_STAINED_HARDENED_CLAY).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
         Block archaicBigBrickSlab = new BlockModSlab(Material.ROCK, MapColor.BROWN_STAINED_HARDENED_CLAY).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
         Block archaicBigBrickStairs = new BlockModStairs(archaicBigBrick.getDefaultState()).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
         registerBlock("archaic_big_bricks",archaicBigBrick,new ItemBlock(archaicBigBrick));
         registerBlock("archaic_big_bricks_slab",archaicBigBrickSlab,new ItemBlockSlab(archaicBigBrickSlab,archaicBigBrick));
         registerBlock("archaic_big_bricks_stairs",archaicBigBrickStairs,new ItemBlock(archaicBigBrickStairs));
+
+        Block archaicBrickSlab = new BlockModSlab(Material.ROCK, MapColor.BROWN_STAINED_HARDENED_CLAY).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
+        Block archaicBrickStairs = new BlockModStairs(RegistryManager.archaic_bricks.getDefaultState()).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
+        registerBlock("archaic_bricks_slab",archaicBrickSlab,new ItemBlockSlab(archaicBrickSlab, RegistryManager.archaic_bricks));
+        registerBlock("archaic_bricks_stairs",archaicBrickStairs,new ItemBlock(archaicBrickStairs));
 
         Block sealedPlanksSlab = new BlockModSlab(Material.WOOD, MapColor.BROWN_STAINED_HARDENED_CLAY).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
         Block sealedPlanksStairs = new BlockModStairs(RegistryManager.sealed_planks.getDefaultState()).setHardness(1.6f).setCreativeTab(Soot.creativeTab);

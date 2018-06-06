@@ -48,6 +48,22 @@ public class EntityMuse extends EntityMob {
     }
 
     @Override
+    public boolean attackEntityAsMob(Entity target) {
+        if (!(target instanceof EntityLivingBase) || !isVisibleTo((EntityLivingBase) target)) {
+            return false;
+        }
+
+        boolean flag = super.attackEntityAsMob(target);
+
+        if(flag && target instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer) target;
+            player.addExperienceLevel(-1);
+        }
+
+        return flag;
+    }
+
+    @Override
     public void onUpdate()
     {
         this.noClip = true;

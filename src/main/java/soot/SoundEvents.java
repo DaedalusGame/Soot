@@ -49,6 +49,8 @@ public class SoundEvents {
     public static SoundEvent STILL_SLOW;
     @GameRegistry.ObjectHolder("soot:block.embers.still.fast")
     public static SoundEvent STILL_FAST;
+    @GameRegistry.ObjectHolder("soot:block.embers.alchemical_mixer.waste")
+    public static SoundEvent ALCHEMICAL_MIXER_WASTE;
     @GameRegistry.ObjectHolder("soot:block.sulfur_ore.vent")
     public static SoundEvent SULFUR_VENT;
     @GameRegistry.ObjectHolder("soot:fireball.big.fire")
@@ -63,6 +65,18 @@ public class SoundEvents {
     public static SoundEvent BLAZING_RAY_FIRE;
     @GameRegistry.ObjectHolder("soot:item.blazing_ray.empty")
     public static SoundEvent BLAZING_RAY_EMPTY;
+    @GameRegistry.ObjectHolder("soot:inspiration.start")
+    public static SoundEvent INSPIRATION_START;
+    @GameRegistry.ObjectHolder("soot:inspiration.end")
+    public static SoundEvent INSPIRATION_END;
+    @GameRegistry.ObjectHolder("soot:inspiration.refresh")
+    public static SoundEvent INSPIRATION_REFRESH;
+    @GameRegistry.ObjectHolder("soot:inspiration.loop")
+    public static SoundEvent INSPIRATION_LOOP;
+    @GameRegistry.ObjectHolder("soot:inspiration.muse_appear")
+    public static SoundEvent INSPIRATION_MUSE_APPEAR;
+
+
 
     @SubscribeEvent
     public static void registerSounds(RegistryEvent.Register<SoundEvent> event) {
@@ -87,6 +101,7 @@ public class SoundEvents {
         event.getRegistry().register(registerSound("block.embers.still.loop"));
         event.getRegistry().register(registerSound("block.embers.still.slow"));
         event.getRegistry().register(registerSound("block.embers.still.fast"));
+        event.getRegistry().register(registerSound("block.embers.alchemical_mixer.waste"));
         event.getRegistry().register(registerSound("block.sulfur_ore.vent"));
         event.getRegistry().register(registerSound("fireball.small.fire"));
         event.getRegistry().register(registerSound("fireball.small.hit"));
@@ -94,6 +109,11 @@ public class SoundEvents {
         event.getRegistry().register(registerSound("fireball.big.hit"));
         event.getRegistry().register(registerSound("item.blazing_ray.fire"));
         event.getRegistry().register(registerSound("item.blazing_ray.empty"));
+        event.getRegistry().register(registerSound("inspiration.start"));
+        event.getRegistry().register(registerSound("inspiration.end"));
+        event.getRegistry().register(registerSound("inspiration.refresh"));
+        event.getRegistry().register(registerSound("inspiration.loop"));
+        event.getRegistry().register(registerSound("inspiration.muse_appear"));
     }
 
     public static SoundEvent registerSound(String soundName) {

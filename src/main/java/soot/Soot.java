@@ -12,6 +12,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Logger;
 import soot.handler.*;
+import soot.network.PacketHandler;
 import soot.recipe.CraftingRegistry;
 import soot.util.Attributes;
 import soot.util.OreTransmutationManager;
@@ -66,6 +67,7 @@ public class Soot
             MinecraftForge.EVENT_BUS.register(GolemHandler.class);
         if(Config.GENERATE_SULFUR_ORE)
             MinecraftForge.ORE_GEN_BUS.register(GenerationHandler.class);
+        PacketHandler.registerMessages();
     }
 
     @EventHandler
