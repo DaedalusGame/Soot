@@ -1,0 +1,235 @@
+itemGroup.soot=Soot
+
+soot.tooltip.eitr=Игнорирует броню при ударе.
+
+embers.jei.recipe.dawnstone_anvil=Рецепт золотитовой наковальни
+embers.jei.recipe.alchemical_mixer=Рецепт алхимического смесителя
+embers.jei.recipe.still=Рецепт стойки
+
+embers.research.world.sulfur=Сера
+embers.research.world.sulfur.title=Коррозионные вены
+embers.research.world.sulfur.desc=Исследуя пещеры Вы можете обнаружить странные камни с отверстиями - серные породы. При добыче данного блока киркой Вы получите серную смесь, которая пока что не пригодна к использованию...
+
+embers.research.world.redstone_bin=Ящик-ловушка
+embers.research.world.redstone_bin.title=Контролируемый дроп
+embers.research.world.redstone_bin.desc=Порой необходимо выбросить сразу много ресурсов из ящика, но, увы, ничего не получалось... До этого момента. Сейчас же Вы можете создать полноценный аналог обычного ящика, но с одной отличительной особенностью - при получении сигнала красного камня ящик полностью опустошает свой инвентарь, выбрасывая все предметы под себя.
+
+embers.research.mechanisms.insulation=Изоляция
+embers.research.mechanisms.insulation.title=Сохранение тепла
+embers.research.mechanisms.insulation.desc=нагревательная катушка - по истине удивительная машина, также нельзя оставить без внимания и её способность к поглощению энергии Эмбера в качестве топлива. Но, порой, поддерживать постоянную работу катушки не совсем выгодно. Выходом из данной ситуации служат теплоизоляторы, которые увеличивают максимальную тепловую мощь катушки и снижают скорость её охлаждения на 30%.
+
+embers.research.metallurgy.scale=Весы
+embers.research.metallurgy.scale.title=Мерные чашки
+embers.research.metallurgy.scale.desc=Алхимия - очень мрачное и неблагодарное искусство. Пепел должен быть точно измерен, или все Ваши ценные компоненты будут просто бесследно сгорать, но, есть выход и из этой ситуации.. При прикреплении двух контейнеров к верхней части весов нижняя их половина будет излучать сигнал красного камня в направлении более тяжёлого контейнера(Против часовой стрелки), или в обе стороны, если они равны.
+
+embers.research.metallurgy.catalytic_plug=Каталитический затвор
+embers.research.metallurgy.catalytic_plug.title=Внедрение изнурения
+embers.research.metallurgy.catalytic_plug.desc=Каталитические затворы - фантастические устройства для самых нетерпеливых. При подключении к машине они будут удваивать общую скорость производства устройства, но только в том случае, если оно также снабжено алхимическим мусором со спины, который потребляется в процессе. На каждое устройство можно подключить только 2 каталитических затвора, тем самым ускорив его в 4 раза.
+
+embers.research.metallurgy.advanced_emitters=Продвинутая передача Эмбера
+embers.research.metallurgy.advanced_emitters.title="Один за всех, и все за одного"...
+embers.research.metallurgy.advanced_emitters.desc=Эмбер-распространитель может излучать энергию в 5 различных направлениях. Просто подключите нужную сторону к механизму и активируйте его сигналом красного камня. Кроме того, при передаче большого количества энергии Эмбера приёмники могут сильно перегружаться, в связи с чем производство становится не таким быстрым и выгодным. Для сведения этого фактора к минимуму Вы можете установить Эмбер-воронку, которая будет захватывать энергию из нескольких источников и передавать в механизм.
+
+embers.research.alchemy.eitr=Эйтр
+embers.research.alchemy.eitr.title=Да это же...
+embers.research.alchemy.eitr.desc=Эйтр - всего лишь жалкий кусок металла, наполненный парой алхимических свойств, которые имеют довольно неплохие особенности. При ударе Эйтром по врагу часть нанесенного Вами урона обратится в чистый, и пройдет сквозь броню.
+
+embers.research.brewing=Пивоварение
+
+embers.research.brewing.still=Пивоваренная стойка
+embers.research.brewing.still.title=Почетный Дварфийский пивовар
+embers.research.brewing.still.desc=Пивоваренная стойка - огромный сосуд для создания различного рода варев. Основание Вашего варева следует закачивать на дно этого сосуда, а в кран при помощи труб или воронки можно поместить различного рода катализаторы и модификаторы, ну а результат дистилляции	выйдет в сосуд, находящийся под краном стойки.
+
+embers.research.brewing.still_fuel=Нагрев стойки
+embers.research.brewing.still_fuel.title=Сжигание пожаров..
+embers.research.brewing.still_fuel.desc=Пивоварение все еще требует какого-либо источника тепла для поддержания работы стойки, но этот процесс слишком медленный... В качестве источника тепла можно использовать нагревательную катушку, поместив её центр прямо под пивоваренной стойкой, тем самым ускорив стойку в десятки раз, но этот процесс будет требовать куда больше энергии Эмбера..
+
+embers.research.brewing.distillation_pipe=Вспомогательный фильтр
+embers.research.brewing.distillation_pipe.title=Двойная дистилляция
+embers.research.brewing.distillation_pipe.desc=Для улучшения Ваших варев можно использовать вспомогательные фильтры, которые позволят проводить повторную дистилляцию, что значительно повысит эффективность и эффект того, что получится в результате изготовления. Но у этого есть и минус - этот процесс повышает алкогольную концентрацию Ваших напитков... Последствия очевидны...
+
+embers.research.brewing.alchemy_dial=Алхимический измеритель
+embers.research.brewing.alchemy_dial.title=В дебрях аналитики...
+embers.research.brewing.alchemy_dial.desc=Опытные пивовары могут анализировать результаты пивоварения в силу своих навыков, но новичкам часто приходится не сладко... Алхимический измеритель поможет с этим. Прикрепив его к резервуару для жидкости, содержащего какое-либо варево, Вы получите полную и точную информацию о всех его свойствах. Учитывая затраты ресурсов при изготовлении данного прибора невольно складывается впечатление, что он может что-то ещё, но что?...
+
+embers.research.brewing.drinks=Напитки
+embers.research.brewing.drinks.title=Пособие для начинающих. Том 1...
+embers.research.brewing.drinks.desc=Существует несколько видов напитков, доступных для пивоварения: Эль, увеличивающий наносимый урон, Картофельная водка, которая всё делается абсолютно наоборот, Пылающий Эль, который повышает Вашу устойчивость к огню, Абсент, который немного вдохновляет Вас, Снежная водка, дарующая Вам леденящие шипы, и многое-многое другое. Всё познаётся путём экспериментов, не так ли? 
+
+embers.research.brewing.rename=Переименование
+embers.research.brewing.rename.title=Слава и... Слава?...
+embers.research.brewing.rename.desc=Порой довольно трудно понять что и в какой кружке, но выход из этой ситуации есть.. Достаточно просто прикрепить табличку с желаемым названием напитка к нижней части пивоваренной стойки, и на выходе вы получите варево с конкретным названием.
+
+embers.research.brewing.lifedrinker=Вампиризм
+embers.research.brewing.lifedrinker.title=CR 25
+embers.research.brewing.lifedrinker.desc=Вампиризм - модификатор, применяемый к любому виду алкоголя. Когда под этим эффектом будет убит моб, он передаст Вам минимум одно сердце, которое будет оставаться до тех пор, пока Вы будете под действием эффекта. Но ведь эффект можно и продлить.. Хмм..
+
+embers.research.brewing.steadfast=Стойкость
+embers.research.brewing.steadfast.title=Быстрый как заяц
+embers.research.brewing.steadfast.desc=Стойкость - модификатор, применяемый к любому виду алкоголя. Во время действия этого эффекта Ваша скорость немного возрастает, также он сочетается с обычным эффектом скорости. Но есть и один минус - повышенное отбрасывание.
+
+embers.research.brewing.duration=Продолжительность
+embers.research.brewing.duration.title=Продвижение неизбежного...
+embers.research.brewing.duration.desc=	Добавления красного камня может немного продлить эффект Вашего напитка, но будьте осторожны, большая концентрация этого модификатора повысит токсичность Вашего варева.
+
+embers.research.brewing.purification=Очистка
+embers.research.brewing.purification.title=Излечение неизлечимого
+embers.research.brewing.purification.desc=При добавлении различного рода модификаторов к Вашему напитку неизбежно повышается уровень его токсичности, но кристаллы призмарина могут немного очистить напиток, тем самым понизив уровень его токсичности.
+
+embers.research.brewing.healing=Исцеление
+embers.research.brewing.healing.title=Жадность
+embers.research.brewing.healing.desc=Добавление адского нароста к напитку может привить ему способность к регенерации здоровья на короткий период времени, не за бесплатно, конечно же. В обмен на регенерацию Вам придётся поплатиться сильным голодом, но оно того стоит...
+
+embers.research.brewing.cooling=Охлаждение
+embers.research.brewing.cooling.title=Предотвращение ожогов
+embers.research.brewing.cooling.desc=Некоторые напитки довольно горячие, что может вызвать серьёзные ожоги. Добавление небольшого количества льда к вареву наверняка понизит его температуру...
+
+embers.research.brewing.stew=Тушение
+embers.research.brewing.stew.title=Время готовить!
+embers.research.brewing.stew.desc=Суп из свеклы хорош, но не очень сытен.. Добавление других ингредиентов во время его приготовления может неплохо повысить уровень насыщения, но стоит помнить, что добавление пшеницы сильно повысит продолжительность поедания супа..
+
+entity.muse.name=Муза
+
+tile.sulfur_ore.name=Серная руда
+
+tile.ember_burst.name=Эмбер-распространитель
+tile.ember_funnel.name=Эмбер-воронка
+tile.still.name=Пивоваренная стойка
+
+tile.alchemy_globe.name=Алхимический рекоммулятор
+tile.catalytic_plug.name=Каталитический затвор
+tile.insulation.name=Теплоизолятор
+tile.distillation_pipe.name=Вспомогательный фильтр
+
+tile.scale.name=Весы
+tile.redstone_bin.name=Ящик-ловушка
+tile.alchemy_gauge.name=Алхимический измеритель
+
+tile.caminite_clay.name=Блок каминитовой смеси
+tile.caminite_tiles.name=Каминитовая плитки
+tile.caminite_tiles_slab.name=Плита из каминитовой плитки
+tile.caminite_tiles_stairs.name=Ступеньки из каминитовой плитки
+tile.caminite_large_tile.name=Каминит
+tile.caminite_large_tile_slab.name=Каминитовая плита
+tile.caminite_large_tile_stairs.name=Каминитовые ступеньки
+tile.archaic_tile_slab.name=Плита из архаического камня
+tile.archaic_tile_stairs.name=Ступеньки из архаического камня
+tile.archaic_big_bricks.name=Древний кирпич
+tile.archaic_big_bricks_slab.name=Плита из древнего кирпича
+tile.archaic_big_bricks_stairs.name=Ступеньки из древнего кирпича
+tile.archaic_bricks_slab.name=Плита из архаического кирпича
+tile.archaic_bricks_stairs.name=Ступеньки из архаического кирпича
+tile.sealed_planks_slab.name=Плита из запечатанных досок
+tile.sealed_planks_stairs.name=Ступеньки из запечатанных досок
+tile.sealed_tile.name=Запечатанное дерево
+tile.sealed_tile_slab.name=Плита из запечатанного дерева
+tile.sealed_tile_stairs.name=Ступеньки из запечатанного дерева
+tile.sealed_keg.name=Укрепленное запечатанное дерево
+tile.sealed_pillar.name=Колонна из запечатанного дерева
+tile.wrought_tile.name=Блок кованого железа
+tile.wrought_platform.name=Платформа из кованого железа
+tile.wrought_platform_slab.name=Фрагмент платформы из кованого железа
+
+item.mug.name=%s в кружке
+item.mug.empty.name=Пустая кружка
+item.signet_antimony.name=Сурьмовая печать
+item.ingot_antimony.name=Сурьмовый слиток
+item.ember_grit.name=Пыль эмбера
+item.metallurgic_dust.name=Металлургическая пыль
+item.stamp_text_raw.name=Необработанный текстовый штамп
+item.stamp_text.name=Текстовый штамп
+item.stamp_nugget_raw.name=Необработанный штамп самородка
+item.stamp_nugget.name=Штамп самородка
+item.sulfur.name=Сера
+item.sulfur_clump.name=Серная смесь
+item.eitr.name=Эйтр
+
+fluid.sugar=Расплавленный сахар
+fluid.antimony=Расплавленная сурьма
+fluid.alchemical_redstone=Разжиженный красный камень
+fluid.boiling_wort=Пшеничный навар
+fluid.boiling_potato_juice=Картофельный сок
+fluid.boiling_wormwood=Ярь-медянка
+fluid.boiling_beetroot_soup=Свекольный суп
+fluid.dwarven_ale=Эль
+fluid.root_beer=Рутбир
+fluid.vodka=Картофельная водка
+fluid.absinthe=Абсент
+fluid.methanol=Пиролинический дух
+fluid.umber_ale=Крашеный эль [WIP]
+fluid.inner_fire=Пылающий эль
+fluid.snowpoff=Снежная водка
+
+potion.potency.2=III
+potion.potency.3=IV
+potion.potency.4=V
+
+effect.ale=Эль
+effect.stoutness=Отвага
+effect.tipsy=Опьянение
+effect.inner_fire=Внутренний огонь
+effect.lifedrinker=Вампиризм
+effect.inspiration=Вдохновение
+effect.fire_lung=Легкий огонёк
+effect.snowpoff=Морозостойкость
+effect.steadfast=Стойкость
+
+attribute.name.generic.physicalDamageRate=Физический урон
+attribute.name.generic.fireDamageRate=Огненный урон
+attribute.name.generic.fireAspect=Огненный аспект
+attribute.name.generic.barehandedPower=Рукопашный урон
+
+distilling.effect.header=Эффекты дистилляции:
+distilling.effect.add=%s +%d
+distilling.effect.add_percent=%s +%d%%
+distilling.effect.sub=%s -%d
+distilling.effect.sub_percent=%s -%d%%
+distilling.effect.loss=%d%% утеряно в процессе дистилляции
+distilling.effect.lifedrinker=Вампиризм
+distilling.effect.steadfast=Стойкость
+distilling.effect.enlightened=Просвещение
+distilling.effect.thick_soup=Сгущение
+distilling.modifier.toxicity.name=Токсичность
+distilling.modifier.concentration.name=Концентрация
+distilling.modifier.duration.name=Продолжительность
+distilling.modifier.heat.name=Температура
+distilling.modifier.viscosity.name=Вязкость
+distilling.modifier.light.name=Люминисцентность
+distilling.modifier.health.name=Восстановление здоровья
+distilling.modifier.hunger.name=восстановление голода
+distilling.modifier.saturation.name=Восстановление насыщения
+distilling.modifier.lifedrinker.name=Вампиризм
+distilling.modifier.steadfast.name=Стойкость
+distilling.modifier.enlightened.name=Просвещение
+distilling.modifier.volume.name=Объем
+distilling.modifier.fuel.name=Воспламеняемость
+
+distilling.modifier.dial.linear=- %s: %d
+distilling.modifier.dial.percent=- %s: %d%%
+distilling.modifier.dial.name=- %s
+distilling.modifier.dial.add_health=- +%d Здоровья
+distilling.modifier.dial.sub_health=- %d Здоровья
+distilling.modifier.dial.add_hunger=- +%d Еды
+distilling.modifier.dial.sub_hunger=- %d Еды
+distilling.modifier.dial.slower_chugging=- Медленное прерывание
+distilling.modifier.dial.faster_chugging=- Быстрое прерывания
+distilling.modifier.dial.fire_retardant=- Огнестойкий материал
+
+subtitles.embers.alchemy.fail=Ритуал энергетической алхимии провален...
+subtitles.embers.alchemy.success=Ритуал энергетической алхимии успешно завершен!
+subtitles.embers.alchemy.start=Начинается проведение ритуала энергетической алхимии!
+subtitles.embers.beam_cannon.fire=Лучевая пушка атакует
+subtitles.embers.beam_cannon.hit=Лучевой удар
+subtitles.embers.crystalcell=Кристальные клетки странно гудят..
+subtitles.embers.activator=Эмбер успешно выпущен
+subtitles.embers.stamp.down=Штамп падает
+subtitles.embers.stamp.up=Штамп поднимается
+subtitles.embers.bore.start=Эмбер-скважина заработала!
+subtitles.embers.bore.stop=Эмбер-скважина останавливается...
+subtitles.sulfur_ore.vent=Сульфурная руда выпускает коррозионное облако
+subtitles.fireball.small.fire=Огненный шар выпущен
+subtitles.fireball.small.hit=Огненный шар столкнулся
+subtitles.fireball.big.fire=Большой огненный шар выпущен
+subtitles.fireball.big.hit=Большой огненный шар столкнулся
+subtitles.blazing_ray.fire=Пылающий луч накаляется
+subtitles.blazing_ray.empty=Пылающий луч щёлкает
