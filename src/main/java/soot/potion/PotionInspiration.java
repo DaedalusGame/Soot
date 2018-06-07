@@ -13,6 +13,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import soot.Soot;
 import soot.entity.EntityMuse;
 import soot.network.PacketHandler;
@@ -105,6 +106,7 @@ public class PotionInspiration extends PotionBase {
     }
 
     @SubscribeEvent
+    @SideOnly(Side.CLIENT)
     public void onClientTick(TickEvent.ClientTickEvent event) {
         if(event.phase == TickEvent.Phase.END)
             return;

@@ -39,6 +39,7 @@ import soot.entity.EntityMuse;
 import soot.entity.EntitySnowpoff;
 import soot.fluids.FluidBooze;
 import soot.fluids.FluidMolten;
+import soot.handler.FluidFixHandler;
 import soot.handler.GuiHandler;
 import soot.item.*;
 import soot.potion.*;
@@ -64,10 +65,11 @@ import java.util.HashSet;
 import java.util.Random;
 
 public class Registry {
-    private static ArrayList<Block> MODELLED_BLOCKS = new ArrayList<>();
-    private static ArrayList<Item> MODELLED_ITEMS = new ArrayList<>();
-    private static ArrayList<Block> BLOCKS = new ArrayList<>();
-    private static ArrayList<Item> ITEMS = new ArrayList<>();
+    public static ArrayList<Block> MODELLED_BLOCKS = new ArrayList<>();
+    public static ArrayList<Item> MODELLED_ITEMS = new ArrayList<>();
+    public static ArrayList<Block> BLOCKS = new ArrayList<>();
+    public static ArrayList<Item> ITEMS = new ArrayList<>();
+    public static ArrayList<Fluid> FLUIDS = new ArrayList<>();
     private static ArrayList<Runnable> WRITEBACKS = new ArrayList<>();
 
     public static Item.ToolMaterial EITR_TOOL_MATERIAL = EnumHelper.addToolMaterial(Soot.MODID+":eitr", 2, 512, 7.5f, 0.0f, 24);
@@ -532,18 +534,18 @@ public class Registry {
 
     public static void registerFluids() {
         //For creating alcohol. All made in Melter, so very hot.
-        FluidRegistry.registerFluid(new FluidBooze("boiling_wort", new ResourceLocation(Soot.MODID, "blocks/wort"), new ResourceLocation(Soot.MODID, "blocks/wort_flowing")).setTemperature(500));
-        FluidRegistry.registerFluid(new FluidBooze("boiling_potato_juice", new ResourceLocation(Soot.MODID, "blocks/potato_juice"), new ResourceLocation(Soot.MODID, "blocks/potato_juice_flowing")).setTemperature(500));
-        FluidRegistry.registerFluid(new FluidBooze("boiling_wormwood", new ResourceLocation(Soot.MODID, "blocks/verdigris"), new ResourceLocation(Soot.MODID, "blocks/verdigris_flowing")).setTemperature(500));
-        FluidRegistry.registerFluid(new FluidBooze("boiling_beetroot_soup", new ResourceLocation(Soot.MODID, "blocks/beetsoup"), new ResourceLocation(Soot.MODID, "blocks/beetsoup_flowing")).setTemperature(500));
+        registerFluid(new FluidBooze("boiling_wort", new ResourceLocation(Soot.MODID, "blocks/wort"), new ResourceLocation(Soot.MODID, "blocks/wort_flowing")).setTemperature(500), false);
+        registerFluid(new FluidBooze("boiling_potato_juice", new ResourceLocation(Soot.MODID, "blocks/potato_juice"), new ResourceLocation(Soot.MODID, "blocks/potato_juice_flowing")).setTemperature(500), false);
+        registerFluid(new FluidBooze("boiling_wormwood", new ResourceLocation(Soot.MODID, "blocks/verdigris"), new ResourceLocation(Soot.MODID, "blocks/verdigris_flowing")).setTemperature(500), false);
+        registerFluid(new FluidBooze("boiling_beetroot_soup", new ResourceLocation(Soot.MODID, "blocks/beetsoup"), new ResourceLocation(Soot.MODID, "blocks/beetsoup_flowing")).setTemperature(500), false);
         //Alcohol itself. Cold.
-        FluidRegistry.registerFluid(new FluidBooze("dwarven_ale", new ResourceLocation(Soot.MODID, "blocks/ale"), new ResourceLocation(Soot.MODID, "blocks/ale_flowing")));
-        FluidRegistry.registerFluid(new FluidBooze("vodka", new ResourceLocation(Soot.MODID, "blocks/vodka"), new ResourceLocation(Soot.MODID, "blocks/vodka_flowing")));
-        FluidRegistry.registerFluid(new FluidBooze("inner_fire", new ResourceLocation(Soot.MODID, "blocks/inner_fire"), new ResourceLocation(Soot.MODID, "blocks/inner_fire_flowing")));
-        FluidRegistry.registerFluid(new FluidBooze("umber_ale", new ResourceLocation(Soot.MODID, "blocks/umber_ale"), new ResourceLocation(Soot.MODID, "blocks/umber_ale_flowing")));
-        FluidRegistry.registerFluid(new FluidBooze("methanol", new ResourceLocation(Soot.MODID, "blocks/methanol"), new ResourceLocation(Soot.MODID, "blocks/methanol_flowing")));
-        FluidRegistry.registerFluid(new FluidBooze("absinthe", new ResourceLocation(Soot.MODID, "blocks/absinthe"), new ResourceLocation(Soot.MODID, "blocks/absinthe_flowing")));
-        FluidRegistry.registerFluid(new FluidBooze("snowpoff", new ResourceLocation(Soot.MODID, "blocks/snowpoff"), new ResourceLocation(Soot.MODID, "blocks/snowpoff_flowing")));
+        registerFluid(new FluidBooze("dwarven_ale", new ResourceLocation(Soot.MODID, "blocks/ale"), new ResourceLocation(Soot.MODID, "blocks/ale_flowing")), false);
+        registerFluid(new FluidBooze("vodka", new ResourceLocation(Soot.MODID, "blocks/vodka"), new ResourceLocation(Soot.MODID, "blocks/vodka_flowing")), false);
+        registerFluid(new FluidBooze("inner_fire", new ResourceLocation(Soot.MODID, "blocks/inner_fire"), new ResourceLocation(Soot.MODID, "blocks/inner_fire_flowing")), false);
+        registerFluid(new FluidBooze("umber_ale", new ResourceLocation(Soot.MODID, "blocks/umber_ale"), new ResourceLocation(Soot.MODID, "blocks/umber_ale_flowing")), false);
+        registerFluid(new FluidBooze("methanol", new ResourceLocation(Soot.MODID, "blocks/methanol"), new ResourceLocation(Soot.MODID, "blocks/methanol_flowing")), false);
+        registerFluid(new FluidBooze("absinthe", new ResourceLocation(Soot.MODID, "blocks/absinthe"), new ResourceLocation(Soot.MODID, "blocks/absinthe_flowing")), false);
+        registerFluid(new FluidBooze("snowpoff", new ResourceLocation(Soot.MODID, "blocks/snowpoff"), new ResourceLocation(Soot.MODID, "blocks/snowpoff_flowing")), false);
         //Alchemy Fluids
         registerFluid(new FluidMolten("antimony", new ResourceLocation(Soot.MODID, "blocks/molten_antimony"), new ResourceLocation(Soot.MODID, "blocks/molten_antimony_flowing")), true);
         registerFluid(new FluidMolten("sugar", new ResourceLocation(Soot.MODID, "blocks/molten_sugar"), new ResourceLocation(Soot.MODID, "blocks/molten_sugar_flowing")), true);
@@ -554,6 +556,7 @@ public class Registry {
         FluidRegistry.registerFluid(fluid);
         if (withBucket)
             FluidRegistry.addBucketForFluid(fluid);
+        FLUIDS.add(fluid);
     }
 
     public static void registerBlockModels() {
