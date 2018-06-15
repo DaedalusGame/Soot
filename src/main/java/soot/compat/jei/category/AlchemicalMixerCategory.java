@@ -6,14 +6,12 @@ import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeCategory;
 import mezz.jei.util.Translator;
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 import soot.Soot;
 import soot.compat.jei.wrapper.AlchemicalMixerWrapper;
 import soot.recipe.RecipeAlchemicalMixer;
-import soot.util.AspectList;
-import soot.util.AspectRenderUtil;
+import teamroots.embers.util.AspectRenderUtil;
 
 import javax.annotation.Nonnull;
 import java.util.List;

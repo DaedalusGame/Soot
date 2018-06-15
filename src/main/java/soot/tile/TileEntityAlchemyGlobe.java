@@ -8,12 +8,12 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.capabilities.Capability;
 import soot.block.BlockAlchemyGlobe;
-import soot.capability.CapabilityUpgradeProvider;
 import soot.upgrade.UpgradeAlchemyGlobe;
-import soot.util.AlchemyUtil;
-import soot.util.AspectList;
+import teamroots.embers.api.alchemy.AspectList;
+import teamroots.embers.api.capabilities.EmbersCapabilities;
 import teamroots.embers.particle.ParticleUtil;
 import teamroots.embers.tileentity.TileEntityAlchemyPedestal;
+import teamroots.embers.util.AlchemyUtil;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -57,13 +57,13 @@ public class TileEntityAlchemyGlobe extends TileEntity implements ITickable {
 
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
-        return (capability == CapabilityUpgradeProvider.UPGRADE_PROVIDER_CAPABILITY && getFacing().getOpposite() == facing) || super.hasCapability(capability, facing);
+        return (capability == EmbersCapabilities.UPGRADE_PROVIDER_CAPABILITY && getFacing().getOpposite() == facing) || super.hasCapability(capability, facing);
     }
 
     @Nullable
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
-        return (capability == CapabilityUpgradeProvider.UPGRADE_PROVIDER_CAPABILITY && getFacing().getOpposite() == facing) ? (T)upgrade : super.getCapability(capability, facing);
+        return (capability == EmbersCapabilities.UPGRADE_PROVIDER_CAPABILITY && getFacing().getOpposite() == facing) ? (T)upgrade : super.getCapability(capability, facing);
     }
 
     @Override

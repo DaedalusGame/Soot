@@ -9,21 +9,33 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import soot.block.BlockEmberBurst;
 import soot.util.EmberUtil;
 import teamroots.embers.EventManager;
+import teamroots.embers.SoundManager;
+import teamroots.embers.api.capabilities.EmbersCapabilities;
+import teamroots.embers.api.power.IEmberCapability;
+import teamroots.embers.api.power.IEmberPacketReceiver;
 import teamroots.embers.block.BlockEmberEmitter;
 import teamroots.embers.entity.EntityEmberPacket;
-import teamroots.embers.power.*;
+import teamroots.embers.power.DefaultEmberCapability;
+import teamroots.embers.power.EmberCapabilityProvider;
 import teamroots.embers.tileentity.ITileEntityBase;
+import teamroots.embers.util.Misc;
 
 import javax.annotation.Nullable;
 import java.util.Random;
 
-public class TileEntityEmberBurst extends TileEntity implements ITileEntityBase, ITickable, IEmberPacketProducer {
+public class TileEntityEmberBurst extends TileEntity implements ITileEntityBase, ITickable, teamroots.embers.api.power.IEmberPacketProducer {
+    public static final double TRANSFER_RATE = 80.0;
+    public static final double PULL_RATE = 100.0;
+
     public enum EnumConnection{
         NONE, LEVER
     }
@@ -127,7 +139,7 @@ public class TileEntityEmberBurst extends TileEntity implements ITileEntityBase,
     }
 
     public EnumConnection getConnection(IBlockAccess world, BlockPos pos, EnumFacing side){
-        return EmberUtil.isValidLever(world,pos,side) ? EnumConnection.LEVER : EnumConnection.NONE;
+        return Misc.isValidLever(world,pos,side) ? EnumConnection.LEVER : EnumConnection.NONE;
     }
 
     @Override
@@ -156,22 +168,17 @@ public class TileEntityEmberBurst extends TileEntity implements ITileEntityBase,
     @Override
     public void update() {
         this.ticksExisted ++;
-        IBlockState state = world.getBlockState(pos);
-        EnumFacing facing = state.getValue(BlockEmberEmitter.facing);
-        TileEntity attachedTile = world.getTileEntity(pos.offset(facing, -1));
+        IBlockState state = getWorld().getBlockState(getPos());
+        EnumFacing facing = state.getValue(BlockEmberBurst.facing);
+        TileEntity attachedTile = getWorld().getTileEntity(getPos().offset(facing.getOpposite()));
         if (ticksExisted % 5 == 0 && attachedTile != null){
-            if (attachedTile.hasCapability(EmberCapabilityProvider.emberCapability, null)){
-                IEmberCapability cap = attachedTile.getCapability(EmberCapabilityProvider.emberCapability, null);
+            if (attachedTile.hasCapability(EmbersCapabilities.EMBER_CAPABILITY, null)){
+                IEmberCapability cap = attachedTile.getCapability(EmbersCapabilities.EMBER_CAPABILITY, null);
                 if (cap.getEmber() > 0 && capability.getEmber() < capability.getEmberCapacity()){
-                    double removed = cap.removeAmount(100, true);
-                    double added = capability.addAmount(removed, true);
+                    double removed = cap.removeAmount(PULL_RATE, true);
+                    capability.addAmount(removed, true);
                     markDirty();
-                    BlockPos offset = pos.offset(facing,-1);
                     attachedTile.markDirty();
-                    if (!world.isRemote && !(attachedTile instanceof ITileEntityBase)){
-                        attachedTile.markDirty();
-                        EventManager.markTEForUpdate(offset, attachedTile);
-                    }
                 }
             }
         }
@@ -189,43 +196,37 @@ public class TileEntityEmberBurst extends TileEntity implements ITileEntityBase,
                 if (targetTile instanceof IEmberPacketReceiver) {
                     if (!(((IEmberPacketReceiver) targetTile).isFull())) {
                         EntityEmberPacket packet = new EntityEmberPacket(world);
-                        double vx = 0, vy = 0, vz = 0;
 
-                        switch (targetFacing)
-                        {
-                            case DOWN:
-                                vy = -0.5;
-                                break;
-                            case UP:
-                                vy = 0.5;
-                                break;
-                            case NORTH:
-                                vz = -0.5;
-                                vy = -0.01;
-                                break;
-                            case SOUTH:
-                                vz = 0.5;
-                                vy = -0.01;
-                                break;
-                            case WEST:
-                                vx = -0.5;
-                                vy = -0.01;
-                                break;
-                            case EAST:
-                                vx = 0.5;
-                                vy = -0.01;
-                                break;
-                        }
-
-                        double sentAmount = Math.min(80.0, capability.getEmber());
-                        packet.initCustom(pos, target, vx, vy, vz, sentAmount);
+                        Vec3d velocity = getBurstVelocity(facing);
+                        packet.initCustom(pos, target, velocity.x, velocity.y, velocity.z, Math.min(TRANSFER_RATE, capability.getEmber()));
                         packet.setPosition(pos.getX() + 0.5f + facing.getFrontOffsetX() * 0.4f,pos.getY() + 0.5f + facing.getFrontOffsetY() * 0.4f,pos.getZ() + 0.5f + facing.getFrontOffsetZ() * 0.4f);
-                        this.capability.removeAmount(sentAmount, true);
-                        world.spawnEntity(packet);
+                        this.capability.removeAmount(Math.min(TRANSFER_RATE, capability.getEmber()), true);
+                        getWorld().spawnEntity(packet);
+                        getWorld().playSound(null, pos, SoundManager.EMBER_EMIT, SoundCategory.BLOCKS, 1.0f, random.nextFloat()+0.5f);
                         markDirty();
                     }
                 }
             }
+        }
+    }
+
+    private Vec3d getBurstVelocity(EnumFacing facing) {
+        switch(facing)
+        {
+            case DOWN:
+                return new Vec3d(0, -0.5, 0);
+            case UP:
+                return new Vec3d(0, 0.5, 0);
+            case NORTH:
+                return new Vec3d(0, -0.01, -0.5);
+            case SOUTH:
+                return new Vec3d(0, -0.01, 0.5);
+            case WEST:
+                return new Vec3d(-0.5, -0.01, 0);
+            case EAST:
+                return new Vec3d(0.5, -0.01, 0);
+            default:
+                return Vec3d.ZERO;
         }
     }
 
@@ -235,7 +236,7 @@ public class TileEntityEmberBurst extends TileEntity implements ITileEntityBase,
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing){
-        if (capability == EmberCapabilityProvider.emberCapability){
+        if (capability == EmbersCapabilities.EMBER_CAPABILITY){
             return true;
         }
         return super.hasCapability(capability, facing);
@@ -243,7 +244,7 @@ public class TileEntityEmberBurst extends TileEntity implements ITileEntityBase,
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing){
-        if (capability == EmberCapabilityProvider.emberCapability){
+        if (capability == EmbersCapabilities.EMBER_CAPABILITY){
             return (T)this.capability;
         }
         return super.getCapability(capability, facing);

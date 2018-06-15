@@ -2,11 +2,11 @@ package soot.recipe;
 
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
-import soot.util.AlchemyResult;
-import soot.util.AspectList;
-import soot.util.AspectList.AspectRangeList;
-import soot.util.IHasAspects;
+import teamroots.embers.api.alchemy.AlchemyResult;
+import teamroots.embers.api.alchemy.AspectList;
+import teamroots.embers.api.alchemy.AspectList.AspectRangeList;
 import teamroots.embers.recipe.FluidMixingRecipe;
+import teamroots.embers.util.IHasAspects;
 
 public class RecipeAlchemicalMixer extends FluidMixingRecipe implements IHasAspects {
     public AspectRangeList aspectRange;

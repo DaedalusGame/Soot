@@ -13,23 +13,23 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import soot.SoundEvents;
-import soot.capability.CapabilityUpgradeProvider;
-import soot.capability.IUpgradeProvider;
 import soot.network.PacketHandler;
 import soot.network.message.MessageMixerFailFX;
 import soot.recipe.RecipeAlchemicalMixer;
 import soot.recipe.CraftingRegistry;
 import soot.tile.TileEntityAlchemyGlobe;
-import soot.tile.overrides.TileEntityMixerBottomImproved;
-import soot.util.AlchemyResult;
-import soot.util.UpgradeUtil;
+import teamroots.embers.api.alchemy.AlchemyResult;
+import teamroots.embers.api.upgrades.IUpgradeProvider;
+import teamroots.embers.api.upgrades.UpgradeUtil;
+import teamroots.embers.tileentity.TileEntityMixerBottom;
 import teamroots.embers.tileentity.TileEntityMixerTop;
+import teamroots.embers.util.DefaultUpgradeProvider;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UpgradeAlchemyGlobe extends CapabilityUpgradeProvider {
+public class UpgradeAlchemyGlobe extends DefaultUpgradeProvider {
     public UpgradeAlchemyGlobe(TileEntity tile) {
         super("alchemy_globe", tile);
     }
@@ -46,16 +46,16 @@ public class UpgradeAlchemyGlobe extends CapabilityUpgradeProvider {
         if(failure > 0)
             failure--;
 
-        if (tile instanceof TileEntityMixerBottomImproved && failure <= 0) //Only works with the fixed up class
+        if (tile instanceof TileEntityMixerBottom && failure <= 0) //Only works with the fixed up class
         {
-            doAlchemicMixing((TileEntityMixerBottomImproved) tile, upgrades);
+            doAlchemicMixing((TileEntityMixerBottom) tile, upgrades);
             return true; //Block normal mixing.
         }
 
         return false;
     }
 
-    public void doAlchemicMixing(TileEntityMixerBottomImproved bottom, List<IUpgradeProvider> upgrades)
+    public void doAlchemicMixing(TileEntityMixerBottom bottom, List<IUpgradeProvider> upgrades)
     {
         if(!(tile instanceof TileEntityAlchemyGlobe))
             return;
@@ -63,8 +63,7 @@ public class UpgradeAlchemyGlobe extends CapabilityUpgradeProvider {
         World world = bottom.getWorld();
         TileEntityMixerTop top = (TileEntityMixerTop) world.getTileEntity(bottom.getPos().up());
         if (top != null) {
-            double costMultiplier = UpgradeUtil.getTotalEmberConsumption(bottom, upgrades);
-            double emberCost = 2.0 * costMultiplier;
+            double emberCost = UpgradeUtil.getTotalEmberConsumption(bottom, 2.0, upgrades);
             if (top.capability.getEmber() >= emberCost) {
                 ArrayList<FluidStack> fluids = bottom.getFluids();
                 RecipeAlchemicalMixer recipe = CraftingRegistry.getAlchemicalMixingRecipe(fluids);
@@ -76,7 +75,7 @@ public class UpgradeAlchemyGlobe extends CapabilityUpgradeProvider {
                         int amount = tank.fill(output, false);
                         if (amount != 0) {
                             tank.fill(output, true);
-                            bottom.consumeFluids(fluids, recipe);
+                            bottom.consumeFluids(recipe);
                             top.capability.removeAmount(emberCost, true);
                             bottom.markDirty();
                             top.markDirty();
@@ -87,7 +86,7 @@ public class UpgradeAlchemyGlobe extends CapabilityUpgradeProvider {
                         ItemStack failure = result.createFailure();
                         BlockPos topPos = top.getPos();
                         ejectFailure(world, topPos,failure,EnumFacing.HORIZONTALS);
-                        bottom.consumeFluids(fluids, recipe);
+                        bottom.consumeFluids(recipe);
                         top.capability.removeAmount(emberCost*200, true);
                         fail(world.rand.nextInt(100)+200);
                         globe.consumeAsh();

@@ -12,8 +12,6 @@ public class FuelHandler {
     @SubscribeEvent
     public static void handleFuel(FurnaceFuelBurnTimeEvent event) {
         ItemStack stack = event.getItemStack();
-        if(stack.getItem() == Registry.EMBER_GRIT)
-            event.setBurnTime(1600);
         if(stack.getItem() == Registry.MUG) {
             FluidStack fluid = net.minecraftforge.fluids.FluidUtil.getFluidContained(stack);
             if(fluid == null) {

@@ -1,122 +1,4 @@
 {
-  "block.embers.alchemy.fail": {
-    "category": "block",
-    "sounds": [
-      "soot:alchemy_end_fail"
-    ],
-    "subtitle": "subtitles.embers.alchemy.fail"
-  },
-  "block.embers.alchemy.success": {
-    "category": "block",
-    "sounds": [
-      "soot:alchemy_end_success"
-    ],
-    "subtitle": "subtitles.embers.alchemy.success"
-  },
-  "block.embers.alchemy.loop": {
-    "category": "block",
-    "sounds": [
-      "soot:alchemy_mid_loop"
-    ]
-  },
-  "block.embers.alchemy.start": {
-    "category": "block",
-    "sounds": [
-      "soot:alchemy_start"
-    ],
-    "subtitle": "subtitles.embers.alchemy.start"
-  },
-  "block.embers.beam_cannon.fire": {
-    "category": "block",
-    "sounds": [
-      "soot:beam_cannon_fire"
-    ],
-    "subtitle": "subtitles.embers.beam_cannon.fire"
-  },
-  "block.embers.beam_cannon.hit": {
-    "category": "block",
-    "sounds": [
-      "soot:beam_cannon_hit_1",
-      "soot:beam_cannon_hit_2"
-    ],
-    "subtitle": "subtitles.embers.beam_cannon.hit"
-  },
-  "block.embers.crystalcell": {
-    "category": "block",
-    "sounds": [
-      "soot:crystalcell"
-    ]
-  },
-  "block.embers.pedestal.loop": {
-    "category": "block",
-    "sounds": [
-      "soot:pedestal_ashes_loop"
-    ]
-  },
-  "block.embers.activator": {
-    "category": "block",
-    "sounds": [
-      "soot:ember_activatorplume",
-	  "soot:ember_activatorplume_alt"
-    ],
-    "subtitle": "subtitles.embers.activator"
-  },
-  "block.embers.stamper.down": {
-    "category": "block",
-    "sounds": [
-      "soot:stamp_down1",
-      "soot:stamp_down2",
-      "soot:stamp_down3"
-    ],
-    "subtitle": "subtitles.embers.stamp.down"
-  },
-  "block.embers.stamper.up": {
-    "category": "block",
-    "sounds": [
-      "soot:stamp_up1",
-      "soot:stamp_up2",
-      "soot:stamp_up3"
-    ],
-    "subtitle": "subtitles.embers.stamp.up"
-  },
-  "block.embers.bore.start": {
-    "category": "block",
-    "sounds": [
-      "soot:ember_bore_start_up"
-    ],
-    "subtitle": "subtitles.embers.bore.start"
-  },
-  "block.embers.bore.stop": {
-    "category": "block",
-    "sounds": [
-      "soot:ember_bore_stop"
-    ],
-    "subtitle": "subtitles.embers.bore.stop"
-  },
-  "block.embers.bore.loop": {
-    "category": "block",
-    "sounds": [
-      "soot:ember_bore_run_loop"
-    ]
-  },
-  "block.embers.bore.loop_mine": {
-    "category": "block",
-    "sounds": [
-      "soot:ember_bore_mine_loop"
-    ]
-  },
-  "block.embers.melter.loop": {
-    "category": "block",
-    "sounds": [
-      "soot:melter_loop"
-    ]
-  },
-  "block.embers.mixer.loop": {
-    "category": "block",
-    "sounds": [
-      "soot:mixer_loop"
-    ]
-  },
   "block.embers.alchemical_globe.loop": {
     "category": "block",
     "sounds": [
@@ -139,12 +21,6 @@
     "category": "block",
     "sounds": [
       "soot:alch_mixer_waste"
-    ]
-  },
-  "block.embers.plinth.loop": {
-    "category": "block",
-    "sounds": [
-      "soot:cinder_plinth_loop"
     ]
   },
   "block.embers.still.loop": {
@@ -172,47 +48,6 @@
       "soot:sulfur_vent2"
     ],
     "subtitle": "subtitles.sulfur_ore.vent"
-  },
-  "fireball.small.fire": {
-    "sounds": [
-      "soot:fireball_small_launch1",
-      "soot:fireball_small_launch2"
-    ],
-    "subtitle": "subtitles.fireball.small.fire"
-  },
-  "fireball.small.hit": {
-    "sounds": [
-      "soot:fireball_small_hit1",
-      "soot:fireball_small_hit2"
-    ],
-    "subtitle": "subtitles.fireball.small.hit"
-  },
-  "fireball.big.fire": {
-    "sounds": [
-      "soot:fireball_big_launch1",
-      "soot:fireball_big_launch2"
-    ],
-    "subtitle": "subtitles.fireball.big.fire"
-  },
-  "fireball.big.hit": {
-    "sounds": [
-      "soot:fireball_big_hit1",
-      "soot:fireball_big_hit2"
-    ],
-    "subtitle": "subtitles.fireball.big.hit"
-  },
-  "item.blazing_ray.fire": {
-    "sounds": [
-      "soot:blray_fire1",
-      "soot:blray_fire2"
-    ],
-    "subtitle": "subtitles.blazing_ray.fire"
-  },
-  "item.blazing_ray.empty": {
-    "sounds": [
-      "soot:blray_empty"
-    ],
-    "subtitle": "subtitles.blazing_ray.empty"
   },
   "inspiration.start": {
     "sounds": [

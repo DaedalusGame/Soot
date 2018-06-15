@@ -4,8 +4,8 @@ import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraftforge.fluids.FluidStack;
 import soot.recipe.RecipeAlchemicalMixer;
-import soot.util.AspectList;
-import soot.util.IHasAspects;
+import teamroots.embers.api.alchemy.AspectList;
+import teamroots.embers.util.IHasAspects;
 
 public class AlchemicalMixerWrapper implements IRecipeWrapper, IHasAspects {
     public RecipeAlchemicalMixer recipe;

@@ -10,13 +10,13 @@ import crafttweaker.api.liquid.ILiquidStack;
 import net.minecraftforge.fluids.FluidStack;
 import soot.recipe.CraftingRegistry;
 import soot.recipe.RecipeAlchemicalMixer;
-import soot.util.AspectList;
-import soot.util.AspectList.AspectRangeList;
 import soot.util.CTUtil;
 import stanhebben.zenscript.annotations.NotNull;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 import stanhebben.zenscript.value.IntRange;
+import teamroots.embers.api.alchemy.AspectList;
+import teamroots.embers.api.alchemy.AspectList.AspectRangeList;
 
 import java.util.ArrayList;
 import java.util.List;

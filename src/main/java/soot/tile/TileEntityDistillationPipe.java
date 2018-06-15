@@ -5,8 +5,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import soot.block.BlockDistillationPipe;
-import soot.capability.CapabilityUpgradeProvider;
 import soot.upgrade.UpgradeDistillationPipe;
+import teamroots.embers.api.capabilities.EmbersCapabilities;
 
 import javax.annotation.Nullable;
 
@@ -27,13 +27,13 @@ public class TileEntityDistillationPipe extends TileEntity {
 
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
-        return (capability == CapabilityUpgradeProvider.UPGRADE_PROVIDER_CAPABILITY && getFacing() == facing) || super.hasCapability(capability, facing);
+        return (capability == EmbersCapabilities.UPGRADE_PROVIDER_CAPABILITY && getFacing() == facing) || super.hasCapability(capability, facing);
     }
 
     @Nullable
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityUpgradeProvider.UPGRADE_PROVIDER_CAPABILITY && getFacing() == facing)
+        if (capability == EmbersCapabilities.UPGRADE_PROVIDER_CAPABILITY && getFacing() == facing)
             return (T) upgrade;
         return super.getCapability(capability, facing);
     }

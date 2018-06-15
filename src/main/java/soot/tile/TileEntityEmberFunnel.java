@@ -13,12 +13,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import teamroots.embers.EventManager;
+import teamroots.embers.api.capabilities.EmbersCapabilities;
+import teamroots.embers.api.power.IEmberCapability;
+import teamroots.embers.api.power.IEmberPacketReceiver;
 import teamroots.embers.block.BlockEmberEmitter;
 import teamroots.embers.entity.EntityEmberPacket;
 import teamroots.embers.power.DefaultEmberCapability;
-import teamroots.embers.power.EmberCapabilityProvider;
-import teamroots.embers.power.IEmberCapability;
-import teamroots.embers.power.IEmberPacketReceiver;
 import teamroots.embers.tileentity.ITileEntityBase;
 
 import javax.annotation.Nullable;
@@ -80,8 +80,8 @@ public class TileEntityEmberFunnel extends TileEntity implements ITileEntityBase
         BlockPos attachPos = pos.offset(facing.getOpposite());
         TileEntity attachTile = world.getTileEntity(attachPos);
         if (ticksExisted % 2 == 0 && attachTile != null){
-            if (attachTile.hasCapability(EmberCapabilityProvider.emberCapability, null)){
-                IEmberCapability cap = attachTile.getCapability(EmberCapabilityProvider.emberCapability, null);
+            if (attachTile.hasCapability(EmbersCapabilities.EMBER_CAPABILITY, null)){
+                IEmberCapability cap = attachTile.getCapability(EmbersCapabilities.EMBER_CAPABILITY, null);
                 if (cap != null){
                     if (cap.getEmber() < cap.getEmberCapacity() && capability.getEmber() > 0){
                         double added = cap.addAmount(Math.min(TRANSFER_SPEED,capability.getEmber()), true);
@@ -111,7 +111,7 @@ public class TileEntityEmberFunnel extends TileEntity implements ITileEntityBase
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing){
-        if (capability == EmberCapabilityProvider.emberCapability){
+        if (capability == EmbersCapabilities.EMBER_CAPABILITY){
             return true;
         }
         return super.hasCapability(capability, facing);
@@ -119,7 +119,7 @@ public class TileEntityEmberFunnel extends TileEntity implements ITileEntityBase
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing){
-        if (capability == EmberCapabilityProvider.emberCapability){
+        if (capability == EmbersCapabilities.EMBER_CAPABILITY){
             return (T)this.capability;
         }
         return super.getCapability(capability, facing);

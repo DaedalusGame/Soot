@@ -1,6 +1,5 @@
 itemGroup.soot=Soot
 
-embers.jei.recipe.dawnstone_anvil=黎明石砧合成
 embers.jei.recipe.alchemical_mixer=炼金台合成
 embers.jei.recipe.still=蒸馏器合成
 
@@ -16,7 +15,6 @@ item.ingot_antimony.name=锑锭
 
 fluid.sugar=熔融糖
 fluid.antimony=熔融锑
-fluid.alchemical_redstone=炼金红石
 fluid.boiling_wort=麦芽汁
 fluid.boiling_potato_juice=马铃薯汁
 fluid.boiling_wormwood=熔融孔雀石

@@ -11,10 +11,7 @@ import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
@@ -27,7 +24,6 @@ import soot.entity.EntityCustomCloud;
 import soot.entity.EntityMuse;
 import soot.entity.EntityMuseRenderer;
 import soot.tile.*;
-import soot.tile.overrides.*;
 import soot.util.*;
 import teamroots.embers.tileentity.TileEntityBinRenderer;
 
@@ -54,16 +50,6 @@ public class ClientProxy implements IProxy {
     @Override
     public EntityPlayer getMainPlayer() {
         return Minecraft.getMinecraft().player;
-    }
-
-    @Override
-    public void playMachineSound(TileEntity tile, int id, SoundEvent soundIn, SoundCategory categoryIn, float volumeIn, float pitchIn, boolean repeatIn, float xIn, float yIn, float zIn) {
-        Minecraft.getMinecraft().getSoundHandler().playSound(new MachineSound(tile, id, soundIn, categoryIn, volumeIn, pitchIn, repeatIn, xIn, yIn, zIn));
-    }
-
-    @Override
-    public void playParallelMachineSound(TileEntity tile, int id, SoundEvent soundIn, SoundCategory categoryIn, float volumeIn, float pitchIn, boolean repeatIn, float xIn, float yIn, float zIn) {
-        Minecraft.getMinecraft().getSoundHandler().playSound(new ParallelMachineSound(tile, id, soundIn, categoryIn, volumeIn, pitchIn, repeatIn, xIn, yIn, zIn));
     }
 
     @Override
@@ -127,11 +113,8 @@ public class ClientProxy implements IProxy {
     {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityEmberBurst.class, new TileEntityEmberBurstRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAlchemyGlobe.class, new TileEntityAlchemyGlobeRenderer());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityEmberBoreImproved.class, new TileEntityEmberBoreImprovedRenderer());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityStamperImproved.class, new TileEntityStamperImprovedRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityRedstoneBin.class, new TileEntityBinRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityStillTip.class, new TileEntityStillTipRenderer());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAlchemyTabletImproved.class, new TileEntityAlchemyTabletImprovedRenderer());
     }
 
     @Override

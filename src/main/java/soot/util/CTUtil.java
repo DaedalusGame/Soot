@@ -6,6 +6,8 @@ import crafttweaker.api.item.IItemStack;
 import crafttweaker.api.oredict.IngredientOreDict;
 import net.minecraft.item.crafting.Ingredient;
 import stanhebben.zenscript.value.IntRange;
+import teamroots.embers.api.alchemy.AspectList;
+import teamroots.embers.compat.crafttweaker.IngredientCraftTweaker;
 
 public class CTUtil {
     public static Ingredient toIngredient(IIngredient ingredient) {

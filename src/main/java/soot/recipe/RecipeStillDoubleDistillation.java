@@ -9,7 +9,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import soot.tile.TileEntityStillBase;
 import soot.util.FluidUtil;
-import soot.util.UpgradeUtil;
+import teamroots.embers.api.upgrades.UpgradeUtil;
 
 import java.util.Collection;
 import java.util.List;

@@ -15,7 +15,6 @@ import soot.handler.*;
 import soot.network.PacketHandler;
 import soot.recipe.CraftingRegistry;
 import soot.util.Attributes;
-import soot.util.OreTransmutationManager;
 import teamroots.embers.RegistryManager;
 
 @Mod(modid = Soot.MODID, acceptedMinecraftVersions = "[1.12, 1.13)", dependencies = "required-after:embers")
@@ -56,8 +55,7 @@ public class Soot
         Registry.preInit();
         proxy.preInit();
         MinecraftForge.EVENT_BUS.register(Attributes.class);
-        MinecraftForge.EVENT_BUS.register(FluidFixHandler.class);
-        MinecraftForge.EVENT_BUS.register(OreTransmutationManager.class);
+        MinecraftForge.EVENT_BUS.register(FluidStitchHandler.class);
         MinecraftForge.EVENT_BUS.register(AnvilHandler.class);
         MinecraftForge.EVENT_BUS.register(FuelHandler.class);
         MinecraftForge.EVENT_BUS.register(EitrHandler.class);

@@ -3,15 +3,15 @@ package soot.upgrade;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fluids.FluidStack;
-import soot.capability.CapabilityUpgradeProvider;
 import soot.recipe.CraftingRegistry;
 import soot.recipe.RecipeStill;
 import soot.recipe.RecipeStillDoubleDistillation;
 import soot.recipe.RecipeStillModifier;
 import soot.tile.TileEntityStillBase;
 import soot.tile.TileEntityStillTip;
+import teamroots.embers.util.DefaultUpgradeProvider;
 
-public class UpgradeDistillationPipe extends CapabilityUpgradeProvider {
+public class UpgradeDistillationPipe extends DefaultUpgradeProvider {
     public UpgradeDistillationPipe(TileEntity tile) {
         super("distillation_pipe", tile);
     }

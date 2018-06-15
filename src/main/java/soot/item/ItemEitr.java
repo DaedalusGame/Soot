@@ -6,7 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import soot.util.ItemUtil;
+import teamroots.embers.util.ItemUtil;
 
 import javax.annotation.Nullable;
 import java.util.List;

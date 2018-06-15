@@ -3,13 +3,14 @@ package soot.compat.jei.wrapper;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.item.ItemStack;
-import soot.recipe.RecipeDawnstoneAnvil;
+import teamroots.embers.recipe.DawnstoneAnvilRecipe;
+
 import java.util.Arrays;
 
 public class DawnstoneAnvilWrapper implements IRecipeWrapper {
-    RecipeDawnstoneAnvil recipe;
+    DawnstoneAnvilRecipe recipe;
 
-    public DawnstoneAnvilWrapper(RecipeDawnstoneAnvil recipe)
+    public DawnstoneAnvilWrapper(DawnstoneAnvilRecipe recipe)
     {
         this.recipe = recipe;
     }

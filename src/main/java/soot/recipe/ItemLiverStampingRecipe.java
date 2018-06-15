@@ -7,10 +7,11 @@ import net.minecraftforge.fluids.FluidStack;
 import soot.Registry;
 import soot.item.ItemSulfurClump;
 import teamroots.embers.RegistryManager;
+import teamroots.embers.recipe.ItemStampingRecipe;
 
-public class RecipeStamperLiver extends RecipeStamper {
-    public RecipeStamperLiver() {
-        super(Ingredient.fromItem(Registry.SULFUR_CLUMP), null, new ItemStack(Registry.SULFUR), Ingredient.fromItem(RegistryManager.stamp_flat));
+public class ItemLiverStampingRecipe extends ItemStampingRecipe {
+    public ItemLiverStampingRecipe() {
+        super(Ingredient.fromItem(Registry.SULFUR_CLUMP), null, Ingredient.fromItem(RegistryManager.stamp_flat), new ItemStack(Registry.SULFUR));
     }
 
     @Override

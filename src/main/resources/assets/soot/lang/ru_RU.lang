@@ -2,7 +2,6 @@ itemGroup.soot=Soot
 
 soot.tooltip.eitr=Игнорирует броню при ударе.
 
-embers.jei.recipe.dawnstone_anvil=Рецепт золотитовой наковальни
 embers.jei.recipe.alchemical_mixer=Рецепт алхимического смесителя
 embers.jei.recipe.still=Рецепт стойки
 
@@ -21,10 +20,6 @@ embers.research.mechanisms.insulation.desc=нагревательная кату
 embers.research.metallurgy.scale=Весы
 embers.research.metallurgy.scale.title=Мерные чашки
 embers.research.metallurgy.scale.desc=Алхимия - очень мрачное и неблагодарное искусство. Пепел должен быть точно измерен, или все Ваши ценные компоненты будут просто бесследно сгорать, но, есть выход и из этой ситуации.. При прикреплении двух контейнеров к верхней части весов нижняя их половина будет излучать сигнал красного камня в направлении более тяжёлого контейнера(Против часовой стрелки), или в обе стороны, если они равны.
-
-embers.research.metallurgy.catalytic_plug=Каталитический затвор
-embers.research.metallurgy.catalytic_plug.title=Внедрение изнурения
-embers.research.metallurgy.catalytic_plug.desc=Каталитические затворы - фантастические устройства для самых нетерпеливых. При подключении к машине они будут удваивать общую скорость производства устройства, но только в том случае, если оно также снабжено алхимическим мусором со спины, который потребляется в процессе. На каждое устройство можно подключить только 2 каталитических затвора, тем самым ускорив его в 4 раза.
 
 embers.research.metallurgy.advanced_emitters=Продвинутая передача Эмбера
 embers.research.metallurgy.advanced_emitters.title="Один за всех, и все за одного"...
@@ -97,7 +92,6 @@ tile.ember_funnel.name=Эмбер-воронка
 tile.still.name=Пивоваренная стойка
 
 tile.alchemy_globe.name=Алхимический рекоммулятор
-tile.catalytic_plug.name=Каталитический затвор
 tile.insulation.name=Теплоизолятор
 tile.distillation_pipe.name=Вспомогательный фильтр
 
@@ -134,8 +128,6 @@ item.mug.name=%s в кружке
 item.mug.empty.name=Пустая кружка
 item.signet_antimony.name=Сурьмовая печать
 item.ingot_antimony.name=Сурьмовый слиток
-item.ember_grit.name=Пыль эмбера
-item.metallurgic_dust.name=Металлургическая пыль
 item.stamp_text_raw.name=Необработанный текстовый штамп
 item.stamp_text.name=Текстовый штамп
 item.stamp_nugget_raw.name=Необработанный штамп самородка
@@ -146,7 +138,6 @@ item.eitr.name=Эйтр
 
 fluid.sugar=Расплавленный сахар
 fluid.antimony=Расплавленная сурьма
-fluid.alchemical_redstone=Разжиженный красный камень
 fluid.boiling_wort=Пшеничный навар
 fluid.boiling_potato_juice=Картофельный сок
 fluid.boiling_wormwood=Ярь-медянка

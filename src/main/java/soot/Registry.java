@@ -1,6 +1,5 @@
 package soot;
 
-import crafttweaker.CraftTweakerAPI;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -23,45 +22,30 @@ import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.oredict.OreDictionary;
 import soot.block.*;
-import soot.block.overrides.*;
-import soot.capability.CapabilityUpgradeProvider;
-import soot.capability.IUpgradeProvider;
-import soot.compat.crafttweaker.*;
 import soot.entity.EntityFireCloud;
 import soot.entity.EntityMuse;
 import soot.entity.EntitySnowpoff;
 import soot.fluids.FluidBooze;
 import soot.fluids.FluidMolten;
-import soot.handler.FluidFixHandler;
-import soot.handler.GuiHandler;
 import soot.item.*;
 import soot.potion.*;
 import soot.tile.*;
-import soot.tile.overrides.*;
-import soot.upgrade.UpgradeCatalyticPlug;
 import soot.util.CaskManager;
 import soot.util.CaskManager.CaskLiquid;
 import soot.util.HeatManager;
-import soot.util.Nope;
-import soot.util.OreTransmutationManager;
-import teamroots.embers.Embers;
 import teamroots.embers.RegistryManager;
 import teamroots.embers.research.ResearchBase;
 import teamroots.embers.research.ResearchCategory;
 import teamroots.embers.research.ResearchManager;
 import teamroots.embers.tileentity.*;
+import teamroots.embers.upgrade.UpgradeCatalyticPlug;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Random;
 
 public class Registry {
@@ -80,8 +64,6 @@ public class Registry {
     public static BlockStill STILL;
     @GameRegistry.ObjectHolder("soot:alchemy_gauge")
     public static BlockAlchemyGauge ALCHEMY_GAUGE;
-    @GameRegistry.ObjectHolder("soot:catalytic_plug")
-    public static BlockCatalyticPlug CATALYTIC_PLUG;
     @GameRegistry.ObjectHolder("soot:ember_burst")
     public static BlockEmberBurst EMBER_BURST;
     @GameRegistry.ObjectHolder("soot:distillation_pipe")
@@ -94,9 +76,6 @@ public class Registry {
     @GameRegistry.ObjectHolder("soot:scale")
     public static BlockScale SCALE;
 
-    @GameRegistry.ObjectHolder("soot:heat_coil")
-    public static BlockHeatCoilImproved HEAT_COIL_OVERRIDE;
-
     @GameRegistry.ObjectHolder("soot:sulfur_ore")
     public static BlockSulfurOre SULFUR_ORE;
     @GameRegistry.ObjectHolder("soot:caminite_clay")
@@ -108,12 +87,8 @@ public class Registry {
     public static Item SIGNET_ANTIMONY;
     @GameRegistry.ObjectHolder("soot:ingot_antimony")
     public static Item INGOT_ANTIMONY;
-    @GameRegistry.ObjectHolder("soot:ember_grit")
-    public static Item EMBER_GRIT;
     @GameRegistry.ObjectHolder("soot:mug")
     public static ItemMug MUG;
-    @GameRegistry.ObjectHolder("soot:metallurgic_dust")
-    public static Item METALLURGIC_DUST;
     @GameRegistry.ObjectHolder("soot:stamp_text_raw")
     public static Item STAMP_TEXT_RAW;
     @GameRegistry.ObjectHolder("soot:stamp_text")
@@ -167,15 +142,6 @@ public class Registry {
     public static Fluid ROOT_BEER;
     public static Fluid AUBERGINE_LIQUOR;
 
-    public static final String STONE = "stone";
-    public static final String NETHER = "nether";
-    public static final String END = "end";
-    public static final String SAND = "sand";
-    public static final String BETWEEN_STONE = "betweenlands";
-    public static final String BETWEEN_PIT = "betweenlands_pit";
-    public static final String BETWEEN_GEM = "betweenlands_gem";
-    public static final HashMap<String,String> ALTERNATE_ORES = new HashMap<>();
-
     public static void preInit() {
         MinecraftForge.EVENT_BUS.register(Registry.class);
         registerBlocks();
@@ -183,11 +149,6 @@ public class Registry {
         registerEntities();
         registerFluids();
         registerCapabilities();
-        if(Loader.isModLoaded("crafttweaker") && Config.EMBERS_CRAFTTWEAKER_SUPPORT)
-            registerCraftTweakerSupport();
-        Soot.proxy.addResourceOverride(Embers.MODID,"textures","gui","codex_index","png"); //Yeah yeah i know it's selfish.
-        Soot.proxy.addResourceOverride(Embers.MODID,"models","item","pipe","json");
-        Soot.proxy.addResourceOverride(Embers.MODID,"models","item","item_pipe","json");
     }
 
     public static void init() {
@@ -196,11 +157,11 @@ public class Registry {
 
         HeatManager.register(RegistryManager.archaic_light,20);
         HeatManager.register(Blocks.FIRE,10);
-        HeatManager.register(HEAT_COIL_OVERRIDE, (world, pos, state) -> {
+        HeatManager.register(RegistryManager.heat_coil, (world, pos, state) -> {
             TileEntity tile = world.getTileEntity(pos);
-            if(tile instanceof TileEntityHeatCoilImproved) {
-                double heat = ((TileEntityHeatCoilImproved) tile).getHeat();
-                return heat > TileEntityHeatCoilImproved.MAX_HEAT / 2 ? heat : 0;
+            if(tile instanceof TileEntityHeatCoil) {
+                double heat = ((TileEntityHeatCoil) tile).heat;
+                return heat > TileEntityHeatCoil.MAX_HEAT / 2 ? heat : 0;
             }
             return 0;
         });
@@ -211,40 +172,7 @@ public class Registry {
     }
 
     public static void postInit() {
-        if(Config.METALLURGICAL_DUST_COLLECT)
-            initMetallurgicalDust();
         initResearches();
-        if(Config.OVERRIDE_CODEX)
-            NetworkRegistry.INSTANCE.registerGuiHandler(Embers.instance, new GuiHandler());
-    }
-
-    public static void initMetallurgicalDust() {
-        OreTransmutationManager.registerTransmutationSet(STONE, Blocks.STONE.getDefaultState());
-        OreTransmutationManager.registerTransmutationSet(NETHER,Blocks.NETHERRACK.getDefaultState());
-        OreTransmutationManager.registerTransmutationSet(END,Blocks.END_STONE.getDefaultState());
-        OreTransmutationManager.registerTransmutationSet(SAND,Blocks.SAND.getDefaultState());
-        OreTransmutationManager.registerTransmutationSet(BETWEEN_STONE,new ResourceLocation("thebetweenlands:betweenstone"),0);
-        OreTransmutationManager.registerTransmutationSet(BETWEEN_PIT,new ResourceLocation("thebetweenlands:pitstone"),0);
-        OreTransmutationManager.registerTransmutationSet(BETWEEN_GEM,new ResourceLocation("thebetweenlands:mud"),0);
-
-        OreTransmutationManager.registerOre(STONE,Blocks.LIT_REDSTONE_ORE.getDefaultState()); //workaround for a vanilla issue
-
-        ALTERNATE_ORES.put("minecraft:quartz_ore",NETHER);
-        ALTERNATE_ORES.put("tconstruct:ore",NETHER);
-        ALTERNATE_ORES.put("astralsorcery:blockcustomsandore",SAND);
-        ALTERNATE_ORES.put("thebetweenlands:slimy_bone_ore",BETWEEN_STONE);
-        ALTERNATE_ORES.put("thebetweenlands:sulfur_ore",BETWEEN_STONE);
-        ALTERNATE_ORES.put("thebetweenlands:syrmorite_ore",BETWEEN_STONE);
-        ALTERNATE_ORES.put("thebetweenlands:octine_ore",BETWEEN_STONE);
-        ALTERNATE_ORES.put("thebetweenlands:valonite_ore",BETWEEN_PIT);
-        ALTERNATE_ORES.put("thebetweenlands:scabyst_ore",BETWEEN_PIT);
-        ALTERNATE_ORES.put("thebetweenlands:aqua_middle_gem_ore",BETWEEN_GEM);
-        ALTERNATE_ORES.put("thebetweenlands:crimson_middle_gem_ore",BETWEEN_GEM);
-        ALTERNATE_ORES.put("thebetweenlands:green_middle_gem_ore",BETWEEN_GEM);
-        //How about this
-        //You click the make pr button if you want more support
-
-        gatherOreTransmutations();
     }
 
     public static void initResearches() {
@@ -272,7 +200,6 @@ public class Registry {
         categoryWorld.addResearch(new ResearchBase("redstone_bin",new ItemStack(REDSTONE_BIN),12.0,5.0));
         categoryMechanisms.addResearch(new ResearchBase("insulation",new ItemStack(INSULATION), 12.0D, 0.0D).addAncestor(ResearchManager.hearth_coil));
         categoryMetallurgy.addResearch(new ResearchBase("advanced_emitters",new ItemStack(EMBER_BURST),0.0D, 4.0D));
-        categoryMetallurgy.addResearch(new ResearchBase("catalytic_plug",new ItemStack(CATALYTIC_PLUG),12.0D, 3.0D).addAncestor(ResearchManager.alchemy));
         categoryMetallurgy.addResearch(new ResearchBase("scale",new ItemStack(SCALE),12.0D, 5.0D).addAncestor(ResearchManager.alchemy));
         categoryAlchemy.addResearch(new ResearchBase("eitr",new ItemStack(EITR), 4.0, 4.0).addAncestor(ResearchManager.waste));
         ResearchBase still = new ResearchBase("still", new ItemStack(STILL), 6.0D, 4.0D);
@@ -292,48 +219,6 @@ public class Registry {
         categoryBrewing.addResearch(new ResearchBase("healing",new ItemStack(Items.NETHER_WART), 11.0D, 1.0D).addAncestor(still));
         categoryBrewing.addResearch(new ResearchBase("cooling",new ItemStack(Blocks.ICE), 12.0D, 3.0D).addAncestor(still));
         categoryBrewing.addResearch(new ResearchBase("stew",new ItemStack(Items.POTATO), 12.0D, 5.0D).addAncestor(still));
-    }
-
-    public static void gatherOreTransmutations() {
-        HashSet<String> existingTags = new HashSet<>();
-
-        for (String orename : OreDictionary.getOreNames()) {
-            if(orename == null || !orename.startsWith("ore") || !isValidOre(orename))
-                continue;
-            for (ItemStack stack : OreDictionary.getOres(orename,false)) {
-                Item item = stack.getItem();
-                if(!(item instanceof ItemBlock))
-                    continue;
-                ResourceLocation registryName = item.getRegistryName();
-                if(registryName == null)
-                    continue; //WEE WOO WEE WOO
-                String entry = ALTERNATE_ORES.getOrDefault(registryName.toString(),STONE);
-                String tag = entry+":"+orename;
-                if(existingTags.contains(tag))
-                    continue;
-                if(stack.getMetadata() == OreDictionary.WILDCARD_VALUE)
-                    OreTransmutationManager.registerOre(entry, registryName);
-                else
-                    OreTransmutationManager.registerOre(entry, registryName,stack.getMetadata());
-                existingTags.add(tag);
-            }
-        }
-    }
-
-    public static void registerCraftTweakerSupport() {
-        CraftTweakerAPI.registerClass(Alchemy.class);
-        CraftTweakerAPI.registerClass(DawnstoneAnvil.class);
-        CraftTweakerAPI.registerClass(EmberBore.class);
-        CraftTweakerAPI.registerClass(HeatCoil.class);
-        CraftTweakerAPI.registerClass(Melter.class);
-        CraftTweakerAPI.registerClass(Mixer.class);
-        CraftTweakerAPI.registerClass(Stamper.class);
-        CraftTweakerAPI.registerClass(CraftTweaker.IngredientExtensions.class);
-        CraftTweakerAPI.registerClass(CraftTweaker.ItemStackExtensions.class);
-    }
-
-    private static boolean isValidOre(String orename) {
-        return Config.METALLURGICAL_DUST_BLACKLIST.contains(orename) == Config.METALLURGICAL_DUST_IS_WHITELIST;
     }
 
     public static void registerCaskLiquids() {
@@ -365,19 +250,11 @@ public class Registry {
     }
 
     public static void registerAccessorTiles() {
-        TileEntityMechAccessorImproved.registerAccessibleTile(TileEntityMechCore.class);
-        TileEntityMechAccessorImproved.registerAccessibleTile(TileEntityMixerBottom.class);
-        TileEntityMechAccessorImproved.registerAccessibleTile(TileEntityMixerTop.class);
-        TileEntityMechAccessorImproved.registerAccessibleTile(TileEntityActivatorBottom.class);
-        TileEntityMechAccessorImproved.registerAccessibleTile(TileEntityFurnaceBottom.class);
-        TileEntityMechAccessorImproved.registerAccessibleTile(TileEntityFurnaceTop.class);
-        TileEntityMechAccessorImproved.registerAccessibleTile(TileEntityBoilerBottom.class);
-        TileEntityMechAccessorImproved.registerAccessibleTile(TileEntityReactor.class);
-        TileEntityMechAccessorImproved.registerAccessibleTile(TileEntityStillBase.class);
+        TileEntityMechAccessor.registerAccessibleTile(TileEntityStillBase.class);
     }
 
     public static void registerBlocks() {
-        Nope.shutupForge(Registry::registerOverrides);
+        //Nope.shutupForge(Registry::registerOverrides);
 
         BlockSulfurOre sulfurOre = (BlockSulfurOre) new BlockSulfurOre(Material.ROCK).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
         registerBlock("sulfur_ore", sulfurOre, new ItemBlock(sulfurOre));
@@ -394,8 +271,6 @@ public class Registry {
 
         BlockAlchemyGlobe alchemyGlobe = (BlockAlchemyGlobe) new BlockAlchemyGlobe(Material.ROCK).setHardness(1.6f).setLightOpacity(0).setCreativeTab(Soot.creativeTab);
         registerBlock("alchemy_globe", alchemyGlobe, new ItemBlock(alchemyGlobe));
-        BlockCatalyticPlug catalyticPlug = (BlockCatalyticPlug) new BlockCatalyticPlug(Material.IRON).setHardness(1.6f).setLightOpacity(0).setCreativeTab(Soot.creativeTab);
-        registerBlock("catalytic_plug", catalyticPlug, new ItemBlock(catalyticPlug));
         BlockInsulation insulation = (BlockInsulation) new BlockInsulation(Material.ROCK).setHardness(1.6f).setLightOpacity(1).setCreativeTab(Soot.creativeTab);
         registerBlock("insulation", insulation, new ItemBlock(insulation));
         BlockDistillationPipe distillationPipe = (BlockDistillationPipe) new BlockDistillationPipe(Material.IRON).setHardness(1.6f).setLightOpacity(1).setCreativeTab(Soot.creativeTab);
@@ -407,7 +282,6 @@ public class Registry {
         registerItem("signet_antimony", new Item().setCreativeTab(Soot.creativeTab));
         registerItem("ingot_antimony", new Item().setCreativeTab(Soot.creativeTab));
         registerItem("mug", new ItemMug().setCreativeTab(Soot.creativeTab));
-        registerItem("metallurgic_dust", new ItemMetallurgicDust().setCreativeTab(Soot.creativeTab));
         registerItem("ember_grit", new Item().setCreativeTab(Soot.creativeTab));
         registerItem("stamp_text_raw", new Item().setCreativeTab(Soot.creativeTab));
         registerItem("stamp_text", new Item().setCreativeTab(Soot.creativeTab));
@@ -479,59 +353,6 @@ public class Registry {
         registerBlock("wrought_platform_slab",wroughtPlatformSlab,new ItemBlockSlab(wroughtPlatformSlab,wroughtPlatform));
     }
 
-    public static void registerOverrides() {
-        if (Config.OVERRIDE_BORE) {
-            BlockEmberBoreImproved boreImproved = (BlockEmberBoreImproved) new BlockEmberBoreImproved(Material.ROCK, "ember_bore", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.0F);
-            registerBlock(boreImproved, false);
-            registerItem(boreImproved.getItemBlock(), false);
-        }
-        if (Config.OVERRIDE_STAMPER) {
-            BlockStamperImproved stamperImproved = (BlockStamperImproved) new BlockStamperImproved(Material.ROCK, "stamper", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.0F);
-            registerBlock(stamperImproved, false);
-            registerItem(stamperImproved.getItemBlock(), false);
-        }
-        if (Config.OVERRIDE_MIXER) {
-            BlockMixerImproved mixerImproved = (BlockMixerImproved) new BlockMixerImproved(Material.ROCK, "mixer", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.0F);
-            registerBlock(mixerImproved, false);
-            registerItem(mixerImproved.getItemBlock(), false);
-        }
-        if (Config.OVERRIDE_DAWNSTONE_ANVIL) {
-            BlockDawnstoneAnvilImproved dawnstoneAnvilImproved = (BlockDawnstoneAnvilImproved) new BlockDawnstoneAnvilImproved(Material.ROCK, "dawnstone_anvil", true).setHarvestProperties("pickaxe", 1).setIsFullCube(false).setIsOpaqueCube(false).setHardness(1.6f).setLightOpacity(0);
-            registerBlock(dawnstoneAnvilImproved, false);
-            registerItem(dawnstoneAnvilImproved.getItemBlock(), false);
-        }
-        if (Config.OVERRIDE_BEAM_CANNON) {
-            BlockBeamCannonImproved beamCannonImproved = (BlockBeamCannonImproved) new BlockBeamCannonImproved(Material.ROCK, "beam_cannon", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.6F);
-            registerBlock(beamCannonImproved, false);
-            registerItem(beamCannonImproved.getItemBlock(), false);
-        }
-        if (Config.OVERRIDE_ALCHEMY_TABLET) {
-            BlockAlchemyTabletImproved alchemyTabletImproved = (BlockAlchemyTabletImproved) new BlockAlchemyTabletImproved(Material.ROCK, "alchemy_tablet", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.6F);
-            registerBlock(alchemyTabletImproved, false);
-            registerItem(alchemyTabletImproved.getItemBlock(), false);
-        }
-        if (Config.OVERRIDE_ALCHEMY_PEDESTAL) {
-            BlockAlchemyPedestalImproved alchemyPedestalImproved = (BlockAlchemyPedestalImproved) new BlockAlchemyPedestalImproved(Material.ROCK, "alchemy_pedestal", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.6F);
-            registerBlock(alchemyPedestalImproved, false);
-            registerItem(alchemyPedestalImproved.getItemBlock(), false);
-        }
-        if (Config.OVERRIDE_HEARTH_COIL) {
-            BlockHeatCoilImproved heatCoilImproved = (BlockHeatCoilImproved) new BlockHeatCoilImproved(Material.ROCK, "heat_coil", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.0F);
-            registerBlock(heatCoilImproved, false);
-            registerItem(heatCoilImproved.getItemBlock(), false);
-        }
-        if (Config.OVERRIDE_MECH_ACCESSOR) {
-            BlockMechAccessorImproved accessorImproved = (BlockMechAccessorImproved) new BlockMechAccessorImproved(Material.ROCK, "mech_accessor", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.0F);
-            registerBlock(accessorImproved, false);
-            registerItem(accessorImproved.getItemBlock(), false);
-        }
-        if (Config.OVERRIDE_CRYSTAL_CELL) {
-            BlockCrystalCellImproved crystalCellImproved = (BlockCrystalCellImproved) new BlockCrystalCellImproved(Material.ROCK, "crystal_cell", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.0F);
-            registerBlock(crystalCellImproved, false);
-            registerItem(crystalCellImproved.getItemBlock(), false);
-        }
-    }
-
     public static void registerFluids() {
         //For creating alcohol. All made in Melter, so very hot.
         registerFluid(new FluidBooze("boiling_wort", new ResourceLocation(Soot.MODID, "blocks/wort"), new ResourceLocation(Soot.MODID, "blocks/wort_flowing")).setTemperature(500), false);
@@ -549,7 +370,6 @@ public class Registry {
         //Alchemy Fluids
         registerFluid(new FluidMolten("antimony", new ResourceLocation(Soot.MODID, "blocks/molten_antimony"), new ResourceLocation(Soot.MODID, "blocks/molten_antimony_flowing")), true);
         registerFluid(new FluidMolten("sugar", new ResourceLocation(Soot.MODID, "blocks/molten_sugar"), new ResourceLocation(Soot.MODID, "blocks/molten_sugar_flowing")), true);
-        registerFluid(new FluidMolten("alchemical_redstone", new ResourceLocation(Embers.MODID, "blocks/alchemic_slurry_still"), new ResourceLocation(Embers.MODID, "blocks/alchemic_slurry_flowing")), true);
     }
 
     private static void registerFluid(Fluid fluid, boolean withBucket) {
@@ -613,17 +433,6 @@ public class Registry {
         registerTileEntity(TileEntityStillBase.class);
         registerTileEntity(TileEntityStillTip.class);
 
-        registerTileEntity(TileEntityEmberBoreImproved.class);
-        registerTileEntity(TileEntityStamperImproved.class);
-        registerTileEntity(TileEntityMixerBottomImproved.class);
-        registerTileEntity(TileEntityDawnstoneAnvilImproved.class);
-        registerTileEntity(TileEntityHeatCoilImproved.class);
-        registerTileEntity(TileEntityBeamCannonImproved.class);
-        registerTileEntity(TileEntityAlchemyTabletImproved.class);
-        registerTileEntity(TileEntityAlchemyPedestalImproved.class);
-        registerTileEntity(TileEntityMechAccessorImproved.class);
-        registerTileEntity(TileEntityCrystalCellImproved.class);
-
         registerTileEntity(TileEntityAlchemyGlobe.class);
         registerTileEntity(TileEntityInsulation.class);
         registerTileEntity(TileEntityCatalyticPlug.class);
@@ -637,20 +446,6 @@ public class Registry {
     }
 
     public static void registerCapabilities() {
-        CapabilityManager.INSTANCE.register(IUpgradeProvider.class, new Capability.IStorage<IUpgradeProvider>() {
-            @Nullable
-            @Override
-            public NBTBase writeNBT(Capability<IUpgradeProvider> capability, IUpgradeProvider instance, EnumFacing side) {
-                return null;
-            }
-
-            @Override
-            public void readNBT(Capability<IUpgradeProvider> capability, IUpgradeProvider instance, EnumFacing side, NBTBase nbt) {
-                //NOOP
-            }
-        }, () -> {
-            return new CapabilityUpgradeProvider("none", null);
-        });
     }
 
     @SubscribeEvent

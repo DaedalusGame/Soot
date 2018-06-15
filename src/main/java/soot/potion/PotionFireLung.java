@@ -14,8 +14,8 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import soot.Registry;
 import soot.entity.EntityFireCloud;
-import soot.util.ItemUtil;
 import teamroots.embers.particle.ParticleUtil;
+import teamroots.embers.util.ItemUtil;
 
 import java.awt.*;
 
