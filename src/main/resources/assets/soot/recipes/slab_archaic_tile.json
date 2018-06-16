@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "soot:archaic_tile_slab",
+    "count": 6,
+    "data": 0
+  },
+  "pattern": [
+    "AAA"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "A": {
+      "item": "embers:archaic_tile",
+      "data": 0
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "result": {
+    "item": "embers:archaic_tile",
+    "count": 1,
+    "data": 0
+  },
+  "type": "forge:ore_shapeless",
+  "ingredients": [
+    {
+      "item": "soot:archaic_tile_slab",
+      "data": 0
+    },
+    {
+      "item": "soot:archaic_tile_slab",
+      "data": 0
+    }
+  ]
+}
