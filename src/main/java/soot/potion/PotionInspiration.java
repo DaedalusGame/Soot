@@ -108,7 +108,7 @@ public class PotionInspiration extends PotionBase {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void onClientTick(TickEvent.ClientTickEvent event) {
-        if(event.phase == TickEvent.Phase.END)
+        if(event.phase == TickEvent.Phase.END || event.side == Side.SERVER)
             return;
 
         EntityPlayer player = Soot.proxy.getMainPlayer();

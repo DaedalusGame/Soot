@@ -161,7 +161,8 @@ public class TileEntityStillBase extends TileEntity implements ITileEntityBase, 
     @Override
     public void update() {
         ticksExisted++;
-        handleSound();
+        if(getWorld().isRemote)
+            handleSound();
         double heat = HeatManager.getHeat(world, pos.down());
         currentSound = SOUND_NONE;
         if (heat > 0) {

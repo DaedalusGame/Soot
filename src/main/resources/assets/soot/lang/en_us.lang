@@ -1,5 +1,6 @@
 itemGroup.soot=Soot
 
+soot.tooltip.migrate=Right-click with Tinker Hammer
 soot.tooltip.eitr=Degrades armor on hit.
 
 embers.jei.recipe.alchemical_mixer=Alchemical Mixer Recipe

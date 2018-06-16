@@ -1,5 +1,6 @@
 package soot;
 
+import crafttweaker.CraftTweakerAPI;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -22,10 +23,14 @@ import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.oredict.OreDictionary;
 import soot.block.*;
+import soot.block.overrides.*;
 import soot.entity.EntityFireCloud;
 import soot.entity.EntityMuse;
 import soot.entity.EntitySnowpoff;
@@ -34,9 +39,12 @@ import soot.fluids.FluidMolten;
 import soot.item.*;
 import soot.potion.*;
 import soot.tile.*;
+import soot.tile.overrides.*;
 import soot.util.CaskManager;
 import soot.util.CaskManager.CaskLiquid;
 import soot.util.HeatManager;
+import soot.util.Nope;
+import teamroots.embers.Embers;
 import teamroots.embers.RegistryManager;
 import teamroots.embers.research.ResearchBase;
 import teamroots.embers.research.ResearchCategory;
@@ -46,6 +54,8 @@ import teamroots.embers.upgrade.UpgradeCatalyticPlug;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Random;
 
 public class Registry {
@@ -142,6 +152,15 @@ public class Registry {
     public static Fluid ROOT_BEER;
     public static Fluid AUBERGINE_LIQUOR;
 
+    public static final String STONE = "stone";
+    public static final String NETHER = "nether";
+    public static final String END = "end";
+    public static final String SAND = "sand";
+    public static final String BETWEEN_STONE = "betweenlands";
+    public static final String BETWEEN_PIT = "betweenlands_pit";
+    public static final String BETWEEN_GEM = "betweenlands_gem";
+    public static final HashMap<String,String> ALTERNATE_ORES = new HashMap<>();
+
     public static void preInit() {
         MinecraftForge.EVENT_BUS.register(Registry.class);
         registerBlocks();
@@ -174,6 +193,7 @@ public class Registry {
     public static void postInit() {
         initResearches();
     }
+
 
     public static void initResearches() {
         ResearchCategory categoryWorld = null;
@@ -250,11 +270,11 @@ public class Registry {
     }
 
     public static void registerAccessorTiles() {
-        TileEntityMechAccessor.registerAccessibleTile(TileEntityStillBase.class);
+        TileEntityMechAccessorImproved.registerAccessibleTile(TileEntityStillBase.class);
     }
 
     public static void registerBlocks() {
-        //Nope.shutupForge(Registry::registerOverrides);
+        Nope.shutupForge(Registry::registerOverrides);
 
         BlockSulfurOre sulfurOre = (BlockSulfurOre) new BlockSulfurOre(Material.ROCK).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
         registerBlock("sulfur_ore", sulfurOre, new ItemBlock(sulfurOre));
@@ -282,7 +302,6 @@ public class Registry {
         registerItem("signet_antimony", new Item().setCreativeTab(Soot.creativeTab));
         registerItem("ingot_antimony", new Item().setCreativeTab(Soot.creativeTab));
         registerItem("mug", new ItemMug().setCreativeTab(Soot.creativeTab));
-        registerItem("ember_grit", new Item().setCreativeTab(Soot.creativeTab));
         registerItem("stamp_text_raw", new Item().setCreativeTab(Soot.creativeTab));
         registerItem("stamp_text", new Item().setCreativeTab(Soot.creativeTab));
         registerItem("stamp_nugget_raw", new Item().setCreativeTab(Soot.creativeTab));
@@ -351,6 +370,49 @@ public class Registry {
         registerBlock("wrought_tile",wroughtTile,new ItemBlock(wroughtTile));
         registerBlock("wrought_platform",wroughtPlatform,new ItemBlock(wroughtPlatform));
         registerBlock("wrought_platform_slab",wroughtPlatformSlab,new ItemBlockSlab(wroughtPlatformSlab,wroughtPlatform));
+    }
+
+    public static void registerOverrides() {
+        if (Config.OVERRIDE_BORE) {
+            BlockEmberBoreImproved boreImproved = (BlockEmberBoreImproved) new BlockEmberBoreImproved(Material.ROCK, "ember_bore", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.0F);
+            registerBlock(boreImproved, false);
+        }
+        if (Config.OVERRIDE_STAMPER) {
+            BlockStamperImproved stamperImproved = (BlockStamperImproved) new BlockStamperImproved(Material.ROCK, "stamper", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.0F);
+            registerBlock(stamperImproved, false);
+        }
+        if (Config.OVERRIDE_MIXER) {
+            BlockMixerImproved mixerImproved = (BlockMixerImproved) new BlockMixerImproved(Material.ROCK, "mixer", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.0F);
+            registerBlock(mixerImproved, false);
+        }
+        if (Config.OVERRIDE_DAWNSTONE_ANVIL) {
+            BlockDawnstoneAnvilImproved dawnstoneAnvilImproved = (BlockDawnstoneAnvilImproved) new BlockDawnstoneAnvilImproved(Material.ROCK, "dawnstone_anvil", true).setHarvestProperties("pickaxe", 1).setIsFullCube(false).setIsOpaqueCube(false).setHardness(1.6f).setLightOpacity(0);
+            registerBlock(dawnstoneAnvilImproved, false);
+        }
+        if (Config.OVERRIDE_BEAM_CANNON) {
+            BlockBeamCannonImproved beamCannonImproved = (BlockBeamCannonImproved) new BlockBeamCannonImproved(Material.ROCK, "beam_cannon", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.6F);
+            registerBlock(beamCannonImproved, false);
+        }
+        if (Config.OVERRIDE_ALCHEMY_TABLET) {
+            BlockAlchemyTabletImproved alchemyTabletImproved = (BlockAlchemyTabletImproved) new BlockAlchemyTabletImproved(Material.ROCK, "alchemy_tablet", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.6F);
+            registerBlock(alchemyTabletImproved, false);
+        }
+        if (Config.OVERRIDE_ALCHEMY_PEDESTAL) {
+            BlockAlchemyPedestalImproved alchemyPedestalImproved = (BlockAlchemyPedestalImproved) new BlockAlchemyPedestalImproved(Material.ROCK, "alchemy_pedestal", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.6F);
+            registerBlock(alchemyPedestalImproved, false);
+        }
+        if (Config.OVERRIDE_HEARTH_COIL) {
+            BlockHeatCoilImproved heatCoilImproved = (BlockHeatCoilImproved) new BlockHeatCoilImproved(Material.ROCK, "heat_coil", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.0F);
+            registerBlock(heatCoilImproved, false);
+        }
+        if (Config.OVERRIDE_MECH_ACCESSOR) {
+            BlockMechAccessorImproved accessorImproved = (BlockMechAccessorImproved) new BlockMechAccessorImproved(Material.ROCK, "mech_accessor", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.0F);
+            registerBlock(accessorImproved, false);
+        }
+        if (Config.OVERRIDE_CRYSTAL_CELL) {
+            BlockCrystalCellImproved crystalCellImproved = (BlockCrystalCellImproved) new BlockCrystalCellImproved(Material.ROCK, "crystal_cell", true).setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe", 0).setHardness(1.0F);
+            registerBlock(crystalCellImproved, false);
+        }
     }
 
     public static void registerFluids() {
@@ -433,9 +495,19 @@ public class Registry {
         registerTileEntity(TileEntityStillBase.class);
         registerTileEntity(TileEntityStillTip.class);
 
+        registerTileEntity(TileEntityEmberBoreImproved.class);
+        registerTileEntity(TileEntityStamperImproved.class);
+        registerTileEntity(TileEntityMixerBottomImproved.class);
+        registerTileEntity(TileEntityDawnstoneAnvilImproved.class);
+        registerTileEntity(TileEntityHeatCoilImproved.class);
+        registerTileEntity(TileEntityBeamCannonImproved.class);
+        registerTileEntity(TileEntityAlchemyTabletImproved.class);
+        registerTileEntity(TileEntityAlchemyPedestalImproved.class);
+        registerTileEntity(TileEntityMechAccessorImproved.class);
+        registerTileEntity(TileEntityCrystalCellImproved.class);
+
         registerTileEntity(TileEntityAlchemyGlobe.class);
         registerTileEntity(TileEntityInsulation.class);
-        registerTileEntity(TileEntityCatalyticPlug.class);
         registerTileEntity(TileEntityDistillationPipe.class);
     }
 

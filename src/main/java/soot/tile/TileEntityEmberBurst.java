@@ -197,7 +197,7 @@ public class TileEntityEmberBurst extends TileEntity implements ITileEntityBase,
                     if (!(((IEmberPacketReceiver) targetTile).isFull())) {
                         EntityEmberPacket packet = new EntityEmberPacket(world);
 
-                        Vec3d velocity = getBurstVelocity(facing);
+                        Vec3d velocity = getBurstVelocity(targetFacing);
                         packet.initCustom(pos, target, velocity.x, velocity.y, velocity.z, Math.min(TRANSFER_RATE, capability.getEmber()));
                         packet.setPosition(pos.getX() + 0.5f + facing.getFrontOffsetX() * 0.4f,pos.getY() + 0.5f + facing.getFrontOffsetY() * 0.4f,pos.getZ() + 0.5f + facing.getFrontOffsetZ() * 0.4f);
                         this.capability.removeAmount(Math.min(TRANSFER_RATE, capability.getEmber()), true);

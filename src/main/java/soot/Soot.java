@@ -65,6 +65,7 @@ public class Soot
             MinecraftForge.EVENT_BUS.register(GolemHandler.class);
         if(Config.GENERATE_SULFUR_ORE)
             MinecraftForge.ORE_GEN_BUS.register(GenerationHandler.class);
+        MinecraftForge.EVENT_BUS.register(new MigrationHandler());
         PacketHandler.registerMessages();
     }
 
