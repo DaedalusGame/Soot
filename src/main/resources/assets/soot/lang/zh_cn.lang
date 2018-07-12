@@ -90,7 +90,7 @@ embers.research.brewing.stew.desc=甜菜汁是很好喝的饮料，但终究一�
 
 entity.muse.name=沉思
 
-tile.sulfur_ore.name=硫矿石
+tile.sulfur_ore.name=硫磺矿石
 
 tile.ember_burst.name=灰烬能量多方向爆射器
 tile.ember_funnel.name=灰烬能量漏斗
@@ -144,12 +144,12 @@ item.sulfur.name=硫磺
 item.sulfur_clump.name=硫肝
 item.eitr.name=腐蚀之毒
 
-fluid.sugar=熔融糖
+fluid.sugar=糖液
 fluid.antimony=熔融锑
 fluid.alchemical_redstone=炼金红石浆液
 fluid.boiling_wort=麦芽汁
 fluid.boiling_potato_juice=马铃薯汁
-fluid.boiling_wormwood=熔融孔雀石
+fluid.boiling_wormwood=绿蕨汁
 fluid.boiling_beetroot_soup=甜菜汁
 fluid.dwarven_ale=啤酒
 fluid.root_beer=根啤
@@ -158,7 +158,7 @@ fluid.absinthe=苦艾酒
 fluid.methanol=甲醇
 fluid.umber_ale=茶啤
 fluid.inner_fire=烈酒
-fluid.snowpoff=伏特加
+fluid.snowpoff=雪崩
 
 potion.potency.2=III
 potion.potency.3=IV
@@ -169,9 +169,9 @@ effect.stoutness=坚毅
 effect.tipsy=微醺
 effect.inner_fire=烈酒
 effect.lifedrinker=生命吸取
-effect.inspiration=铭刻
+effect.inspiration=灵感
 effect.fire_lung=肺火
-effect.snowpoff=冰冷伏特加
+effect.snowpoff=雪崩
 effect.steadfast=奔驰不懈
 
 attribute.name.generic.physicalDamageRate=物理伤害
@@ -216,8 +216,8 @@ distilling.modifier.dial.faster_chugging=- 间歇燃烧加快
 distilling.modifier.dial.fire_retardant=- 防火
 
 subtitles.embers.alchemy.fail=先进的炼金术失败......
-subtitles.embers.alchemy.success=进的炼金术成功！
-subtitles.embers.alchemy.start=进的炼金术开始了
+subtitles.embers.alchemy.success=先进的炼金术成功！
+subtitles.embers.alchemy.start=先进的炼金术开始了
 subtitles.embers.beam_cannon.fire=光束炮射击
 subtitles.embers.beam_cannon.hit=光束撞击
 subtitles.embers.crystalcell=晶胞能量单元嗡嗡作响
@@ -226,7 +226,7 @@ subtitles.embers.stamp.down=压印模具猛击下来
 subtitles.embers.stamp.up=压印模具收回
 subtitles.embers.bore.start=灰烬钻机发出隆隆的启动声
 subtitles.embers.bore.stop=灰烬钻机喷气并停止
-subtitles.sulfur_ore.vent=硫矿石释放腐蚀性雾气
+subtitles.sulfur_ore.vent=硫磺矿石释放腐蚀性雾气
 subtitles.fireball.small.fire=火球被释放
 subtitles.fireball.small.hit=火球撞击
 subtitles.fireball.big.fire=大火球被释放
