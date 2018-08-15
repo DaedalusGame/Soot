@@ -43,8 +43,10 @@ public class MigrationHandler {
         migratedItems.put("soot:metallurgic_dust","embers:dust_metallurgic");
         migratedItems.put("soot:ember_grit","embers:dust_ember");
         migratedItems.put("soot:catalytic_plug","embers:catalytic_plug");
+        migratedItems.put("soot:ember_funnel","embers:ember_funnel");
 
         migratedBlocks.put("soot:catalytic_plug","embers:catalytic_plug");
+        migratedBlocks.put("soot:ember_funnel","embers:ember_funnel");
     }
 
     @SubscribeEvent

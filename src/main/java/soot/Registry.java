@@ -280,9 +280,7 @@ public class Registry {
         registerBlock("sulfur_ore", sulfurOre, new ItemBlock(sulfurOre));
 
         BlockEmberBurst emberBurst = (BlockEmberBurst) new BlockEmberBurst(Material.ROCK).setCreativeTab(Soot.creativeTab);
-        BlockEmberFunnel emberFunnel = (BlockEmberFunnel) new BlockEmberFunnel(Material.ROCK).setCreativeTab(Soot.creativeTab);
         registerBlock("ember_burst", emberBurst, new ItemBlock(emberBurst));
-        registerBlock("ember_funnel", emberFunnel, new ItemBlock(emberFunnel));
 
         BlockRedstoneBin redstoneBin = (BlockRedstoneBin) new BlockRedstoneBin(Material.IRON,"redstone_bin").setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe",0).setHardness(1f).setCreativeTab(Soot.creativeTab);
         registerBlock("redstone_bin", redstoneBin, new ItemBlock(redstoneBin));
@@ -487,7 +485,6 @@ public class Registry {
         registerTileEntity(TileEntitySulfurOre.class);
 
         registerTileEntity(TileEntityEmberBurst.class);
-        registerTileEntity(TileEntityEmberFunnel.class);
 
         registerTileEntity(TileEntityRedstoneBin.class);
         registerTileEntity(TileEntityScale.class);

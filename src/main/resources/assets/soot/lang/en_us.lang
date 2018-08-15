@@ -24,7 +24,7 @@ embers.research.metallurgy.scale.desc=Alchemy is a very menial and thankless wor
 
 embers.research.metallurgy.advanced_emitters=Advanced Ember Transfer
 embers.research.metallurgy.advanced_emitters.title=One-to-Many and Many-to-One
-embers.research.metallurgy.advanced_emitters.desc=The Ember Spread Burst can emit Ember in up to 5 different directions that can be linked to different machinery. Simply hook each side up as you would a regular emitter and enable it with a redstone signal. Additionally, when transferring large amounts of Ember, receivers can quickly become overwhelmed. You've devised the Ember Funnel that catches Ember from multiple sources and rapidly transfers it to the connected machine.
+embers.research.metallurgy.advanced_emitters.desc=The Ember Spread Burst can emit Ember in up to 5 different directions that can be linked to different machinery. Simply hook each side up as you would a regular emitter and enable it with a redstone signal.
 
 embers.research.alchemy.eitr=Eitr
 embers.research.alchemy.eitr.title=Miyazaki Why
@@ -89,7 +89,6 @@ entity.muse.name=Muse
 tile.sulfur_ore.name=Sulfur Ore
 
 tile.ember_burst.name=Ember Spread Burst
-tile.ember_funnel.name=Ember Funnel
 tile.still.name=Brewing Still
 
 tile.alchemy_globe.name=Alchemical Recombulator

@@ -169,14 +169,9 @@ public class TileEntityStillTip extends TileEntity implements ITileEntityBase, I
     }
 
     @Override
-    public void markForUpdate(){
-        EventManager.markTEForUpdate(getPos(), this);
-    }
-
-    @Override
-    public void markDirty(){
-        markForUpdate();
+    public void markDirty() {
         super.markDirty();
+        Misc.syncTE(this);
     }
 
     @Override

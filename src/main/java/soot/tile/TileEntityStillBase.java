@@ -31,6 +31,7 @@ import teamroots.embers.EventManager;
 import teamroots.embers.api.upgrades.IUpgradeProvider;
 import teamroots.embers.api.upgrades.UpgradeUtil;
 import teamroots.embers.tileentity.ITileEntityBase;
+import teamroots.embers.util.Misc;
 import teamroots.embers.util.sound.ISoundController;
 
 import javax.annotation.Nullable;
@@ -97,14 +98,9 @@ public class TileEntityStillBase extends TileEntity implements ITileEntityBase, 
     }
 
     @Override
-    public void markForUpdate() {
-        EventManager.markTEForUpdate(getPos(), this);
-    }
-
-    @Override
     public void markDirty() {
-        markForUpdate();
         super.markDirty();
+        Misc.syncTE(this);
     }
 
     @Override

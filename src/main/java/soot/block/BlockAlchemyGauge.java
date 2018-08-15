@@ -141,7 +141,7 @@ public class BlockAlchemyGauge extends Block implements IDial {
         EnumFacing facing = state.getValue(FACING);
         TileEntity tile = world.getTileEntity(pos.offset(facing.getOpposite()));
         if (tile != null){
-            PacketHandler.INSTANCE.sendToServer(new MessageTEUpdateRequest(Minecraft.getMinecraft().player.getUniqueID(),pos));
+            PacketHandler.INSTANCE.sendToServer(new MessageTEUpdateRequest(pos));
         }
     }
 }
