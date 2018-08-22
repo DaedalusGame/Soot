@@ -1,8 +1,8 @@
 package soot.handler;
 
+import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
@@ -14,6 +14,8 @@ import soot.Config;
 import teamroots.embers.RegistryManager;
 
 public class GolemHandler {
+    static Object2BooleanOpenHashMap<Class> golemClassCache = new Object2BooleanOpenHashMap<>();
+
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onEntityDamaged(LivingHurtEvent event)
     {
@@ -40,7 +42,15 @@ public class GolemHandler {
     }
 
     private static boolean isGolem(EntityLivingBase target) {
-        ResourceLocation location = EntityList.getKey(target);
-        return location != null && location.getResourcePath().toLowerCase().contains("golem");
+        Class<? extends EntityLivingBase> targetClass = target.getClass();
+        if(golemClassCache.containsKey(targetClass)) {
+            return golemClassCache.getBoolean(targetClass);
+        }
+        else {
+            ResourceLocation location = EntityList.getKey(target);
+            boolean isGolem = location != null && location.getResourcePath().toLowerCase().contains("golem");
+            golemClassCache.put(targetClass,isGolem);
+            return isGolem;
+        }
     }
 }
