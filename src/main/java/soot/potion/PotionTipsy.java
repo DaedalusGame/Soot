@@ -1,5 +1,6 @@
 package soot.potion;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -7,11 +8,13 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import soot.util.Attributes;
+import teamroots.embers.EventManager;
 
 import java.awt.*;
 import java.lang.reflect.Field;
@@ -30,36 +33,56 @@ public class PotionTipsy extends PotionBase {
 
     @Override
     public boolean isReady(int duration, int amplifier) {
-        return duration % 10 == 0; //Every half second, have a % chance to drop item from hand
+        return true;
+    }
+
+    private void turnEntity(Entity entity, float angle) {
+        entity.rotationYaw += angle;
+
+        if (entity.getRidingEntity() != null) {
+            entity.getRidingEntity().applyOrientationToEntity(entity);
+        }
     }
 
     @Override
     public void performEffect(EntityLivingBase entity, int amplifier) {
         Random random = entity.getRNG();
+        PotionEffect effect = entity.getActivePotionEffect(this);
 
-        if(entity.world.isRemote)
+        if(entity instanceof EntityPlayer == entity.world.isRemote) {
+            double dx = entity.motionX;
+            double dy = entity.motionY;
+            double dz = entity.motionZ;
+            float speed = (float) MathHelper.clamp(Math.sqrt(dx * dx + dz * dz),0.2,1);
+            if(speed != 0)
+            turnEntity(entity, (float) Math.sin(EventManager.ticks / 30.0) * 4f * speed * (amplifier+1));
+        }
+
+        if(entity.world.isRemote) {
             return;
+        }
 
-        if(handDropChances == null)
-            handDropChances = ReflectionHelper.findField(EntityLiving.class,"field_82174_bp","inventoryHandsDropChances");
+        if(effect != null && effect.getDuration() % 10 == 0) { //Every half second, have a % chance to drop item from hand
+            if (handDropChances == null)
+                handDropChances = ReflectionHelper.findField(EntityLiving.class, "field_82174_bp", "inventoryHandsDropChances");
 
-        if(random.nextInt(100) < amplifier) {
-            boolean canDropMain = true;
-            boolean canDropOffhand = true;
-            if(entity instanceof EntityLiving) {
-                try {
-                    float[] chances = (float[]) handDropChances.get(entity);
-                    canDropMain = chances[EntityEquipmentSlot.MAINHAND.getIndex()] > 0;
-                    canDropOffhand = chances[EntityEquipmentSlot.OFFHAND.getIndex()] > 0;
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+            if (random.nextInt(100) < amplifier) {
+                boolean canDropMain = true;
+                boolean canDropOffhand = true;
+                if (entity instanceof EntityLiving) {
+                    try {
+                        float[] chances = (float[]) handDropChances.get(entity);
+                        canDropMain = chances[EntityEquipmentSlot.MAINHAND.getIndex()] > 0;
+                        canDropOffhand = chances[EntityEquipmentSlot.OFFHAND.getIndex()] > 0;
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
-            if(random.nextBoolean() && canDropMain) {
-                dropItem(entity,EntityEquipmentSlot.MAINHAND);
-            }
-            else if(canDropOffhand) {
-                dropItem(entity,EntityEquipmentSlot.OFFHAND);
+                if (random.nextBoolean() && canDropMain) {
+                    dropItem(entity, EntityEquipmentSlot.MAINHAND);
+                } else if (canDropOffhand) {
+                    dropItem(entity, EntityEquipmentSlot.OFFHAND);
+                }
             }
         }
     }

@@ -37,6 +37,7 @@ import soot.entity.EntitySnowpoff;
 import soot.fluids.FluidBooze;
 import soot.fluids.FluidMolten;
 import soot.item.*;
+import soot.itemmod.ModifierMundane;
 import soot.potion.*;
 import soot.tile.*;
 import soot.tile.overrides.*;
@@ -46,6 +47,9 @@ import soot.util.HeatManager;
 import soot.util.Nope;
 import teamroots.embers.Embers;
 import teamroots.embers.RegistryManager;
+import teamroots.embers.api.EmbersAPI;
+import teamroots.embers.api.itemmod.ModifierBase;
+import teamroots.embers.itemmod.ModifierFocalLens;
 import teamroots.embers.research.ResearchBase;
 import teamroots.embers.research.ResearchCategory;
 import teamroots.embers.research.ResearchManager;
@@ -111,6 +115,8 @@ public class Registry {
     public static Item SULFUR;
     @GameRegistry.ObjectHolder("soot:sulfur_clump")
     public static ItemSulfurClump SULFUR_CLUMP;
+    @GameRegistry.ObjectHolder("soot:mundane_stone")
+    public static Item MUNDANE_STONE;
 
     @GameRegistry.ObjectHolder("soot:eitr")
     public static ItemEitr EITR;
@@ -161,6 +167,8 @@ public class Registry {
     public static final String BETWEEN_GEM = "betweenlands_gem";
     public static final HashMap<String,String> ALTERNATE_ORES = new HashMap<>();
 
+    public static ModifierBase MUNDANE;
+
     public static void preInit() {
         MinecraftForge.EVENT_BUS.register(Registry.class);
         registerBlocks();
@@ -173,9 +181,10 @@ public class Registry {
     public static void init() {
         registerCaskLiquids();
         registerAccessorTiles();
+        registerModifiers();
 
-        HeatManager.register(RegistryManager.archaic_light,20);
-        HeatManager.register(Blocks.FIRE,10);
+        HeatManager.register(RegistryManager.archaic_light,150);
+        HeatManager.register(Blocks.FIRE,50);
         HeatManager.register(RegistryManager.heat_coil, (world, pos, state) -> {
             TileEntity tile = world.getTileEntity(pos);
             if(tile instanceof TileEntityHeatCoil) {
@@ -307,6 +316,7 @@ public class Registry {
         registerItem("sulfur", new Item().setCreativeTab(Soot.creativeTab));
         registerItem("sulfur_clump", new ItemSulfurClump().setCreativeTab(Soot.creativeTab));
         registerItem("eitr", new ItemEitr(EITR_TOOL_MATERIAL).setCreativeTab(Soot.creativeTab));
+        registerItem("mundane_stone", new Item().setCreativeTab(Soot.creativeTab));
 
         BlockStill still = (BlockStill) new BlockStill().setHardness(1.6f).setLightOpacity(0).setCreativeTab(Soot.creativeTab);
         registerBlock("still", still, new ItemStill(still));
@@ -512,6 +522,12 @@ public class Registry {
         EntityRegistry.registerModEntity(new ResourceLocation(Soot.MODID, "firecloud"), EntityFireCloud.class, "firecloud", 0, Soot.instance, 80, 1, true);
         EntityRegistry.registerModEntity(new ResourceLocation(Soot.MODID, "snowpoff"), EntitySnowpoff.class, "snowpoff", 1, Soot.instance, 80, 1, true);
         EntityRegistry.registerModEntity(new ResourceLocation(Soot.MODID, "muse"), EntityMuse.class, "muse", 2, Soot.instance, 80, 1, true);
+    }
+
+    public static void registerModifiers() {
+        MUNDANE = new ModifierMundane();
+
+        EmbersAPI.registerModifier(MUNDANE_STONE, MUNDANE);
     }
 
     public static void registerCapabilities() {

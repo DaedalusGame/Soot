@@ -1,12 +1,13 @@
 package soot.util;
 
 import com.google.common.collect.Lists;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
@@ -16,6 +17,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import soot.Registry;
@@ -49,7 +51,7 @@ public class MiscUtil {
                     {
                         AttributeModifier attributemodifier = entry.getValue();
                         AttributeModifier attributemodifier1 = new AttributeModifier(attributemodifier.getName(), potion.getAttributeModifierAmount(potioneffect.getAmplifier(), attributemodifier), attributemodifier.getOperation());
-                        attributeModifiers.add(new Tuple(((IAttribute)entry.getKey()).getName(), attributemodifier1));
+                        attributeModifiers.add(new Tuple(entry.getKey().getName(), attributemodifier1));
                     }
                 }
 
@@ -162,5 +164,37 @@ public class MiscUtil {
             }
         }
         return addedLore;
+    }
+
+    public static Item.ToolMaterial getToolMaterial(Item item) {
+        if(item instanceof ItemTool) {
+            return ReflectionHelper.getPrivateValue(ItemTool.class, (ItemTool)item, "field_77862_b", "toolMaterial");
+        }
+        if(item instanceof ItemHoe) {
+            return ReflectionHelper.getPrivateValue(ItemHoe.class, (ItemHoe)item, "field_77843_a", "toolMaterial");
+        }
+        if(item instanceof ItemSword) {
+            return ReflectionHelper.getPrivateValue(ItemSword.class, (ItemSword)item, "field_150933_b", "material");
+        }
+        if(item instanceof ItemArmor) {
+            return ReflectionHelper.getPrivateValue(ItemArmor.class, (ItemArmor)item, "field_77878_bZ", "material");
+        }
+        return null;
+    }
+
+    public static String generateFormatMatchCode(int code) {
+        String formatCode = "";
+        for(int i = 0; i < 4; i++) { //Short.maxValue should be good enough for codes
+            formatCode += TextFormatting.fromColorIndex((code >> i*4) & 15);
+        }
+        return formatCode + TextFormatting.RESET;
+    }
+
+    public static String generateEmptyString(String original) { //Possibly taken from Quark but don't tell anybody
+        int len = Minecraft.getMinecraft().fontRenderer.getStringWidth(original);
+        String spaces = "";
+        while(Minecraft.getMinecraft().fontRenderer.getStringWidth(spaces) < len)
+            spaces += " ";
+        return spaces;
     }
 }

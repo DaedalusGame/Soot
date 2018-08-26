@@ -135,6 +135,7 @@ item.stamp_nugget.name=Nugget Stamp
 item.sulfur.name=Sulfur
 item.sulfur_clump.name=Liver of Sulfur
 item.eitr.name=Eitr
+item.mundane_stone.name=Mundane Stone
 
 fluid.sugar=Molten Sugar
 fluid.antimony=Molten Antimony
