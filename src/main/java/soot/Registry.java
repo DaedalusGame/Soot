@@ -38,6 +38,7 @@ import soot.fluids.FluidBooze;
 import soot.fluids.FluidMolten;
 import soot.item.*;
 import soot.itemmod.ModifierMundane;
+import soot.itemmod.ModifierWitchburn;
 import soot.potion.*;
 import soot.tile.*;
 import soot.tile.overrides.*;
@@ -50,11 +51,13 @@ import teamroots.embers.RegistryManager;
 import teamroots.embers.api.EmbersAPI;
 import teamroots.embers.api.itemmod.ModifierBase;
 import teamroots.embers.itemmod.ModifierFocalLens;
+import teamroots.embers.recipe.RecipeRegistry;
 import teamroots.embers.research.ResearchBase;
 import teamroots.embers.research.ResearchCategory;
 import teamroots.embers.research.ResearchManager;
 import teamroots.embers.tileentity.*;
 import teamroots.embers.upgrade.UpgradeCatalyticPlug;
+import teamroots.embers.util.WeightedItemStack;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -117,6 +120,8 @@ public class Registry {
     public static ItemSulfurClump SULFUR_CLUMP;
     @GameRegistry.ObjectHolder("soot:mundane_stone")
     public static Item MUNDANE_STONE;
+    @GameRegistry.ObjectHolder("soot:witch_fire")
+    public static Item WITCH_FIRE;
 
     @GameRegistry.ObjectHolder("soot:eitr")
     public static ItemEitr EITR;
@@ -139,6 +144,8 @@ public class Registry {
     public static Potion POTION_SNOWPOFF;
     @GameRegistry.ObjectHolder("soot:inspiration")
     public static Potion POTION_INSPIRATION;
+    @GameRegistry.ObjectHolder("soot:witchburn")
+    public static Potion POTION_WITCHBURN;
 
     public static Fluid BOILING_WORT;
     public static Fluid BOILING_POTATO_JUICE;
@@ -168,6 +175,7 @@ public class Registry {
     public static final HashMap<String,String> ALTERNATE_ORES = new HashMap<>();
 
     public static ModifierBase MUNDANE;
+    public static ModifierBase WITCHBURN;
 
     public static void preInit() {
         MinecraftForge.EVENT_BUS.register(Registry.class);
@@ -195,6 +203,8 @@ public class Registry {
         });
 
         EITR_TOOL_MATERIAL.setRepairItem(new ItemStack(SULFUR));
+
+        RecipeRegistry.defaultBoreOutput.stacks.add(new WeightedItemStack(new ItemStack(MUNDANE_STONE),1));
 
         UpgradeCatalyticPlug.registerBlacklistedTile(TileEntityStillBase.class);
     }
@@ -317,6 +327,7 @@ public class Registry {
         registerItem("sulfur_clump", new ItemSulfurClump().setCreativeTab(Soot.creativeTab));
         registerItem("eitr", new ItemEitr(EITR_TOOL_MATERIAL).setCreativeTab(Soot.creativeTab));
         registerItem("mundane_stone", new Item().setCreativeTab(Soot.creativeTab));
+        registerItem("witch_fire", new Item().setCreativeTab(Soot.creativeTab));
 
         BlockStill still = (BlockStill) new BlockStill().setHardness(1.6f).setLightOpacity(0).setCreativeTab(Soot.creativeTab);
         registerBlock("still", still, new ItemStill(still));
@@ -526,8 +537,10 @@ public class Registry {
 
     public static void registerModifiers() {
         MUNDANE = new ModifierMundane();
+        WITCHBURN = new ModifierWitchburn();
 
         EmbersAPI.registerModifier(MUNDANE_STONE, MUNDANE);
+        EmbersAPI.registerModifier(WITCH_FIRE, WITCHBURN);
     }
 
     public static void registerCapabilities() {
@@ -559,6 +572,7 @@ public class Registry {
         event.getRegistry().register(new PotionLifedrinker().setRegistryName(Soot.MODID, "lifedrinker"));
         event.getRegistry().register(new PotionSnowpoff().setRegistryName(Soot.MODID, "snowpoff"));
         event.getRegistry().register(new PotionInspiration().setRegistryName(Soot.MODID, "inspiration"));
+        event.getRegistry().register(new PotionWitchBurn().setRegistryName(Soot.MODID, "witchburn"));
     }
 
     private static void registerTileEntity(Class<? extends TileEntity> tile) {

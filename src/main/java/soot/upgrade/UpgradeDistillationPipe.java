@@ -3,12 +3,18 @@ package soot.upgrade;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fluids.FluidStack;
+import soot.block.BlockAlchemyGauge;
 import soot.recipe.CraftingRegistry;
 import soot.recipe.RecipeStill;
 import soot.recipe.RecipeStillDoubleDistillation;
 import soot.recipe.RecipeStillModifier;
 import soot.tile.TileEntityStillBase;
 import soot.tile.TileEntityStillTip;
+import teamroots.embers.Embers;
+import teamroots.embers.api.event.DialInformationEvent;
+import teamroots.embers.api.event.UpgradeEvent;
+import teamroots.embers.api.tile.IMechanicallyPowered;
+import teamroots.embers.block.BlockEmberGauge;
 import teamroots.embers.util.DefaultUpgradeProvider;
 
 public class UpgradeDistillationPipe extends DefaultUpgradeProvider {
@@ -41,5 +47,15 @@ public class UpgradeDistillationPipe extends DefaultUpgradeProvider {
         if(type.equals(RecipeStillDoubleDistillation.TAG_DOUBLE_DISTILL))
             return true; //Enable double distillation.
         return value;
+    }
+
+    @Override
+    public void throwEvent(TileEntity tile, UpgradeEvent event) {
+        if(event instanceof DialInformationEvent) {
+            DialInformationEvent dialEvent = (DialInformationEvent) event;
+            if(BlockAlchemyGauge.DIAL_TYPE.equals(dialEvent.getDialType())) {
+                dialEvent.getInformation().add(Embers.proxy.formatLocalize("embers.tooltip.upgrade.distillation_pipe")); //Proxy this because it runs in shared code
+            }
+        }
     }
 }

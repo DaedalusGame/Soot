@@ -70,6 +70,7 @@ public class CraftingRegistry {
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
         OreIngredient ingotAntimony = new OreIngredient("ingotAntimony");
         OreIngredient ingotLead = new OreIngredient("ingotLead");
+        OreIngredient ingotNickel = new OreIngredient("ingotNickel");
         OreIngredient blankGlass = new OreIngredient("blockGlassColorless");
         Ingredient leadPickaxe = new IngredientSpecial(stack -> {
             Item item = stack.getItem();
@@ -77,6 +78,7 @@ public class CraftingRegistry {
         });
         RecipeRegistry.alchemyRecipes.add(new AlchemyRecipe(new AspectList.AspectRangeList().setRange("copper",16,32).setRange("lead",32,64),blankGlass, Lists.newArrayList(ingotLead, Ingredient.fromItem(RegistryManager.aspectus_lead), ingotLead, Ingredient.fromItem(RegistryManager.archaic_circuit)),new ItemStack(Registry.ALCHEMY_GLOBE)));
         RecipeRegistry.alchemyRecipes.add(new AlchemyRecipe(new AspectList.AspectRangeList().setRange("iron",64,96).setRange("lead",64,96),leadPickaxe, Lists.newArrayList(ingotAntimony, Ingredient.fromItem(Registry.SULFUR_CLUMP), ingotAntimony, Ingredient.fromItem(Registry.SIGNET_ANTIMONY)),new ItemStack(Registry.EITR)));
+        RecipeRegistry.alchemyRecipes.add(new AlchemyRecipe(new AspectList.AspectRangeList().setRange("copper",16,32).setRange("iron",32,48).setRange("lead",32,48),Ingredient.fromItem(RegistryManager.jet_augment), Lists.newArrayList(ingotNickel, Ingredient.fromItem(Registry.SULFUR_CLUMP), ingotNickel, ingotNickel),new ItemStack(Registry.WITCH_FIRE)));
 
         removeRecipe(new ResourceLocation(Embers.MODID, "archaic_bricks_2")); //Remove conflicting recipe
         removeRecipe(new ResourceLocation(Embers.MODID, "plate_caminite_raw"));

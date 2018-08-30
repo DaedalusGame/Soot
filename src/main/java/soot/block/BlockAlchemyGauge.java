@@ -32,6 +32,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BlockAlchemyGauge extends BlockBaseGauge {
+
+    public static final String DIAL_TYPE = "alchemy";
+
     public BlockAlchemyGauge(Material blockMaterialIn) {
         super(blockMaterialIn);
     }
@@ -68,6 +71,6 @@ public class BlockAlchemyGauge extends BlockBaseGauge {
 
     @Override
     public String getDialType() {
-        return "alchemy";
+        return DIAL_TYPE;
     }
 }

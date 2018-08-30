@@ -15,7 +15,7 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle.forge'
 
 
-version = "1.3hotfix"
+version = "1.4"
 group= "soot" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Soot"
 

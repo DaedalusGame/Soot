@@ -153,7 +153,7 @@ public class EntityCustomCloud extends Entity {
                     int b = color & 255;
                     int a = color >> 24 & 255;
 
-                    ParticleUtil.spawnParticleGlow(world, (float) this.posX + offsetX, (float) this.posY, (float) this.posZ + offsetZ, velX, velY, velZ, r, g, b, a, 5.0f, 50);
+                    ParticleUtil.spawnParticleVapor(world, (float) this.posX + offsetX, (float) this.posY, (float) this.posZ + offsetZ, velX, velY, velZ, r, g, b, a, 2.0f, 5.0f, 50);
                 }
             }
         } else {

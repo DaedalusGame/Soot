@@ -160,43 +160,56 @@ public class TileEntityStillBase extends TileEntity implements ITileEntityBase, 
         if(getWorld().isRemote)
             handleSound();
         double heat = HeatManager.getHeat(world, pos.down());
-        currentSound = SOUND_NONE;
-        if (heat > 0) {
-            currentSound = SOUND_HOT;
-        }
         TileEntityStillTip tip = getTip();
         if (tip != null) {
             upgrades = UpgradeUtil.getUpgrades(world, pos, EnumFacing.HORIZONTALS); //TODO: Cache both of these calls
             UpgradeUtil.verifyUpgrades(this, upgrades);
 
             int cookTime = (int) Math.ceil(MathHelper.clampedLerp(1, 40, 1.0 - (heat / 200)) * (1.0 / UpgradeUtil.getTotalSpeedModifier(this, upgrades)));
-            boolean cancel = UpgradeUtil.doWork(this, upgrades);
-            if (!cancel && ticksExisted % cookTime == 0) {
+            if (ticksExisted % cookTime == 0) {
                 FluidTank output = tip.tank;
                 FluidStack inputStack = tank.getFluid();
                 RecipeStill recipe = CraftingRegistry.getStillRecipe(this, inputStack, tip.getCurrentCatalyst());
                 if (recipe != null) {
-                    currentSound = cookTime > 1 ? SOUND_WORK_SLOW : SOUND_WORK_FAST;
-                    inputStack = tank.drain(recipe.getInputConsumed(), false);
-                    FluidStack outputStack = UpgradeUtil.transformOutput(this, recipe.getOutput(this, inputStack), upgrades);
-                    String brewName = getNameFromSign();
-                    if (brewName != null) {
-                        NBTTagCompound compound = FluidUtil.createModifiers(outputStack);
-                        if (!brewName.isEmpty())
-                            compound.setString("custom_name", brewName);
-                        else
-                            compound.removeTag("custom_name");
-                    }
-                    if (output.fill(outputStack, false) == outputStack.amount) {
-                        if (inputStack != null)
-                            tank.drain(inputStack.amount, true);
-                        output.fill(outputStack, true);
-                        tip.depleteCatalyst(recipe.catalystConsumed);
-                        markDirty();
-                        tip.markDirty();
+                    boolean cancel = UpgradeUtil.doWork(this, upgrades);
+                    if(!cancel) {
+                        currentSound = cookTime > 1 ? SOUND_WORK_SLOW : SOUND_WORK_FAST;
+                        inputStack = tank.drain(recipe.getInputConsumed(), false);
+                        FluidStack outputStack = UpgradeUtil.transformOutput(this, recipe.getOutput(this, inputStack), upgrades);
+                        String brewName = getNameFromSign();
+                        if (brewName != null) {
+                            NBTTagCompound compound = FluidUtil.createModifiers(outputStack);
+                            if (!brewName.isEmpty())
+                                compound.setString("custom_name", brewName);
+                            else
+                                compound.removeTag("custom_name");
+                        }
+                        if (output.fill(outputStack, false) == outputStack.amount) {
+                            if (inputStack != null)
+                                tank.drain(inputStack.amount, true);
+                            output.fill(outputStack, true);
+                            tip.depleteCatalyst(recipe.catalystConsumed);
+                            markDirty();
+                            tip.markDirty();
+                        }
                     }
                 }
+                else
+                {
+                    setIdleSound(heat);
+                }
             }
+        }
+        else
+        {
+            setIdleSound(heat);
+        }
+    }
+
+    public void setIdleSound(double heat) {
+        currentSound = SOUND_NONE;
+        if (heat > 0) {
+            currentSound = SOUND_HOT;
         }
     }
 

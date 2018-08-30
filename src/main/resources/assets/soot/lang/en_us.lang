@@ -1,5 +1,6 @@
 itemGroup.soot=Soot
 
+soot.tooltip.upgrade.distillation_pipe=Can double-distill
 soot.tooltip.migrate=Right-click with Tinker Hammer
 soot.tooltip.eitr=Degrades armor on hit.
 
@@ -136,6 +137,7 @@ item.sulfur.name=Sulfur
 item.sulfur_clump.name=Liver of Sulfur
 item.eitr.name=Eitr
 item.mundane_stone.name=Mundane Stone
+item.witch_fire.name=Beltaine Brazier
 
 fluid.sugar=Molten Sugar
 fluid.antimony=Molten Antimony
@@ -165,6 +167,10 @@ effect.inspiration=Inspiration
 effect.fire_lung=Fire Lung
 effect.snowpoff=Snowpoff
 effect.steadfast=Steadfast
+effect.witchburn=Witchburn
+
+embers.tooltip.modifier.mundane=Mundane
+embers.tooltip.modifier.witchburn=Witchburn %s
 
 attribute.name.generic.physicalDamageRate=Physical Damage Taken
 attribute.name.generic.fireDamageRate=Fire Damage Taken
