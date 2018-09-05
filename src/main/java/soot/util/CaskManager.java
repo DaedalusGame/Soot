@@ -93,11 +93,19 @@ public class CaskManager {
     }
 
     @Nullable
-    public static CaskLiquid getFromFluid(FluidStack fluid)
+    public static CaskLiquid getFromFluid(FluidStack fluidStack)
     {
-        if(fluid != null)
+        if(fluidStack != null)
+            return getFromFluid(fluidStack.getFluid());
+
+        return null;
+    }
+
+    @Nullable
+    public static CaskLiquid getFromFluid(Fluid fluid)
+    {
         for (CaskLiquid liquid : liquids) {
-            if(liquid.fluid.equals(fluid.getFluid()))
+            if(liquid.fluid.equals(fluid))
                 return liquid;
         }
 

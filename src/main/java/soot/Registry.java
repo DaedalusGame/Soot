@@ -23,6 +23,7 @@ import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -55,8 +56,10 @@ import teamroots.embers.recipe.RecipeRegistry;
 import teamroots.embers.research.ResearchBase;
 import teamroots.embers.research.ResearchCategory;
 import teamroots.embers.research.ResearchManager;
+import teamroots.embers.research.subtypes.ResearchSwitchCategory;
 import teamroots.embers.tileentity.*;
 import teamroots.embers.upgrade.UpgradeCatalyticPlug;
+import teamroots.embers.util.Vec2i;
 import teamroots.embers.util.WeightedItemStack;
 
 import javax.annotation.Nullable;
@@ -177,6 +180,9 @@ public class Registry {
     public static ModifierBase MUNDANE;
     public static ModifierBase WITCHBURN;
 
+    public static final ResourceLocation PAGE_ICONS = new ResourceLocation(Soot.MODID, "textures/gui/codex_pageicons.png");
+    public static final double PAGE_ICON_SIZE = 0.09375;
+
     public static void preInit() {
         MinecraftForge.EVENT_BUS.register(Registry.class);
         registerBlocks();
@@ -215,49 +221,69 @@ public class Registry {
 
 
     public static void initResearches() {
-        ResearchCategory categoryWorld = null;
-        ResearchCategory categoryMechanisms = null;
-        ResearchCategory categoryMetallurgy = null;
-        ResearchCategory categoryAlchemy = null;
-        ResearchCategory categorySmithing = null;
+        ResearchCategory categoryWorld = ResearchManager.categoryWorld;
+        ResearchCategory categoryMechanisms = ResearchManager.categoryMechanisms;
+        ResearchCategory categoryMetallurgy = ResearchManager.categoryMetallurgy;
+        ResearchCategory categoryAlchemy = ResearchManager.categoryAlchemy;
+        ResearchCategory categorySmithing = ResearchManager.categorySmithing;
         ResearchCategory categoryBrewing = new ResearchCategory("brewing",new ResourceLocation(Soot.MODID,"textures/gui/codex_index.png"), 192.0, 16.0);
 
-        for(ResearchCategory category : ResearchManager.researches) {
-            if(category.name.equals("world"))
-                categoryWorld = category;
-            if(category.name.equals("mechanisms"))
-                categoryMechanisms = category;
-            if(category.name.equals("metallurgy"))
-                categoryMetallurgy = category;
-            if(category.name.equals("alchemy"))
-                categoryAlchemy = category;
-            if(category.name.equals("smithing"))
-                categorySmithing = category;
-        }
+        ResearchBase forgeProjectile = ResearchManager.subCategoryProjectileAugments.researches.get(0);
+        ResearchBase forgeWeapon = ResearchManager.subCategoryWeaponAugments.researches.get(0);
+        ResearchManager.subCategoryProjectileAugments.addResearch(new ResearchBase("witch_fire",new ItemStack(WITCH_FIRE),ResearchManager.subCategoryProjectileAugments.popGoodLocation()).addAncestor(forgeProjectile));
+        ResearchManager.subCategoryWeaponAugments.addResearch(new ResearchBase("mundane_stone",new ItemStack(MUNDANE_STONE),ResearchManager.subCategoryWeaponAugments.popGoodLocation()).addAncestor(forgeWeapon));
+
         ResearchManager.researches.add(categoryBrewing);
         categoryWorld.addResearch(new ResearchBase("sulfur",new ItemStack(SULFUR_CLUMP),12.0,0.0));
-        categoryWorld.addResearch(new ResearchBase("redstone_bin",new ItemStack(REDSTONE_BIN),12.0,5.0));
+        ResearchBase redstone_bin = new ResearchBase("redstone_bin", new ItemStack(REDSTONE_BIN), 7, 2).addAncestor(ResearchManager.bin);
+        ResearchManager.subCategoryPipes.addResearch(redstone_bin);
         categoryMechanisms.addResearch(new ResearchBase("insulation",new ItemStack(INSULATION), 12.0D, 0.0D).addAncestor(ResearchManager.hearth_coil));
-        categoryMetallurgy.addResearch(new ResearchBase("advanced_emitters",new ItemStack(EMBER_BURST),0.0D, 4.0D));
-        categoryMetallurgy.addResearch(new ResearchBase("scale",new ItemStack(SCALE),12.0D, 5.0D).addAncestor(ResearchManager.alchemy));
-        categoryAlchemy.addResearch(new ResearchBase("eitr",new ItemStack(EITR), 4.0, 4.0).addAncestor(ResearchManager.waste));
+        categoryMetallurgy.addResearch(new ResearchBase("advanced_emitters",new ItemStack(EMBER_BURST), 2, 7).addAncestor(ResearchManager.splitter));
+        ResearchManager.subCategoryPipes.addResearch(new ResearchBase("scale",new ItemStack(SCALE), 8, 0).addAncestor(redstone_bin));
+        categoryAlchemy.addResearch(new ResearchBase("eitr",new ItemStack(EITR), 11, 3).addAncestor(ResearchManager.waste));
+
+        ResearchCategory subCategoryAlchemyMixing = new ResearchCategory("alchemical_mixer",0);
+
+        subCategoryAlchemyMixing.addResearch(new ResearchBase("alchemy_globe",new ItemStack(Items.PAPER),5,5));
+
         ResearchBase still = new ResearchBase("still", new ItemStack(STILL), 6.0D, 4.0D);
         categoryBrewing.addResearch(still);
         categoryBrewing.addResearch(new ResearchBase("distillation_pipe",new ItemStack(DISTILLATION_PIPE), 8.0D, 7.0D).addAncestor(still));
         categoryBrewing.addResearch(new ResearchBase("still_fuel",new ItemStack(RegistryManager.archaic_light), 6.0D, 7.0D).addAncestor(still));
-        categoryBrewing.addResearch(new ResearchBase("alchemy_dial",new ItemStack(ALCHEMY_GAUGE), 7.0D, 2.0D).addAncestor(still));
-        Random random = new Random();
-        CaskLiquid liquid = CaskManager.liquids.get(random.nextInt(CaskManager.liquids.size()));
-        ResearchBase drinks = new ResearchBase("drinks", MUG.getFilled(liquid), 4.0D, 7.0D);
-        categoryBrewing.addResearch(drinks);
-        categoryBrewing.addResearch(new ResearchBase("rename",new ItemStack(Items.SIGN), 1.0D, 7.0D).addAncestor(drinks));
-        categoryBrewing.addResearch(new ResearchBase("lifedrinker",new ItemStack(Items.GHAST_TEAR), 11.0D, 7.0D).addAncestor(still));
-        categoryBrewing.addResearch(new ResearchBase("steadfast",new ItemStack(Items.GOLDEN_CARROT), 0.0D, 5.0D).addAncestor(still));
-        categoryBrewing.addResearch(new ResearchBase("duration",new ItemStack(Items.REDSTONE), 0.0D, 3.0D).addAncestor(still));
-        categoryBrewing.addResearch(new ResearchBase("purification",new ItemStack(Items.PRISMARINE_CRYSTALS), 1.0D, 1.0D).addAncestor(still));
-        categoryBrewing.addResearch(new ResearchBase("healing",new ItemStack(Items.NETHER_WART), 11.0D, 1.0D).addAncestor(still));
-        categoryBrewing.addResearch(new ResearchBase("cooling",new ItemStack(Blocks.ICE), 12.0D, 3.0D).addAncestor(still));
-        categoryBrewing.addResearch(new ResearchBase("stew",new ItemStack(Items.POTATO), 12.0D, 5.0D).addAncestor(still));
+        ResearchBase alchemy_dial = new ResearchBase("alchemy_dial", new ItemStack(ALCHEMY_GAUGE), 3.5D, 6.0D).addAncestor(still);
+        categoryBrewing.addResearch(alchemy_dial);
+        categoryBrewing.addResearch(new ResearchBase("rename",new ItemStack(Items.SIGN), 1.0D, 7.0D).addAncestor(alchemy_dial));
+
+        Vec2i[] ringPositions = {new Vec2i(1, 1), new Vec2i(0, 3), new Vec2i(0, 5), new Vec2i(1, 7), new Vec2i(11, 7), new Vec2i(12, 5), new Vec2i(12, 3), new Vec2i(11, 1), new Vec2i(4, 1), new Vec2i(2, 4), new Vec2i(4, 7), new Vec2i(8, 7), new Vec2i(10, 4),new Vec2i(8, 1)};
+        ResearchCategory subCategoryPrimaryEffects = new ResearchCategory("primary_effects",0).pushGoodLocations(ringPositions);
+        ResearchCategory subCategorySecondaryEffects = new ResearchCategory("secondary_effects",0).pushGoodLocations(ringPositions);
+        ResearchCategory subCategoryTertiaryEffects = new ResearchCategory("tertiary_effects",0).pushGoodLocations(ringPositions);
+
+        subCategoryPrimaryEffects.addResearch(new ResearchBase("ale",MUG.getFilled(CaskManager.getFromFluid(ALE)), subCategoryPrimaryEffects.popGoodLocation()));
+        subCategoryPrimaryEffects.addResearch(new ResearchBase("vodka",MUG.getFilled(CaskManager.getFromFluid(VODKA)), subCategoryPrimaryEffects.popGoodLocation()));
+        ResearchBase verdigris = new ResearchBase("verdigris", MUG.getFilled(CaskManager.getFromFluid(BOILING_WORMWOOD)), subCategoryPrimaryEffects.popGoodLocation());
+        subCategoryPrimaryEffects.addResearch(verdigris);
+        subCategoryPrimaryEffects.addResearch(new ResearchBase("absinthe",MUG.getFilled(CaskManager.getFromFluid(ABSINTHE)), subCategoryPrimaryEffects.popGoodLocation()).addAncestor(verdigris));
+        subCategoryPrimaryEffects.addResearch(new ResearchBase("methanol",MUG.getFilled(CaskManager.getFromFluid(METHANOL)), subCategoryPrimaryEffects.popGoodLocation()));
+        subCategoryPrimaryEffects.addResearch(new ResearchBase("snowpoff_vodka",MUG.getFilled(CaskManager.getFromFluid(SNOWPOFF_VODKA)), subCategoryPrimaryEffects.popGoodLocation()));
+        subCategoryPrimaryEffects.addResearch(new ResearchBase("inner_fire",MUG.getFilled(CaskManager.getFromFluid(INNER_FIRE)), subCategoryPrimaryEffects.popGoodLocation()));
+        subCategoryPrimaryEffects.addResearch(new ResearchBase("beetroot_soup",MUG.getFilled(CaskManager.getFromFluid(BOILING_BEETROOT_SOUP)), subCategoryPrimaryEffects.popGoodLocation()));
+        subCategorySecondaryEffects.addResearch(new ResearchBase("lifedrinker",new ItemStack(Items.GHAST_TEAR), subCategorySecondaryEffects.popGoodLocation()));
+        subCategorySecondaryEffects.addResearch(new ResearchBase("steadfast",new ItemStack(Items.GOLDEN_CARROT), subCategorySecondaryEffects.popGoodLocation()));
+        subCategoryTertiaryEffects.addResearch(new ResearchBase("duration",new ItemStack(Items.REDSTONE), subCategoryTertiaryEffects.popGoodLocation()));
+        subCategoryTertiaryEffects.addResearch(new ResearchBase("purification",new ItemStack(Items.PRISMARINE_CRYSTALS), subCategoryTertiaryEffects.popGoodLocation()));
+        subCategoryTertiaryEffects.addResearch(new ResearchBase("healing",new ItemStack(Items.NETHER_WART), subCategoryTertiaryEffects.popGoodLocation()));
+        subCategoryTertiaryEffects.addResearch(new ResearchBase("cooling",new ItemStack(Blocks.ICE), subCategoryTertiaryEffects.popGoodLocation()));
+        subCategoryTertiaryEffects.addResearch(new ResearchBase("stew",new ItemStack(Items.POTATO), subCategoryTertiaryEffects.popGoodLocation()));
+
+        categoryAlchemy.addResearch(makeCategorySwitch(subCategoryAlchemyMixing,5, 0,new ItemStack(ALCHEMY_GLOBE),0,1).addAncestor(ResearchManager.waste));
+        categoryBrewing.addResearch(makeCategorySwitch(subCategoryPrimaryEffects,2, 4,ItemStack.EMPTY,1,1).addAncestor(still));
+        categoryBrewing.addResearch(makeCategorySwitch(subCategorySecondaryEffects,6, 1,ItemStack.EMPTY,2,1).addAncestor(still));
+        categoryBrewing.addResearch(makeCategorySwitch(subCategoryTertiaryEffects,10, 4,ItemStack.EMPTY,3,1).addAncestor(still));
+    }
+
+    private static ResearchBase makeCategorySwitch(ResearchCategory targetCategory, int x, int y, ItemStack icon, int u, int v) {
+        return new ResearchSwitchCategory(targetCategory.name+"_category", icon, x, y).setTargetCategory(targetCategory).setIconBackground(PAGE_ICONS, PAGE_ICON_SIZE * u, PAGE_ICON_SIZE * v);
     }
 
     public static void registerCaskLiquids() {

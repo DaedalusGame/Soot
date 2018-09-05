@@ -46,6 +46,7 @@ public class RecipeStillDoubleDistillation extends RecipeStillModifier {
     @Override
     public void modifyTooltip(List<String> tooltip) {
         super.modifyTooltip(tooltip);
+        tooltip.add(tooltip.size() - 1, TextFormatting.BOLD + Translator.translateToLocalFormatted("distilling.effect.double_distillation"));
         tooltip.add(tooltip.size() - 1, TextFormatting.BLUE + Translator.translateToLocalFormatted("distilling.effect.add", Translator.translateToLocal("distilling.modifier.concentration.name"), 10));
         tooltip.add(tooltip.size() - 1, TextFormatting.BLUE + Translator.translateToLocalFormatted("distilling.effect.add_percent", Translator.translateToLocal("distilling.modifier.concentration.name"), 80));
         tooltip.add(tooltip.size() - 1, TextFormatting.RED + Translator.translateToLocalFormatted("distilling.effect.add_percent", Translator.translateToLocal("distilling.modifier.volume.name"), 10));
