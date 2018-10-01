@@ -219,7 +219,7 @@ effect.snowpoff=雪崩
 effect.steadfast=奔驰不懈
 effect.witchburn=狩猎女巫之火
 
-embers.tooltip.modifier.mundane=宇宙
+embers.tooltip.modifier.mundane=宇宙 %s
 embers.tooltip.modifier.witchburn=狩猎女巫之火 %s
 
 attribute.name.generic.physicalDamageRate=物理伤害

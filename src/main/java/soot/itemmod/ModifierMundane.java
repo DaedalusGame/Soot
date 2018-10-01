@@ -88,8 +88,10 @@ public class ModifierMundane extends ModifierBase {
     public double getMundaneBonus(ItemStack stack) {
         Item item = stack.getItem();
         Item.ToolMaterial material = MiscUtil.getToolMaterial(item);
+        int level = ItemModUtil.getModifierLevel(stack,Registry.MUNDANE);
         double itemAttack = calculateAttributeTotal(item.getAttributeModifiers(EntityEquipmentSlot.MAINHAND, stack).get(SharedMonsterAttributes.ATTACK_DAMAGE.getName()));
-        return 3.0 + material.getAttackDamage() - itemAttack;
+        double bonus = 3.0 + material.getAttackDamage() - itemAttack;
+        return Math.min(level,Math.abs(bonus)) * Math.signum(bonus);
     }
 
     @SideOnly(Side.CLIENT)

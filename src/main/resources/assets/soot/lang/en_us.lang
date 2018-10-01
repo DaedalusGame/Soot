@@ -218,7 +218,7 @@ effect.snowpoff=Snowpoff
 effect.steadfast=Steadfast
 effect.witchburn=Witchburn
 
-embers.tooltip.modifier.mundane=Mundane
+embers.tooltip.modifier.mundane=Mundane %s
 embers.tooltip.modifier.witchburn=Witchburn %s
 
 attribute.name.generic.physicalDamageRate=Physical Damage Taken
