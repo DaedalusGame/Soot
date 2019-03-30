@@ -533,6 +533,8 @@ public class Registry {
 
         registerTileEntity(TileEntityEmberBurst.class);
 
+        registerTileEntity(TileEntityAlchemyGauge.class);
+
         registerTileEntity(TileEntityRedstoneBin.class);
         registerTileEntity(TileEntityScale.class);
 
