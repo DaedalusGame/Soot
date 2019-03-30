@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
 
 public class ModifierMundane extends ModifierBase {
     static final UUID ATTACK_DAMAGE_MODIFIER = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
-    static final String ATTACK_BONUS_UUID = "051b0eb9-ecbd-402e-83d6-e99455da641c";
+    static final UUID ATTACK_BONUS_UUID = UUID.fromString("051b0eb9-ecbd-402e-83d6-e99455da641c");
     public static final String CODE_STAT = MiscUtil.generateFormatMatchCode(114);
     public static final String CODE_NOSTAT = MiscUtil.generateFormatMatchCode(115);
     public static final String GLOW_FORMAT = "!=!";
@@ -61,23 +61,22 @@ public class ModifierMundane extends ModifierBase {
             return;
         ItemStack stack = entity.getHeldItemMainhand();
         IAttributeInstance instance = entity.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
-        UUID uuid = UUID.fromString(ATTACK_BONUS_UUID);
         boolean isMundane = ItemModUtil.hasHeat(stack) && ItemModUtil.hasModifier(stack, Registry.MUNDANE);
 
         if(instance != null) { //This can happen.
             if (isMundane) {
                 double mundaneBonus = getMundaneBonus(stack);
-                AttributeModifier modifier = instance.getModifier(uuid);
+                AttributeModifier modifier = instance.getModifier(ATTACK_BONUS_UUID);
                 if (modifier != null) {
                     double currentBonus = ATTRIBUTE_CACHE.getOrDefault(entity, modifier.getAmount());
                     if (currentBonus != mundaneBonus)
                         instance.removeModifier(modifier);
                 } else {
-                    instance.applyModifier(new AttributeModifier(uuid, "mundane_bonus", mundaneBonus, 0));
+                    instance.applyModifier(new AttributeModifier(ATTACK_BONUS_UUID, "mundane_bonus", mundaneBonus, 0));
                 }
                 ATTRIBUTE_CACHE.put(entity, mundaneBonus);
             } else {
-                AttributeModifier modifier = instance.getModifier(uuid);
+                AttributeModifier modifier = instance.getModifier(ATTACK_BONUS_UUID);
                 if (modifier != null)
                     instance.removeModifier(modifier);
                 ATTRIBUTE_CACHE.remove(entity);
