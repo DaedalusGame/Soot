@@ -14,7 +14,7 @@ import soot.Config;
 import teamroots.embers.RegistryManager;
 
 public class GolemHandler {
-    static Object2BooleanOpenHashMap<Class> golemClassCache = new Object2BooleanOpenHashMap<>();
+    static Map<Class,Boolean> golemClassCache = new HashMap<>();
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onEntityDamaged(LivingHurtEvent event)
