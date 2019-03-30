@@ -1,6 +1,5 @@
 package soot.handler;
 
-import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.MobEffects;
@@ -12,6 +11,9 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import soot.Config;
 import teamroots.embers.RegistryManager;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class GolemHandler {
     static Map<Class,Boolean> golemClassCache = new HashMap<>();
@@ -44,7 +46,7 @@ public class GolemHandler {
     private static boolean isGolem(EntityLivingBase target) {
         Class<? extends EntityLivingBase> targetClass = target.getClass();
         if(golemClassCache.containsKey(targetClass)) {
-            return golemClassCache.getBoolean(targetClass);
+            return golemClassCache.get(targetClass);
         }
         else {
             ResourceLocation location = EntityList.getKey(target);
