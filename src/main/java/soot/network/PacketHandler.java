@@ -17,7 +17,8 @@ public class PacketHandler {
             INSTANCE.registerMessage(MessageMuseSpawnFX.MessageHolder.class, MessageMuseSpawnFX.class,id++, Side.CLIENT);
             INSTANCE.registerMessage(MessageEitrFX.MessageHolder.class, MessageEitrFX.class,id++, Side.CLIENT);
             INSTANCE.registerMessage(MessageMixerFailFX.MessageHolder.class, MessageMixerFailFX.class,id++, Side.CLIENT);
-            INSTANCE.registerMessage(MessageWitchBurnFX.MessageHolder.class, MessageWitchBurnFX.class,id++, Side.CLIENT);
+            //INSTANCE.registerMessage(MessageWitchBurnFX.MessageHolder.class, MessageWitchBurnFX.class,id++, Side.CLIENT);
+            INSTANCE.registerMessage(MessageMixerBlastFX.MessageHolder.class, MessageMixerBlastFX.class,id++, Side.CLIENT);
         }
     }
 

@@ -2,21 +2,19 @@ package soot.itemmod;
 
 import com.google.common.collect.Lists;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import soot.Registry;
-import teamroots.embers.api.EmbersAPI;
+import soot.handler.WitchburnHandler;
 import teamroots.embers.api.event.EmberProjectileEvent;
+import teamroots.embers.api.event.ItemVisualEvent;
 import teamroots.embers.api.itemmod.ItemModUtil;
+import teamroots.embers.api.itemmod.ModifierProjectileBase;
 import teamroots.embers.api.projectile.*;
-import teamroots.embers.itemmod.ModifierProjectileBase;
 
-import java.awt.*;
 import java.util.ListIterator;
-import java.util.Random;
 
 public class ModifierWitchburn extends ModifierProjectileBase {
     public ModifierWitchburn() {
@@ -34,25 +32,58 @@ public class ModifierWitchburn extends ModifierProjectileBase {
             if(level > 0)
                 while (projectiles.hasNext()) {
                     IProjectilePreset projectile = projectiles.next();
-                    projectile.setColor(new Color(64,255,16));
-                    projectile.setEffect(adjustEffect(projectile.getEffect()));
+                    projectile.setColor(WitchburnHandler.COLOR);
+                    projectile.setEffect(adjustEffect(projectile.getEffect(),level));
                 }
         }
     }
 
-    private IProjectileEffect adjustEffect(IProjectileEffect effect) {
+    @SubscribeEvent
+    public void onItemEffect(ItemVisualEvent event) {
+        ItemStack stack = event.getItem();
+        if(!stack.isEmpty() && ItemModUtil.hasHeat(stack)) {
+            int level = ItemModUtil.getModifierLevel(stack, Registry.WITCHBURN);
+            if(level > 0)
+                event.setColor(WitchburnHandler.COLOR);
+        }
+    }
+
+    private IProjectileEffect adjustEffect(IProjectileEffect effect, int level) {
         if (effect instanceof EffectArea) {
             EffectArea areaEffect = (EffectArea) effect;
-            areaEffect.setEffect(adjustEffect(areaEffect.getEffect()));
+            areaEffect.setEffect(adjustEffect(areaEffect.getEffect(),level));
             return areaEffect;
         } else if (effect instanceof EffectMulti) {
-            ((EffectMulti) effect).addEffect(new EffectPotion(new PotionEffect(Registry.POTION_WITCHBURN,200,0,false,false)));
+            ((EffectMulti) effect).addEffect(new EffectWitchburn(100 * level));
             return effect;
         } else {
             if(effect instanceof EffectDamage)
                 ((EffectDamage) effect).setFire(0);
             EffectMulti multiEffect = new EffectMulti(Lists.newArrayList(effect));
-            return adjustEffect(multiEffect);
+            return adjustEffect(multiEffect,level);
+        }
+    }
+
+    private static class EffectWitchburn implements IProjectileEffect {
+        public int ticks;
+
+        public EffectWitchburn(int ticks) {
+            this.ticks = ticks;
+        }
+
+        public int getTicks() {
+            return ticks;
+        }
+
+        public void setTicks(int ticks) {
+            this.ticks = ticks;
+        }
+
+        @Override
+        public void onEntityImpact(Entity entity, IProjectilePreset projectile) {
+            if(entity instanceof EntityLivingBase) {
+                WitchburnHandler.setWitchburn((EntityLivingBase) entity,ticks);
+            }
         }
     }
 }

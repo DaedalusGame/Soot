@@ -16,6 +16,7 @@ public class Attributes {
     public static final IAttribute FIRE_DAMAGE_RATE = new RangedAttribute(null, "generic.fireDamageRate", 1.0D, 0.0D, 2048.0D);
     public static final IAttribute FIRE_ASPECT = new RangedAttribute(null, "generic.fireAspect", 0.0D, 0.0D, 72000.0D);
     public static final IAttribute BAREHANDED_POWER = new RangedAttribute(null, "generic.barehandedPower", 1.0D, 0.0D, 2048.0D);
+    public static final IAttribute WITCHBURN = new RangedAttribute(null, "generic.witchburn", 0.0D, 0.0D, Double.MAX_VALUE).setShouldWatch(true);
 
     @SubscribeEvent
     public static void onEntityConstructEvent(EntityEvent.EntityConstructing event)
@@ -26,6 +27,7 @@ public class Attributes {
             ((EntityLivingBase) entity).getAttributeMap().registerAttribute(FIRE_DAMAGE_RATE);
             ((EntityLivingBase) entity).getAttributeMap().registerAttribute(FIRE_ASPECT);
             ((EntityLivingBase) entity).getAttributeMap().registerAttribute(BAREHANDED_POWER);
+            ((EntityLivingBase) entity).getAttributeMap().registerAttribute(WITCHBURN);
         }
     }
 
