@@ -34,11 +34,14 @@ repositories {
     maven { url 'http://dvs1.progwml6.com/files/maven' }
     maven { url "http://blamejared.com/maven" }
     maven { url "http://www.ryanliptak.com/maven/" }
+    maven { url "http://maven.covers1624.net/" }
+    maven { url "https://maven.thiakil.com/" }
 }
 
 dependencies {
-    deobfCompile "mezz.jei:jei_1.12.2:4.8.3.128"
-    deobfCompile "com.blamejared:MTLib:3.+"
+    //compile "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1+"
+    //deobfCompile "mezz.jei:jei_1.12.2:4.8.3.128"
+    deobfCompile "teamroots.embers:EmbersRekindled:1.13"
 	compile files('libs/')
 }
 
