@@ -1,6 +1,7 @@
 package soot.block;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -11,6 +12,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import soot.tile.TileEntityAlchemyGauge;
 import soot.util.FluidModifier;
 import soot.util.FluidUtil;
 import teamroots.embers.block.BlockBaseGauge;
@@ -62,5 +64,11 @@ public class BlockAlchemyGauge extends BlockBaseGauge {
     @Override
     public String getDialType() {
         return DIAL_TYPE;
+    }
+
+    @Nullable
+    @Override
+    public TileEntity createTileEntity(World world, IBlockState state) {
+        return new TileEntityAlchemyGauge();
     }
 }
