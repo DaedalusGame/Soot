@@ -6,21 +6,18 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import soot.tile.TileEntityAlchemyGlobe;
-import teamroots.embers.particle.ParticleUtil;
 
 import javax.annotation.Nullable;
-import java.util.Random;
 
 public class BlockAlchemyGlobe extends Block {
     public static final PropertyDirection FACING = PropertyDirection.create("facing");
@@ -54,6 +51,19 @@ public class BlockAlchemyGlobe extends Block {
             ParticleUtil.spawnParticleGlow(world, pos.getX() + 0.5f + (float)vector.x * 0.5f, pos.getY() + 0.5f + (float)vector.y * 0.5f, pos.getZ() + 0.5f + (float)vector.z * 0.5f, (float)vector.x * -0.01f*velocityFactor, (float)vector.y * -0.01f*velocityFactor, (float)vector.z * -0.01f*velocityFactor,64,32,90, 1.5f / velocityFactor, (int)(50/velocityFactor));
         }
     }*/
+
+    @Override
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        if(!worldIn.isRemote)
+        {
+            TileEntity tileEntity = worldIn.getTileEntity(pos);
+            if(tileEntity instanceof TileEntityAlchemyGlobe) {
+                TileEntityAlchemyGlobe globe = (TileEntityAlchemyGlobe) tileEntity;
+                globe.activate(playerIn, hand, facing, hitX, hitY, hitZ);
+            }
+        }
+        return true;
+    }
 
     @Override
     public boolean isFullCube(IBlockState state) {

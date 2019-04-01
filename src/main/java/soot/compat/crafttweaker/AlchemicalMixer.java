@@ -1,16 +1,13 @@
 package soot.compat.crafttweaker;
 
-import com.blamejared.mtlib.helpers.InputHelper;
-import com.blamejared.mtlib.utils.BaseListAddition;
-import com.blamejared.mtlib.utils.BaseListRemoval;
-import com.google.common.collect.Lists;
 import crafttweaker.CraftTweakerAPI;
+import crafttweaker.IAction;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.liquid.ILiquidStack;
+import crafttweaker.api.minecraft.CraftTweakerMC;
 import net.minecraftforge.fluids.FluidStack;
 import soot.recipe.CraftingRegistry;
 import soot.recipe.RecipeAlchemicalMixer;
-import soot.util.CTUtil;
 import stanhebben.zenscript.annotations.NotNull;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
@@ -24,18 +21,21 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @ZenRegister
-@ZenClass(AlchemicalMixer.clazz)
+@ZenClass(AlchemicalMixer.CLASS)
 public class AlchemicalMixer {
-    public static final String clazz = "mods.soot.AlchemicalMixer";
+    public static final String NAME = "Alchemical Mixer";
+    public static final String CLASS = "mods.soot.AlchemicalMixer";
 
-    //@ZenMethod
-    //public static void add(ILiquidStack output, @NotNull ILiquidStack[] inputs, int ironMin, int ironMax, int copperMin, int copperMax, int leadMin, int leadMax, int silverMin, int silverMax, int dawnstoneMin, int dawnstoneMax) {
-    //    add(output, inputs, new IntRange(ironMin,ironMax),new IntRange(copperMin,copperMax),new IntRange(leadMin,leadMax),new IntRange(silverMin,silverMax),new IntRange(dawnstoneMin,dawnstoneMax));
-    //}
+    private static AspectList.AspectRangeList toAspectRange(IntRange iron, IntRange copper, IntRange lead, IntRange silver, IntRange dawnstone)
+    {
+        AspectList min = AspectList.createStandard(iron.getFrom(),dawnstone.getFrom(),copper.getFrom(),silver.getFrom(),lead.getFrom());
+        AspectList max = AspectList.createStandard(iron.getTo(),dawnstone.getTo(),copper.getTo(),silver.getTo(),lead.getTo());
+        return new AspectList.AspectRangeList(min,max);
+    }
 
     @ZenMethod
     public static void add(ILiquidStack output, @NotNull ILiquidStack[] inputs, IntRange iron, IntRange copper, IntRange lead, IntRange silver, IntRange dawnstone) {
-        addInternal(output,inputs,CTUtil.toAspectRange(iron,copper,lead,silver,dawnstone));
+        addInternal(output,inputs,toAspectRange(iron,copper,lead,silver,dawnstone));
     }
 
     @ZenMethod
@@ -52,14 +52,14 @@ public class AlchemicalMixer {
 
     private static void addInternal(ILiquidStack output, @NotNull ILiquidStack[] inputs, AspectRangeList aspects)
     {
-        RecipeAlchemicalMixer recipe = new RecipeAlchemicalMixer(InputHelper.toFluids(inputs),InputHelper.toFluid(output), aspects);
+        RecipeAlchemicalMixer recipe = new RecipeAlchemicalMixer(CraftTweakerMC.getLiquidStacks(inputs),CraftTweakerMC.getLiquidStack(output), aspects);
         CraftTweakerAPI.apply(new Add(recipe));
     }
 
     @ZenMethod
     public static void remove(ILiquidStack output)
     {
-        CraftTweakerAPI.apply(new Remove(InputHelper.toFluid(output)));
+        CraftTweakerAPI.apply(new RemoveByOutput(CraftTweakerMC.getLiquidStack(output)));
     }
 
     private static List<RecipeAlchemicalMixer> getRecipesByOutput(FluidStack stack)
@@ -67,27 +67,58 @@ public class AlchemicalMixer {
         return CraftingRegistry.alchemicalMixingRecipes.stream().filter(recipe -> recipe.output.isFluidStackIdentical(stack)).collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public static class Add extends BaseListAddition<RecipeAlchemicalMixer>
+    public static class Add implements IAction
     {
+        RecipeAlchemicalMixer recipe;
+
         public Add(RecipeAlchemicalMixer recipe) {
-            super("AlchemicalMixer", CraftingRegistry.alchemicalMixingRecipes, Lists.newArrayList(recipe));
+            this.recipe = recipe;
         }
 
         @Override
-        protected String getRecipeInfo(RecipeAlchemicalMixer recipe) {
-            return recipe.toString();
+        public void apply() {
+            CraftingRegistry.alchemicalMixingRecipes.add(recipe);
+        }
+
+        @Override
+        public String describe() {
+            return String.format("Adding %s recipe: %s",NAME,recipe.toString());
         }
     }
 
-    public static class Remove extends BaseListRemoval<RecipeAlchemicalMixer>
+    public static class RemoveByOutput implements IAction
     {
-        protected Remove(FluidStack input) {
-            super("AlchemicalMixer", CraftingRegistry.alchemicalMixingRecipes, getRecipesByOutput(input));
+        FluidStack output;
+
+        protected RemoveByOutput(FluidStack output) {
+            this.output = output;
         }
 
         @Override
-        protected String getRecipeInfo(RecipeAlchemicalMixer recipe) {
-            return recipe.toString();
+        public void apply() {
+            CraftingRegistry.alchemicalMixingRecipes.removeAll(getRecipesByOutput(output));
+        }
+
+        @Override
+        public String describe() {
+            return String.format("Removing %s recipes with output: %s",NAME,output.toString());
+        }
+    }
+
+    public static class RemoveAll implements IAction
+    {
+        protected RemoveAll() {
+
+        }
+
+        @Override
+        public void apply() {
+            CraftingRegistry.alchemicalMixingRecipes.clear();
+        }
+
+        @Override
+        public String describe() {
+            return String.format("Removing all %s recipes",NAME);
         }
     }
 }
