@@ -1,6 +1,7 @@
 package soot.particle;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import teamroots.embers.Embers;
@@ -25,6 +26,22 @@ public class ParticleUtilSoot {
             if (ParticleUtil.counter % (Minecraft.getMinecraft().gameSettings.particleSetting == 0 ? 1 : 2 * Minecraft.getMinecraft().gameSettings.particleSetting) == 0) {
                 ClientProxy.particleRenderer.addParticle(new ParticleCube(world, x, y, z, vx, vy, vz, color, scale, lifetime));
             }
+        }
+    }
+
+    public static void spawnParticleCrystal(Entity anchor, double x, double y, double z, double vx, double vy, double vz, Color color, float scale, int lifetime) {
+        if (Embers.proxy instanceof ClientProxy) {
+            ParticleUtil.counter += ParticleUtil.random.nextInt(3);
+            if (ParticleUtil.counter % (Minecraft.getMinecraft().gameSettings.particleSetting == 0 ? 1 : 2 * Minecraft.getMinecraft().gameSettings.particleSetting) == 0) {
+                ClientProxy.particleRenderer.addParticle(new ParticleCrystal(anchor, x, y, z, vx, vy, vz, color, scale, lifetime));
+            }
+        }
+    }
+
+    public static void spawnAlchemyExplosion(World world, double x, double y, double z, Color mainColor, Color backColor, Color cubeColor, float scale, int lifetime)
+    {
+        if (Embers.proxy instanceof ClientProxy) {
+            ClientProxy.particleRenderer.addParticle(new ParticleAlchemyExplosion(world, x, y, z, mainColor, backColor, cubeColor, scale, lifetime));
         }
     }
 
@@ -62,6 +79,18 @@ public class ParticleUtilSoot {
             double sparky = MathHelper.clampedLerp(y1,y2,coeff);
             double sparkz = MathHelper.clampedLerp(z1,z2,coeff);
             ParticleUtil.spawnParticleGlow(world, (float)sparkx, (float)sparky, (float)sparkz, 0, 0, 0, color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()/255f, (float) thickness, lifetime);
+        }
+    }
+
+    public static void spawnCubeRing(World world, double x, double y, double z, Color mainColor, int segments, double dist) {
+        for(int i = 0; i< segments; i++) {
+            double angle = (double)i / segments * Math.PI * 2;
+            double dx = Math.sin(angle);
+            double dy = 0;
+            double dz = Math.cos(angle);
+            int lifetime = 5;
+            double velocity = dist / lifetime;
+            spawnParticleCube(world,x,y,z,dx*velocity,dy*velocity,dz*velocity,mainColor, 0.1f ,lifetime);
         }
     }
 }

@@ -1,0 +1,22 @@
+{
+	"credit": "Made with Blockbench, a free, modern block model editor by JannisX11",
+	"textures": {
+		"1": "embers:blocks/block_caminite_brick",
+		"3": "soot:blocks/decanter_parts1",
+		"4": "soot:blocks/decanter_parts2"
+	},
+	"elements": [
+		{
+			"name": "cube",
+			"from": [4, 4, 4],
+			"to": [12, 16, 12],
+			"shade": true,
+			"faces": {
+				"north": {"uv": [0, 0, 8, 12], "texture": "#3"},
+				"east": {"uv": [0, 0, 8, 12], "texture": "#3"},
+				"south": {"uv": [0, 0, 8, 12], "texture": "#3"},
+				"west": {"uv": [0, 0, 8, 12], "texture": "#3"}
+			}
+		}
+	]
+}

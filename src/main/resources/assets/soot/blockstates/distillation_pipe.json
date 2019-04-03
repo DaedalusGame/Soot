@@ -5,7 +5,6 @@
     "transform": "forge:default-block"
   },
   "variants":{
-    "inventory":[{}],
     "facing":{
       "north": { "y": 90 },
       "south": { "y": 270 },

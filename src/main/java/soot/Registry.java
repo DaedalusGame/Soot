@@ -1,6 +1,5 @@
 package soot;
 
-import crafttweaker.CraftTweakerAPI;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -10,26 +9,21 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import soot.block.*;
 import soot.block.overrides.*;
 import soot.entity.EntityFireCloud;
@@ -47,26 +41,21 @@ import soot.util.CaskManager;
 import soot.util.CaskManager.CaskLiquid;
 import soot.util.HeatManager;
 import soot.util.Nope;
-import teamroots.embers.Embers;
 import teamroots.embers.RegistryManager;
 import teamroots.embers.api.EmbersAPI;
 import teamroots.embers.api.itemmod.ModifierBase;
-import teamroots.embers.itemmod.ModifierFocalLens;
 import teamroots.embers.recipe.RecipeRegistry;
 import teamroots.embers.research.ResearchBase;
 import teamroots.embers.research.ResearchCategory;
 import teamroots.embers.research.ResearchManager;
 import teamroots.embers.research.subtypes.ResearchSwitchCategory;
-import teamroots.embers.tileentity.*;
+import teamroots.embers.tileentity.TileEntityHeatCoil;
 import teamroots.embers.upgrade.UpgradeCatalyticPlug;
 import teamroots.embers.util.Vec2i;
 import teamroots.embers.util.WeightedItemStack;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Random;
 
 public class Registry {
     public static ArrayList<Block> MODELLED_BLOCKS = new ArrayList<>();
@@ -125,6 +114,10 @@ public class Registry {
     public static Item MUNDANE_STONE;
     @GameRegistry.ObjectHolder("soot:witch_fire")
     public static Item WITCH_FIRE;
+    @GameRegistry.ObjectHolder("soot:alchemy_gauntlet")
+    public static ItemAlchemyGauntlet ALCHEMY_GAUNTLET;
+    @GameRegistry.ObjectHolder("soot:elixir")
+    public static ItemElixir ELIXIR;
 
     @GameRegistry.ObjectHolder("soot:eitr")
     public static ItemEitr EITR;
@@ -147,8 +140,8 @@ public class Registry {
     public static Potion POTION_SNOWPOFF;
     @GameRegistry.ObjectHolder("soot:inspiration")
     public static Potion POTION_INSPIRATION;
-    @GameRegistry.ObjectHolder("soot:witchburn")
-    public static Potion POTION_WITCHBURN;
+    //@GameRegistry.ObjectHolder("soot:witchburn")
+    //public static Potion POTION_WITCHBURN;
 
     public static Fluid BOILING_WORT;
     public static Fluid BOILING_POTATO_JUICE;
@@ -227,6 +220,7 @@ public class Registry {
         ResearchCategory categoryAlchemy = ResearchManager.categoryAlchemy;
         ResearchCategory categorySmithing = ResearchManager.categorySmithing;
         ResearchCategory categoryBrewing = new ResearchCategory("brewing",new ResourceLocation(Soot.MODID,"textures/gui/codex_index.png"), 192.0, 16.0);
+        categoryBrewing.addPrerequisite(ResearchManager.dawnstone);
 
         ResearchBase forgeProjectile = ResearchManager.subCategoryProjectileAugments.researches.get(0);
         ResearchBase forgeWeapon = ResearchManager.subCategoryWeaponAugments.researches.get(0);
@@ -338,6 +332,8 @@ public class Registry {
         registerBlock("insulation", insulation, new ItemBlock(insulation));
         BlockDistillationPipe distillationPipe = (BlockDistillationPipe) new BlockDistillationPipe(Material.IRON).setHardness(1.6f).setLightOpacity(1).setCreativeTab(Soot.creativeTab);
         registerBlock("distillation_pipe", distillationPipe, new ItemBlock(distillationPipe));
+        BlockDecanter decanter = (BlockDecanter) new BlockDecanter().setHardness(1.6f).setLightOpacity(1).setCreativeTab(Soot.creativeTab);
+        registerBlock("decanter", decanter, new ItemBlock(decanter));
 
         BlockAlchemyGauge alchemyGauge = (BlockAlchemyGauge) new BlockAlchemyGauge(Material.IRON).setHardness(1.6f).setLightOpacity(0).setCreativeTab(Soot.creativeTab);
         registerBlock("alchemy_gauge", alchemyGauge, new ItemBlock(alchemyGauge));
@@ -354,6 +350,9 @@ public class Registry {
         registerItem("eitr", new ItemEitr(EITR_TOOL_MATERIAL).setCreativeTab(Soot.creativeTab));
         registerItem("mundane_stone", new Item().setCreativeTab(Soot.creativeTab));
         registerItem("witch_fire", new Item().setCreativeTab(Soot.creativeTab));
+        registerItem("alchemy_gauntlet", new ItemAlchemyGauntlet().setCreativeTab(Soot.creativeTab));
+        registerItem("elixir", new ItemElixir().setCreativeTab(Soot.creativeTab));
+        registerItem("essence", new ItemEssence().setCreativeTab(Soot.creativeTab));
 
         BlockStill still = (BlockStill) new BlockStill().setHardness(1.6f).setLightOpacity(0).setCreativeTab(Soot.creativeTab);
         registerBlock("still", still, new ItemStill(still));
@@ -555,6 +554,9 @@ public class Registry {
         registerTileEntity(TileEntityAlchemyGlobe.class);
         registerTileEntity(TileEntityInsulation.class);
         registerTileEntity(TileEntityDistillationPipe.class);
+        registerTileEntity(TileEntityDecanterBottom.class);
+        registerTileEntity(TileEntityDecanterTop.class);
+
     }
 
     private static void registerEntities() {
@@ -600,7 +602,14 @@ public class Registry {
         event.getRegistry().register(new PotionLifedrinker().setRegistryName(Soot.MODID, "lifedrinker"));
         event.getRegistry().register(new PotionSnowpoff().setRegistryName(Soot.MODID, "snowpoff"));
         event.getRegistry().register(new PotionInspiration().setRegistryName(Soot.MODID, "inspiration"));
-        event.getRegistry().register(new PotionWitchBurn().setRegistryName(Soot.MODID, "witchburn"));
+        //event.getRegistry().register(new PotionWitchBurn().setRegistryName(Soot.MODID, "witchburn"));
+    }
+
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    public static void onTextureStitch(TextureStitchEvent event) {
+        ResourceLocation particleDawnstone = new ResourceLocation(Soot.MODID,"entity/particle_dawnstone");
+        event.getMap().registerSprite(particleDawnstone);
     }
 
     private static void registerTileEntity(Class<? extends TileEntity> tile) {

@@ -19,6 +19,8 @@ public class PacketHandler {
             INSTANCE.registerMessage(MessageMixerFailFX.MessageHolder.class, MessageMixerFailFX.class,id++, Side.CLIENT);
             //INSTANCE.registerMessage(MessageWitchBurnFX.MessageHolder.class, MessageWitchBurnFX.class,id++, Side.CLIENT);
             INSTANCE.registerMessage(MessageMixerBlastFX.MessageHolder.class, MessageMixerBlastFX.class,id++, Side.CLIENT);
+            INSTANCE.registerMessage(MessageGauntletActivate.MessageHolder.class, MessageGauntletActivate.class,id++, Side.SERVER);
+            INSTANCE.registerMessage(MessageGauntletRotate.MessageHolder.class, MessageGauntletRotate.class,id++, Side.SERVER);
         }
     }
 

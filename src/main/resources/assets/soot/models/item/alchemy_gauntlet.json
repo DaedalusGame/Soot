@@ -1,0 +1,33 @@
+{
+  "parent": "soot:item/alchemy_gauntlet_neutral_left",
+  "overrides": [
+    {
+      "predicate": {
+        "soot:gauntlet_hand": 0,
+        "soot:gauntlet_state": 0
+      },
+      "model": "soot:item/alchemy_gauntlet_neutral_right"
+    },
+    {
+      "predicate": {
+        "soot:gauntlet_hand": 1,
+        "soot:gauntlet_state": 0
+      },
+      "model": "soot:item/alchemy_gauntlet_neutral_left"
+    },
+    {
+      "predicate": {
+        "soot:gauntlet_hand": 0,
+        "soot:gauntlet_state": 1
+      },
+      "model": "soot:item/alchemy_gauntlet_right"
+    },
+    {
+      "predicate": {
+        "soot:gauntlet_hand": 1,
+        "soot:gauntlet_state": 1
+      },
+      "model": "soot:item/alchemy_gauntlet_left"
+    }
+  ]
+}

@@ -10,6 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
@@ -20,6 +21,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -33,7 +35,12 @@ import net.minecraftforge.oredict.OreIngredient;
 import net.minecraftforge.registries.ForgeRegistry;
 import soot.Registry;
 import soot.tile.TileEntityStillBase;
-import soot.util.*;
+import soot.util.CaskManager;
+import soot.util.FluidModifier;
+import soot.util.FluidModifier.EffectType;
+import soot.util.FluidModifier.EnumType;
+import soot.util.FluidUtil;
+import soot.util.MiscUtil;
 import teamroots.embers.ConfigManager;
 import teamroots.embers.Embers;
 import teamroots.embers.RegistryManager;
@@ -41,7 +48,10 @@ import teamroots.embers.api.alchemy.AspectList;
 import teamroots.embers.recipe.*;
 import teamroots.embers.util.IngredientSpecial;
 
-import java.util.*;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 public class CraftingRegistry {
     public static HashSet<ResourceLocation> REMOVE_RECIPE_BY_RL = new HashSet<>();
@@ -141,7 +151,28 @@ public class CraftingRegistry {
     }
 
     private static void initAlcoholRecipes() {
-        FluidUtil.registerModifier(new FluidModifier("viscosity", 1000) {
+        FluidUtil.registerModifier(new FluidModifier("ale", 0, EnumType.PRIMARY, EffectType.POSITIVE) {
+            @Override
+            public void providePotionEffects(EntityLivingBase target, ArrayList<CaskManager.CaskPotionEffect> effects, NBTTagCompound compound, Fluid fluid) {
+                float value = getOrDefault(compound, fluid);
+                effects.add(new CaskManager.CaskPotionEffect(new PotionEffect(Registry.POTION_ALE, (int) value),4));
+            }
+        }.setFormatType("name_only"));
+        FluidUtil.registerModifier(new FluidModifier("lifedrinker", 0, EnumType.SECONDARY, EffectType.POSITIVE) {
+            @Override
+            public void providePotionEffects(EntityLivingBase target, ArrayList<CaskManager.CaskPotionEffect> effects, NBTTagCompound compound, Fluid fluid) {
+                float value = getOrDefault(compound, fluid);
+                effects.add(new CaskManager.CaskPotionEffect(new PotionEffect(Registry.POTION_LIFEDRINKER, (int) value),0));
+            }
+        }.setFormatType("name_only"));
+        FluidUtil.registerModifier(new FluidModifier("steadfast", 0, EnumType.SECONDARY, EffectType.POSITIVE) {
+            @Override
+            public void providePotionEffects(EntityLivingBase target, ArrayList<CaskManager.CaskPotionEffect> effects, NBTTagCompound compound, Fluid fluid) {
+                float value = getOrDefault(compound, fluid);
+                effects.add(new CaskManager.CaskPotionEffect(new PotionEffect(Registry.POTION_STEADFAST, (int) value),0));
+            }
+        }.setFormatType("name_only"));
+        FluidUtil.registerModifier(new FluidModifier("viscosity", 1000, EnumType.TERTIARY, EffectType.NEGATIVE) {
             @Override
             public String getFormattedText(NBTTagCompound compound, Fluid fluid) {
                 float value = getOrDefault(compound, fluid);
@@ -151,8 +182,8 @@ public class CraftingRegistry {
                     return I18n.format("distilling.modifier.dial.faster_chugging", value);
             }
         });
-        FluidUtil.registerModifier(new FluidModifier("light", 0).setFormatType(FluidModifier.FormatType.NAME_ONLY));
-        FluidUtil.registerModifier(new FluidModifier("health", 0) {
+        FluidUtil.registerModifier(new FluidModifier("light", 0, EnumType.TERTIARY, EffectType.NEUTRAL).setFormatType("name_only"));
+        FluidUtil.registerModifier(new FluidModifier("health", 0, EnumType.TERTIARY, EffectType.POSITIVE) {
             @Override
             public void applyEffect(EntityLivingBase target, NBTTagCompound compound, Fluid fluid) {
                 float value = getOrDefault(compound, fluid);
@@ -165,13 +196,11 @@ public class CraftingRegistry {
             @Override
             public String getFormattedText(NBTTagCompound compound, Fluid fluid) {
                 int value = (int) Math.ceil(getOrDefault(compound, fluid) / 2);
-                if (value >= 0)
-                    return I18n.format("distilling.modifier.dial.add_health", value);
-                else
-                    return I18n.format("distilling.modifier.dial.sub_health", value);
+                DecimalFormat format = Embers.proxy.getDecimalFormat("embers.decimal_format.distilling.health");
+                return I18n.format("distilling.modifier.dial.health", getLocalizedName(), format.format(value));
             }
         });
-        FluidUtil.registerModifier(new FluidModifier("hunger", 0) {
+        FluidUtil.registerModifier(new FluidModifier("hunger", 0, EnumType.TERTIARY, EffectType.POSITIVE) {
             @Override
             public void applyEffect(EntityLivingBase target, NBTTagCompound compound, Fluid fluid) {
                 if (target instanceof EntityPlayer) {
@@ -184,14 +213,12 @@ public class CraftingRegistry {
             @Override
             public String getFormattedText(NBTTagCompound compound, Fluid fluid) {
                 int value = (int) Math.ceil(getOrDefault(compound, fluid) / 2);
-                if (value >= 0)
-                    return I18n.format("distilling.modifier.dial.add_hunger", value);
-                else
-                    return I18n.format("distilling.modifier.dial.sub_hunger", value);
+                DecimalFormat format = Embers.proxy.getDecimalFormat("embers.decimal_format.distilling.hunger");
+                return I18n.format("distilling.modifier.dial.hunger", getLocalizedName(), format.format(value));
             }
         });
-        FluidUtil.registerModifier(new FluidModifier("saturation", 0).setFormatType(FluidModifier.FormatType.NONE)); //Saturation is a classic hidden value
-        FluidUtil.registerModifier(new FluidModifier("toxicity", 0) {
+        FluidUtil.registerModifier(new FluidModifier("saturation", 0, EnumType.TERTIARY, EffectType.POSITIVE).setFormatType(null)); //Saturation is a classic hidden value
+        FluidUtil.registerModifier(new FluidModifier("toxicity", 0, EnumType.TERTIARY, EffectType.NEGATIVE) {
             @Override
             public void applyEffect(EntityLivingBase target, NBTTagCompound compound, Fluid fluid) {
                 float value = getOrDefault(compound, fluid);
@@ -205,44 +232,32 @@ public class CraftingRegistry {
                     target.addPotionEffect(new PotionEffect(MobEffects.WITHER, (int) (value - 150)));
             }
         });
-        FluidUtil.registerModifier(new FluidModifier("heat", 300) {
+        FluidUtil.registerModifier(new FluidModifier("heat", 300, EnumType.TERTIARY, EffectType.NEUTRAL) {
             @Override
             public void applyEffect(EntityLivingBase target, NBTTagCompound compound, Fluid fluid) {
                 float value = getOrDefault(compound, fluid);
-                if (value > 400) //Scalding
-                {
+                if (value > 400) { //Scalding
                     MiscUtil.damageWithoutInvulnerability(target, new DamageSource("scalding"), 2.0f);
-                    //TODO: Message
+                    target.playSound(SoundEvents.ENTITY_PLAYER_HURT_ON_FIRE,1.0f,1.0f);
+                    if(target instanceof EntityPlayer) {
+                        ((EntityPlayer) target).sendStatusMessage(new TextComponentTranslation("message.scalding"),true);
+                    }
                 }
                 if (value > 500) //Burning hot
                     target.setFire((int) ((value - 500) / 10));
             }
         });
-        FluidUtil.registerModifier(new FluidModifier("volume", 0) {
+        FluidUtil.registerModifier(new FluidModifier("volume", 0, EnumType.TERTIARY, EffectType.NEGATIVE) {
             @Override
             public void applyEffect(EntityLivingBase target, NBTTagCompound compound, Fluid fluid) {
                 float value = getOrDefault(compound, fluid);
                 if (target.getRNG().nextDouble() * 100 < value)
                     target.addPotionEffect(new PotionEffect(Registry.POTION_TIPSY, (int) value * 20));
             }
-        }.setFormatType(FluidModifier.FormatType.PERCENTAGE));
-        FluidUtil.registerModifier(new FluidModifier("lifedrinker", 0) {
-            @Override
-            public void applyEffect(EntityLivingBase target, NBTTagCompound compound, Fluid fluid) {
-                float value = getOrDefault(compound, fluid);
-                target.addPotionEffect(new PotionEffect(Registry.POTION_LIFEDRINKER, (int) value));
-            }
-        }.setFormatType(FluidModifier.FormatType.NAME_ONLY));
-        FluidUtil.registerModifier(new FluidModifier("steadfast", 0) {
-            @Override
-            public void applyEffect(EntityLivingBase target, NBTTagCompound compound, Fluid fluid) {
-                float value = getOrDefault(compound, fluid);
-                target.addPotionEffect(new PotionEffect(Registry.POTION_STEADFAST, (int) value));
-            }
-        }.setFormatType(FluidModifier.FormatType.NAME_ONLY));
-        FluidUtil.registerModifier(new FluidModifier("concentration", 0).setFormatType(FluidModifier.FormatType.PERCENTAGE));
-        FluidUtil.registerModifier(new FluidModifier("duration", 1).setFormatType(FluidModifier.FormatType.MULTIPLIER));
-        FluidUtil.registerModifier(new FluidModifier("fuel", 0) {
+        }.setFormatType("percent"));
+        FluidUtil.registerModifier(new FluidModifier("concentration", 0, EnumType.TERTIARY, EffectType.POSITIVE).setFormatType("percent"));
+        FluidUtil.registerModifier(new FluidModifier("duration", 1, EnumType.TERTIARY, EffectType.POSITIVE).setFormatType("multiplier"));
+        FluidUtil.registerModifier(new FluidModifier("fuel", 0, EnumType.TERTIARY, EffectType.NEUTRAL) {
             @Override
             public String getFormattedText(NBTTagCompound compound, Fluid fluid) {
                 int burntime = (int) getOrDefault(compound, fluid);
@@ -404,6 +419,19 @@ public class CraftingRegistry {
                 super.modifyTooltip(tooltip);
                 tooltip.add(tooltip.size() - 1, TextFormatting.BLUE + Translator.translateToLocalFormatted("distilling.effect.sub_percent", Translator.translateToLocal("distilling.modifier.toxicity.name"), 20));
                 tooltip.add(tooltip.size() - 1, TextFormatting.BLUE + Translator.translateToLocalFormatted("distilling.effect.sub", Translator.translateToLocal("distilling.modifier.toxicity.name"), 20));
+            }
+        });
+        stillRecipes.add(new RecipeStillModifier(allDrinks, Ingredient.fromItem(Items.FERMENTED_SPIDER_EYE), 1) {
+            @Override
+            public void modifyOutput(TileEntityStillBase tile, FluidStack output) {
+                NBTTagCompound compound = FluidUtil.createModifiers(output);
+
+            }
+
+            @Override
+            public void modifyTooltip(List<String> tooltip) {
+                super.modifyTooltip(tooltip);
+                tooltip.add(tooltip.size() - 1, TextFormatting.RED + Translator.translateToLocalFormatted("distilling.effect.sub_percent", Translator.translateToLocal("distilling.modifier.toxicity.name"), 20));
             }
         });
         stillRecipes.add(new RecipeStillModifier(allDrinks, new OreIngredient("cropNetherWart"), 1) {

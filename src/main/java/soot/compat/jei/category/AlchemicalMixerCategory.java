@@ -68,7 +68,7 @@ public class AlchemicalMixerCategory implements IRecipeCategory<AlchemicalMixerW
         fluid.init(3, true, 66, 45, 16, 16, 16, true, null);
         fluid.init(4, false, 89, 16, 16, 32, 16, true, null);
         helper.addAspectStacks(recipeWrapper,stacks,0);
-        stacks.addTooltipCallback((slotIndex, input, ingredient, tooltip) -> tooltip.clear());
+        //stacks.addTooltipCallback((slotIndex, input, ingredient, tooltip) -> tooltip.clear());
 
         List<List<FluidStack>> inputs = ingredients.getInputs(FluidStack.class);
         int size = inputs.size();

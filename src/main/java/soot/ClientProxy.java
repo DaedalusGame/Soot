@@ -115,6 +115,7 @@ public class ClientProxy implements IProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAlchemyGlobe.class, new TileEntityAlchemyGlobeRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityRedstoneBin.class, new TileEntityBinRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityStillTip.class, new TileEntityStillTipRenderer());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityDecanterTop.class, new TileEntityDecanterTopRenderer());
     }
 
     @Override

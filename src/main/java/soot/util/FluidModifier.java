@@ -4,7 +4,11 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;
+import soot.util.CaskManager.CaskPotionEffect;
+import teamroots.embers.Embers;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class FluidModifier {
@@ -12,11 +16,15 @@ public class FluidModifier {
     public float defaultValue;
     public boolean showAlways;
     public HashMap<Fluid,Float> defaultValues = new HashMap<>();
-    public FormatType formatType = FormatType.LINEAR;
+    public String formatType = "linear";
+    public EnumType type;
+    public EffectType effectType;
 
-    public FluidModifier(String name, float defaultValue) {
+    public FluidModifier(String name, float defaultValue, EnumType type, EffectType effectType) {
         this.name = name;
         this.defaultValue = defaultValue;
+        this.type = type;
+        this.effectType = effectType;
     }
 
     public FluidModifier setShowAlways() {
@@ -24,12 +32,16 @@ public class FluidModifier {
         return this;
     }
 
-    public FluidModifier setFormatType(FormatType type) {
+    public FluidModifier setFormatType(String type) {
         formatType = type;
         return this;
     }
 
     public void applyEffect(EntityLivingBase target, NBTTagCompound compound, Fluid fluid) {
+        //NOOP
+    }
+
+    public void providePotionEffects(EntityLivingBase target, ArrayList<CaskPotionEffect> effects, NBTTagCompound compound, Fluid fluid) {
         //NOOP
     }
 
@@ -55,30 +67,26 @@ public class FluidModifier {
     }
 
     public String getFormattedText(NBTTagCompound compound, Fluid fluid) {
+        if(formatType == null)
+            return "";
         float value = getOrDefault(compound,fluid);
-        switch (formatType) {
-            case LINEAR:
-                return I18n.format("distilling.modifier.dial.linear", getLocalizedName(), (int)value);
-            case PERCENTAGE:
-                return I18n.format("distilling.modifier.dial.percent", getLocalizedName(), (int)value);
-            case MULTIPLIER:
-                return I18n.format("distilling.modifier.dial.percent", getLocalizedName(), (int)(value * 100));
-            case NAME_ONLY:
-                return I18n.format("distilling.modifier.dial.name", getLocalizedName());
-            default:
-                return "";
-        }
+        DecimalFormat format = Embers.proxy.getDecimalFormat("embers.decimal_format.distilling."+formatType);
+        return I18n.format("distilling.modifier.dial."+formatType, getLocalizedName(), format.format(value));
     }
 
     public String getLocalizedName() {
         return I18n.format("distilling.modifier."+name+".name");
     }
 
-    public enum FormatType {
-        LINEAR,
-        MULTIPLIER,
-        PERCENTAGE,
-        NAME_ONLY,
-        NONE,
+    public enum EnumType {
+        PRIMARY,
+        SECONDARY,
+        TERTIARY
+    }
+
+    public enum EffectType {
+        POSITIVE,
+        NEGATIVE,
+        NEUTRAL
     }
 }

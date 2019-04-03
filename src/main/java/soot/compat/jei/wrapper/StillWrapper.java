@@ -6,6 +6,7 @@ import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidStack;
+import soot.compat.jei.ExtraRecipeInfo;
 import soot.recipe.RecipeStill;
 import soot.recipe.RecipeStillModifier;
 
@@ -32,5 +33,9 @@ public class StillWrapper implements IRecipeWrapper {
 
     public void modifyTooltip(List<String> tooltip) {
         recipe.modifyTooltip(tooltip);
+    }
+
+    public List<ExtraRecipeInfo> getExtraInfo() {
+        return recipe.getExtraInfo();
     }
 }

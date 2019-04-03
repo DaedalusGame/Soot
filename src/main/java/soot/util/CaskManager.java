@@ -1,12 +1,8 @@
 package soot.util;
 
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.MobEffects;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.DamageSource;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -54,29 +50,28 @@ public class CaskManager {
         }
 
         public void applyEffects(EntityLivingBase target, EntityLivingBase source, EntityLivingBase indirectsource, FluidStack fluid) {
+            ArrayList<CaskPotionEffect> effects = new ArrayList<>(this.effects);
             Fluid internal = fluid != null ? fluid.getFluid() : null;
             NBTTagCompound compound = FluidUtil.getModifiers(fluid);
             for (String key : compound.getKeySet()) {
                 FluidModifier modifier = FluidUtil.MODIFIERS.get(key);
-                if(modifier != null)
-                    modifier.applyEffect(target,compound,internal);
+                if(modifier != null) {
+                    modifier.applyEffect(target, compound, internal);
+                    modifier.providePotionEffects(target, effects, compound, internal);
+                }
             }
 
             float duration_modifier = FluidUtil.getModifier(compound, internal, "duration");
             boolean concentrated = FluidUtil.getModifier(compound, internal,"concentration") >= 100;
             boolean showParticles = FluidUtil.getModifier(compound, internal,"concentration") >= 50;
 
-            for (CaskPotionEffect effect : effects)
-            {
+            for (CaskPotionEffect effect : effects) {
                 PotionEffect potioneffect = effect.potionEffect;
                 PotionEffect currentStack = target.getActivePotionEffect(potioneffect.getPotion());
                 int concentration_bonus = concentrated ? 1 : 0;
-                if (potioneffect.getPotion().isInstant())
-                {
+                if (potioneffect.getPotion().isInstant()) {
                     potioneffect.getPotion().affectEntity(source, indirectsource, target, potioneffect.getAmplifier() + concentration_bonus, 1.0D);
-                }
-                else
-                {
+                } else {
                     int amplifier = potioneffect.getAmplifier();
                     int duration = (int)(potioneffect.getDuration() * duration_modifier);
                     if(currentStack != null)

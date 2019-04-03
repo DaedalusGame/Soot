@@ -19,8 +19,8 @@
       "ore": "paper"
     },
     "C": {
-      "item": "minecraft:compass",
-      "data": 0
+      "type": "forge:ore_dict",
+      "ore": "dustRedstone"
     }
   }
 }

@@ -1,42 +1,22 @@
 package soot.particle;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 import soot.Soot;
-import teamroots.embers.particle.IEmberParticle;
 
 import java.awt.*;
 
-public class ParticleCube extends Particle implements IEmberParticle {
-    float yaw, prevYaw;
-    float pitch, prevPitch;
-    float scaleStart, scaleEnd;
-
+public class ParticleCrystal extends ParticleCube {
     public static final ResourceLocation texture = new ResourceLocation(Soot.MODID,"entity/particle_dawnstone");
 
-    public ParticleCube(World world, double x, double y, double z, double vx, double vy, double vz, Color color, float scale, int lifetime) {
-        super(world, x, y, z, vx, vy, vz);
-        particleRed = color.getRed() / 255f;
-        particleGreen = color.getGreen() / 255f;
-        particleBlue = color.getBlue() / 255f;
-        particleAlpha = color.getAlpha() / 255f;
-        particleScale = scale;
-        particleMaxAge = lifetime;
-        motionX = vx;
-        motionY = vy;
-        motionZ = vz;
-        yaw = (float) (rand.nextDouble() * Math.PI * 2);
-        pitch = (float) (rand.nextDouble() * Math.PI * 2);
-        scaleStart = scale;
-        TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(texture.toString());
-        this.setParticleTexture(sprite);
+    Entity anchor;
+
+    public ParticleCrystal(Entity anchor, double x, double y, double z, double vx, double vy, double vz, Color color, float scale, int lifetime) {
+        super(anchor.world, x, y, z, vx, vy, vz, color, scale, lifetime);
+        this.anchor = anchor;
     }
 
     @Override
@@ -46,6 +26,10 @@ public class ParticleCube extends Particle implements IEmberParticle {
 
     @Override
     public void onUpdate(){
+        if(anchor == null || !anchor.isEntityAlive() || anchor.world != world) {
+            setExpired();
+            return;
+        }
         super.onUpdate();
         this.prevYaw = yaw;
         this.prevPitch = pitch;
@@ -55,7 +39,7 @@ public class ParticleCube extends Particle implements IEmberParticle {
 
     @Override
     public boolean alive() {
-        return this.particleAge < this.particleMaxAge;
+        return anchor != null && anchor.isEntityAlive() && anchor.world == world && this.particleAge < this.particleMaxAge;
     }
 
     @Override
@@ -81,9 +65,9 @@ public class ParticleCube extends Particle implements IEmberParticle {
         float yaw = this.yaw + (this.yaw - this.prevYaw) * partialTicks;
         float pitch = this.pitch + (this.pitch - this.prevPitch) * partialTicks;
 
-        float x = (float) (this.prevPosX + (this.posX - this.prevPosX) * (double) partialTicks - interpPosX);
-        float y = (float) (this.prevPosY + (this.posY - this.prevPosY) * (double) partialTicks - interpPosY);
-        float z = (float) (this.prevPosZ + (this.posZ - this.prevPosZ) * (double) partialTicks - interpPosZ);
+        float x = (float) (anchor.posX + this.prevPosX + (this.posX - this.prevPosX) * (double) partialTicks - interpPosX);
+        float y = (float) (anchor.posY + this.prevPosY + (this.posY - this.prevPosY) * (double) partialTicks - interpPosY);
+        float z = (float) (anchor.posZ + this.prevPosZ + (this.posZ - this.prevPosZ) * (double) partialTicks - interpPosZ);
 
         double sina = Math.sin(yaw);
         double cosa = Math.cos(yaw);
@@ -96,15 +80,16 @@ public class ParticleCube extends Particle implements IEmberParticle {
 
         int lightmap = this.getBrightnessForRender(partialTicks);
 
+        double length = scale * 8;
         Vec3d[] points = new Vec3d[]{
-                new Vec3d(-scale, -scale, -scale),
-                new Vec3d(-scale, -scale, scale),
-                new Vec3d(-scale, scale, -scale),
-                new Vec3d(-scale, scale, scale),
-                new Vec3d(scale, -scale, -scale),
-                new Vec3d(scale, -scale, scale),
-                new Vec3d(scale, scale, -scale),
-                new Vec3d(scale, scale, scale)
+                new Vec3d(-scale, 0, -scale),
+                new Vec3d(-scale, 0, scale),
+                new Vec3d(-scale, length, -scale),
+                new Vec3d(-scale, length, scale),
+                new Vec3d(scale, 0, -scale),
+                new Vec3d(scale, 0, scale),
+                new Vec3d(scale, length, -scale),
+                new Vec3d(scale, length, scale)
         };
 
         for (int i = 0; i < points.length; i++) {

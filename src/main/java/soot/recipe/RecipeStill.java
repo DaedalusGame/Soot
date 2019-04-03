@@ -3,9 +3,8 @@ package soot.recipe;
 import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
+import soot.compat.jei.ExtraRecipeInfo;
 import soot.tile.TileEntityStillBase;
 
 import java.util.List;
@@ -57,5 +56,9 @@ public class RecipeStill {
     public FluidStack getOutput(TileEntityStillBase tile, FluidStack input)
     {
         return output.copy();
+    }
+
+    public List<ExtraRecipeInfo> getExtraInfo() {
+        return Lists.newArrayList();
     }
 }
