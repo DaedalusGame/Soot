@@ -28,7 +28,13 @@ public class Config {
     public static boolean OVERRIDE_ALCHEMY_PEDESTAL;
     public static boolean OVERRIDE_CRYSTAL_CELL;
 
-    public static boolean GENERATE_SULFUR_ORE;
+    //public static boolean GENERATE_SULFUR_ORE;
+
+    public static HashSet<Integer> SULFUR_GREYLIST = new HashSet<>();
+    public static boolean SULFUR_IS_WHITELIST;
+    public static int SULFUR_MIN_Y;
+    public static int SULFUR_MAX_Y;
+    public static int SULFUR_PER_CHUNK;
 
     public static void preInit(FMLPreInitializationEvent event)
     {
@@ -54,11 +60,24 @@ public class Config {
         ASH_FIRST = loadPropBool("ashFirst","Features","Ash is removed before the aspect from pedestals.",true);
         //MELTER_ORE_AMOUNT = loadPropInt("melterOreAmount","Features","How many mb of fluid are obtained per ore output in the melter. This is multiplied by the amount of output a melter would produce, so by default 144mb * 2 ingots.",144);
 
-        GENERATE_SULFUR_ORE = loadPropBool("sulfurOre","Generation","Whether sulfur ore generates in new chunks.",true);
+        //GENERATE_SULFUR_ORE = loadPropBool("sulfurOre","Generation","Whether sulfur ore generates in new chunks.",true);
+
+        for (String s : configuration.getStringList("sulfurBlacklist", "Ores", new String[]{"-1","1"}, "A list of all dimension IDs in which sulfur orespawn is prohibited. Sulfur ores will spawn in any dimension not on this list, but only in vanilla stone.")){
+            SULFUR_GREYLIST.add(Integer.valueOf(s));
+        }
+        SULFUR_IS_WHITELIST = configuration.getBoolean("sulfurBlacklistIsWhitelist","Ores",false,"Whether the sulfur blacklist is a whitelist.");
+
+        SULFUR_MIN_Y = configuration.getInt("sulfurMinY", "Ores", 0, 0, 255, "Minimum height over which sulfur ore will spawn.");
+        SULFUR_MAX_Y = configuration.getInt("sulfurMaxY", "Ores", 32, 0, 255, "Maximum height under which sulfur ore will spawn.");
+        SULFUR_PER_CHUNK = configuration.getInt("sulfurVeinsPerChunk", "Ores", 3, 0, Integer.MAX_VALUE, "Number of attempts to spawn copper ore the world generator will make for each chunk.");
 
         if (configuration.hasChanged()) {
             configuration.save();
         }
+    }
+
+    public static boolean isSulfurEnabled(int dimension) {
+        return !(SULFUR_GREYLIST.contains(dimension) != SULFUR_IS_WHITELIST || SULFUR_GREYLIST.contains(dimension));
     }
 
     public static boolean loadPropBool(String propName, String category, String desc, boolean default_) {
