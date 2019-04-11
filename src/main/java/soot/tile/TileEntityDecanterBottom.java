@@ -50,7 +50,6 @@ public class TileEntityDecanterBottom extends TileEntity implements ITileEntityB
         readFromNBT(pkt.getNbtCompound());
     }
 
-
     @Override
     public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         return false;

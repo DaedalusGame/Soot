@@ -1,18 +1,27 @@
-package soot.util;
+package soot.brewing;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import soot.brewing.deliverytypes.DeliveryBlast;
+import soot.util.FluidUtil;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class CaskManager {
     public static ArrayList<CaskLiquid> liquids = new ArrayList<>();
+    public static Map<String,DeliveryType.IGenerator> deliveryTypes = new HashMap<>();
 
     public static class CaskPotionEffect
     {
@@ -49,7 +58,11 @@ public class CaskManager {
             return effects.stream().map(x -> x.potionEffect).collect(Collectors.toCollection(ArrayList::new));
         }
 
-        public void applyEffects(EntityLivingBase target, EntityLivingBase source, EntityLivingBase indirectsource, FluidStack fluid) {
+        public void applyEffects(World world, BlockPos pos, EnumFacing side, Entity source, Entity indirectsource, FluidStack fluid) {
+
+        }
+
+        public void applyEffects(EntityLivingBase target, Entity source, Entity indirectsource, FluidStack fluid) {
             ArrayList<CaskPotionEffect> effects = new ArrayList<>(this.effects);
             Fluid internal = fluid != null ? fluid.getFluid() : null;
             NBTTagCompound compound = FluidUtil.getModifiers(fluid);
@@ -87,9 +100,19 @@ public class CaskManager {
         }
     }
 
+    public static DeliveryType.IGenerator getDeliveryType(FluidStack fluidStack) {
+        NBTTagCompound compound = FluidUtil.getModifiers(fluidStack);
+        Fluid fluid = fluidStack != null ? fluidStack.getFluid() : null;
+        FluidUtil.getModifier(compound,fluid,"");
+        for (Map.Entry<String,DeliveryType.IGenerator> entry : deliveryTypes.entrySet()) {
+            if(FluidUtil.getModifier(compound,fluid,entry.getKey()) > 0)
+                return entry.getValue();
+        }
+        return (gauntlet, elixir, user, fluid1) -> new DeliveryBlast(user, fluid1,8.0,3.0);
+    }
+
     @Nullable
-    public static CaskLiquid getFromFluid(FluidStack fluidStack)
-    {
+    public static CaskLiquid getFromFluid(FluidStack fluidStack) {
         if(fluidStack != null)
             return getFromFluid(fluidStack.getFluid());
 
@@ -97,8 +120,7 @@ public class CaskManager {
     }
 
     @Nullable
-    public static CaskLiquid getFromFluid(Fluid fluid)
-    {
+    public static CaskLiquid getFromFluid(Fluid fluid) {
         for (CaskLiquid liquid : liquids) {
             if(liquid.fluid.equals(fluid))
                 return liquid;
@@ -107,8 +129,11 @@ public class CaskManager {
         return null;
     }
 
-    public static void register(CaskLiquid liquid)
-    {
+    public static void register(String deliveryType, DeliveryType.IGenerator generator) {
+        deliveryTypes.put(deliveryType,generator);
+    }
+
+    public static void register(CaskLiquid liquid) {
         liquids.add(liquid);
     }
 }

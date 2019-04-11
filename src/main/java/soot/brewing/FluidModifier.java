@@ -1,10 +1,10 @@
-package soot.util;
+package soot.brewing;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;
-import soot.util.CaskManager.CaskPotionEffect;
+import soot.brewing.CaskManager.CaskPotionEffect;
 import teamroots.embers.Embers;
 
 import java.text.DecimalFormat;

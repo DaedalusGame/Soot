@@ -6,7 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.NonNullList;
-import soot.util.EssenceType;
+import soot.brewing.EssenceType;
 import soot.util.IItemColored;
 
 import java.awt.*;

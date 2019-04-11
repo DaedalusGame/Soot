@@ -26,6 +26,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import soot.block.*;
 import soot.block.overrides.*;
+import soot.entity.EntityCustomCloud;
 import soot.entity.EntityFireCloud;
 import soot.entity.EntityMuse;
 import soot.entity.EntitySnowpoff;
@@ -37,8 +38,8 @@ import soot.itemmod.ModifierWitchburn;
 import soot.potion.*;
 import soot.tile.*;
 import soot.tile.overrides.*;
-import soot.util.CaskManager;
-import soot.util.CaskManager.CaskLiquid;
+import soot.brewing.CaskManager;
+import soot.brewing.CaskManager.CaskLiquid;
 import soot.util.HeatManager;
 import soot.util.Nope;
 import teamroots.embers.RegistryManager;
@@ -48,6 +49,7 @@ import teamroots.embers.recipe.RecipeRegistry;
 import teamroots.embers.research.ResearchBase;
 import teamroots.embers.research.ResearchCategory;
 import teamroots.embers.research.ResearchManager;
+import teamroots.embers.research.subtypes.ResearchShowItem;
 import teamroots.embers.research.subtypes.ResearchSwitchCategory;
 import teamroots.embers.tileentity.TileEntityHeatCoil;
 import teamroots.embers.upgrade.UpgradeCatalyticPlug;
@@ -114,6 +116,8 @@ public class Registry {
     public static Item MUNDANE_STONE;
     @GameRegistry.ObjectHolder("soot:witch_fire")
     public static Item WITCH_FIRE;
+    @GameRegistry.ObjectHolder("soot:essence")
+    public static ItemEssence ESSENCE;
     @GameRegistry.ObjectHolder("soot:alchemy_gauntlet")
     public static ItemAlchemyGauntlet ALCHEMY_GAUNTLET;
     @GameRegistry.ObjectHolder("soot:elixir")
@@ -212,7 +216,6 @@ public class Registry {
         initResearches();
     }
 
-
     public static void initResearches() {
         ResearchCategory categoryWorld = ResearchManager.categoryWorld;
         ResearchCategory categoryMechanisms = ResearchManager.categoryMechanisms;
@@ -234,11 +237,18 @@ public class Registry {
         categoryMechanisms.addResearch(new ResearchBase("insulation",new ItemStack(INSULATION), 12.0D, 0.0D).addAncestor(ResearchManager.hearth_coil));
         categoryMetallurgy.addResearch(new ResearchBase("advanced_emitters",new ItemStack(EMBER_BURST), 2, 7).addAncestor(ResearchManager.splitter));
         ResearchManager.subCategoryPipes.addResearch(new ResearchBase("scale",new ItemStack(SCALE), 8, 0).addAncestor(redstone_bin));
-        categoryAlchemy.addResearch(new ResearchBase("eitr",new ItemStack(EITR), 11, 3).addAncestor(ResearchManager.waste));
 
         ResearchCategory subCategoryAlchemyMixing = new ResearchCategory("alchemical_mixer",0);
 
-        subCategoryAlchemyMixing.addResearch(new ResearchBase("alchemy_globe",new ItemStack(Items.PAPER),5,5));
+        ResearchBase alchemy_globe = new ResearchBase("alchemy_globe", new ItemStack(ALCHEMY_GLOBE), 5, 5)
+                .addPage(new ResearchBase("alchemy_globe_setup",ItemStack.EMPTY,0,0))
+                .addPage(new ResearchBase("alchemy_globe_crafting",ItemStack.EMPTY,0,0));
+        subCategoryAlchemyMixing.addResearch(alchemy_globe);
+        ResearchBase antimony = new ResearchBase("antimony", new ItemStack(INGOT_ANTIMONY), 4, 7).addAncestor(alchemy_globe);
+        subCategoryAlchemyMixing.addResearch(antimony);
+        subCategoryAlchemyMixing.addResearch(new ResearchBase("eitr",new ItemStack(EITR), 8, 7).addAncestor(antimony));
+        subCategoryAlchemyMixing.addResearch(new ResearchBase("antimony_signet",new ItemStack(SIGNET_ANTIMONY),2,6).addAncestor(antimony));
+        subCategoryAlchemyMixing.addResearch(new ResearchShowItem("metal_leveling",ItemStack.EMPTY,7,4).addItem(new ResearchShowItem.DisplayItem(new ItemStack(RegistryManager.ingot_lead),new ItemStack(RegistryManager.ingot_tin),new ItemStack(Items.IRON_INGOT),new ItemStack(RegistryManager.ingot_copper),new ItemStack(RegistryManager.ingot_silver),new ItemStack(Items.GOLD_INGOT))).setIconBackground(PAGE_ICONS,PAGE_ICON_SIZE*1,PAGE_ICON_SIZE*0).addAncestor(alchemy_globe));
 
         ResearchBase still = new ResearchBase("still", new ItemStack(STILL), 6.0D, 4.0D);
         categoryBrewing.addResearch(still);
@@ -332,8 +342,8 @@ public class Registry {
         registerBlock("insulation", insulation, new ItemBlock(insulation));
         BlockDistillationPipe distillationPipe = (BlockDistillationPipe) new BlockDistillationPipe(Material.IRON).setHardness(1.6f).setLightOpacity(1).setCreativeTab(Soot.creativeTab);
         registerBlock("distillation_pipe", distillationPipe, new ItemBlock(distillationPipe));
-        BlockDecanter decanter = (BlockDecanter) new BlockDecanter().setHardness(1.6f).setLightOpacity(1).setCreativeTab(Soot.creativeTab);
-        registerBlock("decanter", decanter, new ItemBlock(decanter));
+        /*BlockDecanter decanter = (BlockDecanter) new BlockDecanter().setHardness(1.6f).setLightOpacity(1).setCreativeTab(Soot.creativeTab);
+        registerBlock("decanter", decanter, new ItemBlock(decanter));*/
 
         BlockAlchemyGauge alchemyGauge = (BlockAlchemyGauge) new BlockAlchemyGauge(Material.IRON).setHardness(1.6f).setLightOpacity(0).setCreativeTab(Soot.creativeTab);
         registerBlock("alchemy_gauge", alchemyGauge, new ItemBlock(alchemyGauge));
@@ -350,9 +360,9 @@ public class Registry {
         registerItem("eitr", new ItemEitr(EITR_TOOL_MATERIAL).setCreativeTab(Soot.creativeTab));
         registerItem("mundane_stone", new Item().setCreativeTab(Soot.creativeTab));
         registerItem("witch_fire", new Item().setCreativeTab(Soot.creativeTab));
-        registerItem("alchemy_gauntlet", new ItemAlchemyGauntlet().setCreativeTab(Soot.creativeTab));
-        registerItem("elixir", new ItemElixir().setCreativeTab(Soot.creativeTab));
-        registerItem("essence", new ItemEssence().setCreativeTab(Soot.creativeTab));
+        //registerItem("alchemy_gauntlet", new ItemAlchemyGauntlet().setCreativeTab(Soot.creativeTab));
+        //registerItem("elixir", new ItemElixir().setCreativeTab(Soot.creativeTab));
+        //registerItem("essence", new ItemEssence().setCreativeTab(Soot.creativeTab));
 
         BlockStill still = (BlockStill) new BlockStill().setHardness(1.6f).setLightOpacity(0).setCreativeTab(Soot.creativeTab);
         registerBlock("still", still, new ItemStill(still));
@@ -554,8 +564,8 @@ public class Registry {
         registerTileEntity(TileEntityAlchemyGlobe.class);
         registerTileEntity(TileEntityInsulation.class);
         registerTileEntity(TileEntityDistillationPipe.class);
-        registerTileEntity(TileEntityDecanterBottom.class);
-        registerTileEntity(TileEntityDecanterTop.class);
+        //registerTileEntity(TileEntityDecanterBottom.class);
+        //registerTileEntity(TileEntityDecanterTop.class);
 
     }
 
@@ -563,6 +573,7 @@ public class Registry {
         EntityRegistry.registerModEntity(new ResourceLocation(Soot.MODID, "firecloud"), EntityFireCloud.class, "firecloud", 0, Soot.instance, 80, 1, true);
         EntityRegistry.registerModEntity(new ResourceLocation(Soot.MODID, "snowpoff"), EntitySnowpoff.class, "snowpoff", 1, Soot.instance, 80, 1, true);
         EntityRegistry.registerModEntity(new ResourceLocation(Soot.MODID, "muse"), EntityMuse.class, "muse", 2, Soot.instance, 80, 1, true);
+        EntityRegistry.registerModEntity(new ResourceLocation(Soot.MODID, "cloud"), EntityCustomCloud.class, "cloud", 3, Soot.instance, 80, 1, true);
     }
 
     public static void registerModifiers() {

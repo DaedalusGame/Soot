@@ -2,6 +2,7 @@
   "parent": "item/generated",
   "textures": {
     "layer0": "soot:items/flask_fill",
+    "layer1": "soot:items/flask_overlay",
     "layer2": "soot:items/flask_tip"
   }
 }

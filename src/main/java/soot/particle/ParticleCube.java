@@ -49,8 +49,8 @@ public class ParticleCube extends Particle implements IEmberParticle {
         super.onUpdate();
         this.prevYaw = yaw;
         this.prevPitch = pitch;
-        yaw += 0.1f;
-        pitch += 0.1f;
+        //yaw += 0.1f;
+        //pitch += 0.1f;
     }
 
     @Override

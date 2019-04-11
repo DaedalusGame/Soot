@@ -16,8 +16,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import soot.block.BlockEmberBurst;
-import soot.util.EmberUtil;
-import teamroots.embers.EventManager;
 import teamroots.embers.SoundManager;
 import teamroots.embers.api.capabilities.EmbersCapabilities;
 import teamroots.embers.api.power.IEmberCapability;
@@ -25,7 +23,6 @@ import teamroots.embers.api.power.IEmberPacketReceiver;
 import teamroots.embers.block.BlockEmberEmitter;
 import teamroots.embers.entity.EntityEmberPacket;
 import teamroots.embers.power.DefaultEmberCapability;
-import teamroots.embers.power.EmberCapabilityProvider;
 import teamroots.embers.tileentity.ITileEntityBase;
 import teamroots.embers.util.Misc;
 

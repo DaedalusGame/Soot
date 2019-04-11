@@ -10,12 +10,15 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import soot.brewing.EssenceStack;
 import teamroots.embers.tileentity.ITileEntityBase;
 import teamroots.embers.util.Misc;
 
 import javax.annotation.Nullable;
 
 public class TileEntityDecanterTop extends TileEntity implements ITileEntityBase {
+    EssenceStack currentEssence;
+
     public TileEntityDecanterTop() {
     }
 
@@ -45,7 +48,6 @@ public class TileEntityDecanterTop extends TileEntity implements ITileEntityBase
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         readFromNBT(pkt.getNbtCompound());
     }
-
 
     @Override
     public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {

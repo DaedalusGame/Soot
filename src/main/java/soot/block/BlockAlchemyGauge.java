@@ -13,7 +13,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import soot.tile.TileEntityAlchemyGauge;
-import soot.util.FluidModifier;
+import soot.brewing.FluidModifier;
 import soot.util.FluidUtil;
 import teamroots.embers.block.BlockBaseGauge;
 

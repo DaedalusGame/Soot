@@ -4,6 +4,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import soot.brewing.FluidModifier;
 
 import java.util.HashMap;
 import java.util.Map;

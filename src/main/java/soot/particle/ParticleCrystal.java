@@ -14,9 +14,11 @@ public class ParticleCrystal extends ParticleCube {
 
     Entity anchor;
 
-    public ParticleCrystal(Entity anchor, double x, double y, double z, double vx, double vy, double vz, Color color, float scale, int lifetime) {
+    public ParticleCrystal(Entity anchor, double x, double y, double z, double vx, double vy, double vz, float yaw, float pitch, Color color, float scale, int lifetime) {
         super(anchor.world, x, y, z, vx, vy, vz, color, scale, lifetime);
         this.anchor = anchor;
+        this.yaw = yaw;
+        this.pitch = pitch;
     }
 
     @Override
@@ -33,8 +35,8 @@ public class ParticleCrystal extends ParticleCube {
         super.onUpdate();
         this.prevYaw = yaw;
         this.prevPitch = pitch;
-        yaw += 0.1f;
-        pitch += 0.1f;
+        //yaw += 0.1f;
+        //pitch += 0.1f;
     }
 
     @Override
@@ -65,9 +67,12 @@ public class ParticleCrystal extends ParticleCube {
         float yaw = this.yaw + (this.yaw - this.prevYaw) * partialTicks;
         float pitch = this.pitch + (this.pitch - this.prevPitch) * partialTicks;
 
-        float x = (float) (anchor.posX + this.prevPosX + (this.posX - this.prevPosX) * (double) partialTicks - interpPosX);
-        float y = (float) (anchor.posY + this.prevPosY + (this.posY - this.prevPosY) * (double) partialTicks - interpPosY);
-        float z = (float) (anchor.posZ + this.prevPosZ + (this.posZ - this.prevPosZ) * (double) partialTicks - interpPosZ);
+        double ex = anchor.lastTickPosX * (1 - partialTicks) + anchor.posX * (partialTicks);
+        double ey = anchor.lastTickPosY * (1 - partialTicks) + anchor.posY * (partialTicks);
+        double ez = anchor.lastTickPosZ * (1 - partialTicks) + anchor.posZ * (partialTicks);
+        float x = (float) (ex + this.prevPosX + (this.posX - this.prevPosX) * (double) partialTicks - interpPosX);
+        float y = (float) (ey + this.prevPosY + (this.posY - this.prevPosY) * (double) partialTicks - interpPosY);
+        float z = (float) (ez + this.prevPosZ + (this.posZ - this.prevPosZ) * (double) partialTicks - interpPosZ);
 
         double sina = Math.sin(yaw);
         double cosa = Math.cos(yaw);
@@ -82,23 +87,24 @@ public class ParticleCrystal extends ParticleCube {
 
         double length = scale * 8;
         Vec3d[] points = new Vec3d[]{
-                new Vec3d(-scale, 0, -scale),
-                new Vec3d(-scale, 0, scale),
-                new Vec3d(-scale, length, -scale),
-                new Vec3d(-scale, length, scale),
-                new Vec3d(scale, 0, -scale),
-                new Vec3d(scale, 0, scale),
-                new Vec3d(scale, length, -scale),
-                new Vec3d(scale, length, scale)
+                new Vec3d(-scale, -scale, 0),
+                new Vec3d(-scale, -scale, length),
+                new Vec3d(-scale, scale, 0),
+                new Vec3d(-scale, scale, length),
+                new Vec3d(scale, -scale, 0),
+                new Vec3d(scale, -scale, length),
+                new Vec3d(scale, scale, 0),
+                new Vec3d(scale, scale, length)
         };
 
         for (int i = 0; i < points.length; i++) {
             Vec3d v = points[i];
-            points[i] = new Vec3d(
+            points[i] = v.rotatePitch(pitch).rotateYaw(yaw).addVector(x,y,z);
+            /*points[i] = new Vec3d(
                     x + forward.x * v.x + forward.y * v.y + forward.z * v.z,
                     y + up.x * v.x + up.y * v.y + up.z * v.z,
                     z + right.x * v.x + right.y * v.y+ right.z * v.z
-            );
+            );*/
         }
 
         addBox(buffer, points[0], points[1], points[2], points[3], points[4], points[5], points[6], points[7], new Color(particleRed,particleGreen,particleBlue,particleAlpha), lightmap, minU, minV, maxU, maxV);

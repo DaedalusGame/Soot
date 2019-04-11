@@ -32,8 +32,22 @@ embers.research.page.eitr.title=Miyazaki Why
 embers.research.page.eitr.desc=By investigating the sulfur you've discovered in the Caverns, you've devised the perfect union of everybody's favorite mechanics. Eitr is a wretched hunk of metal infused with alchemical substances that corrode anything it touches. It's very weak, even weaker than its mirror image, the ashen Tyrfing. But when striking an enemy, half the damage will be converted into pure durability damage to the opponents armor.
 
 embers.research.page.alchemy_globe=Alchemical Recombulator
-embers.research.page.alchemy_globe.title=I.O.U
-embers.research.page.alchemy_globe.desc=I owe you one documentation of the Alchemical Recombulator.
+embers.research.page.alchemy_globe.title=Hyphenated Dissemination
+embers.research.page.alchemy_globe.desc=Through alchemical experimentation you've landed a breakthrough. You've squared the bottles and kleined the circles. Or maybe vice-versa. You designed a vessel that is able to hold the alchemical spark used to create it in condensed form. The device ripples the fabric of reality around it, and is able to coerce fluids into the same alchemical processes that the exchange tablet allows you to perform.
+embers.research.page.alchemy_globe_setup.desc=To assemble an alchemical mixing setup, begin by placing the globe on any side of the top block of a Mixer Centrifuge. Then place any number of pedestals around it. Either block of a pedestal must be on the same plane as the globe. Apply metal aspecti to the pedestals as per usual.
+embers.research.page.alchemy_globe_crafting.desc=When crafting, the Recombulator works similar to the Mixer Centrifuge. Fluids must be piped into the bottom block and extracted from the top. Then ash must be added to the pedestals. The ash is not consumed when crafting. Then, right-click the globe to begin crafting. When the machine runs out of fluids or the output fills up, crafting will stop but the Recombulator will remain charged and not consume power.
+
+embers.research.page.antimony=Antimony
+embers.research.page.antimony.title=Allmacht Alloy
+embers.research.page.antimony.desc=Testing your newly devised machinery revealed a new type of alloy to you. A malleable, dense metal with a green sheen and several interesting alchemical properties. Surely, you will discover the wide variety of uses this metal has shortly.
+
+embers.research.page.antimony_signet=Signet of Antimony
+embers.research.page.antimony_signet.title=Actually worth loads of mony.
+embers.research.page.antimony_signet.desc=Antimony is green and villagers are greedy, long-nosed bastards. An idea festered in your mind: Perhaps you could press this metal into a shape suitable for trading and trick them with it? And indeed, villagers will trade antimony instead of emeralds... You feel like something is lost on you, but you can't really place your finger on it...
+
+embers.research.page.metal_leveling=Metal Leveling
+embers.research.page.metal_leveling.title=Lead to Gold
+embers.research.page.metal_leveling.desc=As a side effect of squaring the circles, you find yourself able to do a wide variety of things that would otherwise be considered impossible. Like turning worthless metal into gold. The Alchemical Recombulator can, when fed with metal and alchemical slurry, transmute lead to gold. Step-by-step, the metal transmutation chain goes like §fLead → Tin → Iron → Copper → Silver → Gold§r.
 
 embers.research.page.mundane_stone=Mundane Stone
 embers.research.page.mundane_stone.title=Legends Never Die
@@ -63,7 +77,7 @@ embers.research.page.alchemy_dial.desc=Experienced brewers may analyse brewing o
 
 embers.research.page.ale=Ale
 embers.research.page.ale.title=Thanks Lucy
-embers.research.page.ale.desc=Do you know why our ancestors stopped hunting the mammoth with stone swords? The answer is Ale, which made them powerful enough to just punch the poor animal to death with their bare hands. Drinking Ale will give you a stacking damage boost. This damage boost will stack up to 5 times, for up to +400%! However, when you take a hit while under the effects of Ale, you will also take extra damage.
+embers.research.page.ale.desc=Do you know why our ancestors stopped hunting the mammoth with stone swords? The answer is Ale, which made them powerful enough to just punch the poor animal to death with their bare hands. Drinking Ale will give you a stacking damage boost. This damage boost will stack up to 5 times, for up to +400%%! However, when you take a hit while under the effects of Ale, you will also take extra damage.
 
 embers.research.page.vodka=Vodka
 embers.research.page.vodka.title=Na sdorówje!

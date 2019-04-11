@@ -13,6 +13,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Logger;
 import soot.handler.*;
 import soot.network.PacketHandler;
+import soot.projectiles.ProjectileFireBlast;
 import soot.recipe.CraftingRegistry;
 import soot.util.Attributes;
 import teamroots.embers.RegistryManager;
@@ -63,9 +64,9 @@ public class Soot
             MinecraftForge.EVENT_BUS.register(VillagerAntimonyHandler.class);
         if(Config.GOLEMS_POISON_IMMUNE || Config.GOLEMS_TYRFING_WEAK)
             MinecraftForge.EVENT_BUS.register(GolemHandler.class);
-        if(Config.GENERATE_SULFUR_ORE)
-            MinecraftForge.ORE_GEN_BUS.register(GenerationHandler.class);
+        MinecraftForge.ORE_GEN_BUS.register(GenerationHandler.class);
         MinecraftForge.EVENT_BUS.register(new MigrationHandler());
+        MinecraftForge.EVENT_BUS.register(ProjectileFireBlast.class);
         PacketHandler.registerMessages();
     }
 

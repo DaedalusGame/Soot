@@ -13,6 +13,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import soot.particle.ParticleUtilSoot;
 
 import java.awt.*;
+import java.util.Random;
 
 
 public class Attributes {
@@ -23,6 +24,9 @@ public class Attributes {
     public static final IAttribute WITCHBURN = new RangedAttribute(null, "generic.witchburn", 0.0D, 0.0D, Double.MAX_VALUE).setShouldWatch(true);
     public static final IAttribute ATTRACTION = new RangedAttribute(null, "generic.attraction", 0.0D, 0.0D, Double.MAX_VALUE).setShouldWatch(true);
     public static final IAttribute ATTRACTION_GENERATION = new RangedAttribute(null, "generic.attraction_generation", 0.0D, 0.0D, Double.MAX_VALUE).setShouldWatch(true);
+    public static final double ATTRACTION_STACK = 100;
+
+    private static final Random random = new Random();
 
     @SubscribeEvent
     public static void onEntityConstructEvent(EntityEvent.EntityConstructing event)
@@ -43,8 +47,20 @@ public class Attributes {
     public static void onUpdateEvent(LivingEvent.LivingUpdateEvent event)
     {
         Entity entity = event.getEntity();
-        if(entity.world.isRemote) {
-            ParticleUtilSoot.spawnParticleCrystal(entity, 0, entity.getEyeHeight() / 2, 0, 0, 0, 0, Color.WHITE, 1.0f, 20);
+        IAttributeInstance attraction = ((EntityLivingBase) entity).getEntityAttribute(ATTRACTION);
+        double value = attraction.getAttributeValue();
+        if(value > 0 && entity.world.isRemote) {
+            double size = entity.getRenderBoundingBox().getAverageEdgeLength();
+            double height = 0.5 * entity.getEyeHeight() + 0.2;
+            double currentStack = (value % ATTRACTION_STACK) / ATTRACTION_STACK;
+            size = size * size * size;
+            double angleSpread = 0.3;
+            double yaw = -Math.toRadians(((EntityLivingBase) entity).rotationYawHead+180);
+            for(int i=1; i<value/ATTRACTION_STACK; i++) {
+                ParticleUtilSoot.spawnParticleCrystal(entity, 0, height, 0, 0, 0, 0, (float)(yaw + (random.nextDouble() - 0.5) * Math.PI * angleSpread), (float)((random.nextDouble() - 0.5) * Math.PI * angleSpread), Color.WHITE, (float) (size*random.nextDouble()*0.1), 20);
+            }
+
+            ParticleUtilSoot.spawnParticleCrystal(entity, 0, height, 0, 0, 0, 0, (float)(yaw + (random.nextDouble() - 0.5) * Math.PI * angleSpread), (float)((random.nextDouble() - 0.5) * Math.PI * angleSpread), Color.WHITE, (float) (size*0.1*currentStack), 20);
         }
     }
 
@@ -91,4 +107,51 @@ public class Attributes {
         event.setAmount(damage);
     }
 
+    public static boolean isAttracted(Entity entity) {
+        if(entity instanceof EntityLivingBase) {
+            IAttributeInstance attraction = ((EntityLivingBase) entity).getEntityAttribute(ATTRACTION);
+            return attraction.getAttributeValue() > 0;
+        }
+        return false;
+    }
+
+    public static boolean isGenerating(Entity entity) {
+        if(entity instanceof EntityLivingBase) {
+            IAttributeInstance attraction = ((EntityLivingBase) entity).getEntityAttribute(ATTRACTION_GENERATION);
+            return attraction.getAttributeValue() > 0;
+        }
+        return false;
+    }
+
+
+    public static void resetAttraction(Entity entity, int stacks) {
+        if(entity instanceof EntityLivingBase) {
+            IAttributeInstance attraction = ((EntityLivingBase) entity).getEntityAttribute(ATTRACTION);
+            double amount = attraction.getBaseValue();
+            amount -= amount % ATTRACTION_STACK; //Take away the buildup to the next stack
+            amount -= ATTRACTION_STACK * stacks; //And the stack itself
+            attraction.setBaseValue(Math.max(amount,0));
+        }
+    }
+
+    public static void increaseAttraction(Entity entity, double amount) {
+        if(entity instanceof EntityLivingBase) {
+            IAttributeInstance attraction = ((EntityLivingBase) entity).getEntityAttribute(ATTRACTION);
+            attraction.setBaseValue(attraction.getBaseValue()+amount);
+        }
+    }
+
+    public static void increaseGeneration(Entity entity, double amount) {
+        if(entity instanceof EntityLivingBase) {
+            IAttributeInstance attraction = ((EntityLivingBase) entity).getEntityAttribute(ATTRACTION_GENERATION);
+            attraction.setBaseValue(attraction.getBaseValue()+amount);
+        }
+    }
+
+    public static void decreaseGeneration(Entity entity, double amount) {
+        if(entity instanceof EntityLivingBase) {
+            IAttributeInstance attraction = ((EntityLivingBase) entity).getEntityAttribute(ATTRACTION_GENERATION);
+            attraction.setBaseValue(Math.max(attraction.getBaseValue()-amount,0));
+        }
+    }
 }

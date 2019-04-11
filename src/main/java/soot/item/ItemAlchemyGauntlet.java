@@ -1,12 +1,15 @@
 package soot.item;
 
+import com.google.common.collect.Multimap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -16,16 +19,21 @@ import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import soot.Soot;
 import soot.network.PacketHandler;
-import soot.network.message.*;
+import soot.network.message.MessageAlchemyRingFX;
+import soot.network.message.MessageGauntletActivate;
+import soot.network.message.MessageGauntletDodge;
+import soot.network.message.MessageGauntletRotate;
 import soot.particle.ParticleUtilSoot;
+import soot.projectiles.ProjectileFireBlast;
 import soot.util.Attributes;
+import teamroots.embers.api.projectile.EffectDamage;
+import teamroots.embers.api.projectile.IProjectilePreset;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ItemAlchemyGauntlet extends Item {
-    private static final double ATTRACTION_STACK = 100;
     static int escapeCooldown;
 
     public ItemAlchemyGauntlet() {
@@ -35,51 +43,32 @@ public class ItemAlchemyGauntlet extends Item {
     }
 
     public void activateBlock(ItemStack stack, EntityLivingBase player, EnumHand hand, BlockPos pos, EnumFacing facing) {
-        activate(stack,player,hand,player.getLookVec());
+        ItemStack elixir = getElixir(stack,player);
+        if(!elixir.isEmpty()) {
+            ItemElixir itemElixir = (ItemElixir) elixir.getItem();
+            itemElixir.activateBlock(stack, elixir, player, hand, pos, facing);
+        }
     }
 
     public void activate(ItemStack stack, EntityLivingBase player, EnumHand hand, Vec3d dir) {
-        World world = player.world;
-        AxisAlignedBB aabb = new AxisAlignedBB(player.getPosition());
-        aabb = aabb.grow(8,8,8);
-        for(Entity entity : world.getEntitiesInAABBexcluding(player, aabb, this::isAttracted)) {
-            AxisAlignedBB entityBox = entity.getEntityBoundingBox();
-            Vec3d center = entityBox.getCenter();
-            Color mainColor = new Color(16, 255, 64);
-            PacketHandler.INSTANCE.sendToAllTracking(new MessageAlchemyBlastFX(center.x,center.y,center.z,mainColor,mainColor,mainColor,1.0f,5),entity);
-            resetAttraction(entity,1);
+        double handmod = player.getActiveHand() == EnumHand.MAIN_HAND ? 1.0 : -1.0;
+        double posX = player.posX + player.getLookVec().x + handmod * (player.width / 2.0) * Math.sin(Math.toRadians(-player.rotationYaw - 90));
+        double posY = player.posY + player.getEyeHeight() - 0.2 + player.getLookVec().y;
+        double posZ = player.posZ + player.getLookVec().z + handmod * (player.width / 2.0) * Math.cos(Math.toRadians(-player.rotationYaw - 90));
+        ItemStack elixir = getElixir(stack,player);
+        if(!elixir.isEmpty()) {
+            ItemElixir itemElixir = (ItemElixir) elixir.getItem();
+            itemElixir.activate(stack, elixir, player, hand, dir);
+            Vec3d emitPos = new Vec3d(posX,posY,posZ);
+            IProjectilePreset projectile = new ProjectileFireBlast(player, emitPos, emitPos.add(player.getLookVec().scale(10)), new EffectDamage(200.0f, x -> DamageSource.DROWN, 0, 0), getElixirColor(elixir), 3, 33, 3.0);
+            projectile.shoot(player.world);
         }
     }
 
     public void dodge(ItemStack stack, EntityLivingBase player, EnumHand hand, Vec3d visualPos) {
-        //World world = player.world;
-        Color mainColor = new Color(16, 255, 64);
-        PacketHandler.INSTANCE.sendToAllTracking(new MessageAlchemyRingFX(visualPos.x,visualPos.y,visualPos.z,mainColor,30,2.0f,true),player);
-    }
-
-    public boolean isAttracted(Entity entity) {
-        if(entity instanceof EntityLivingBase) {
-            IAttributeInstance attraction = ((EntityLivingBase) entity).getEntityAttribute(Attributes.ATTRACTION);
-            return attraction.getAttributeValue() >= 0;
-        }
-        return false;
-    }
-
-    public void increaseAttraction(Entity entity, double amount) {
-        if(entity instanceof EntityLivingBase) {
-            IAttributeInstance attraction = ((EntityLivingBase) entity).getEntityAttribute(Attributes.ATTRACTION);
-            attraction.setBaseValue(attraction.getBaseValue()+amount);
-        }
-    }
-
-    public void resetAttraction(Entity entity, int stacks) {
-        if(entity instanceof EntityLivingBase) {
-            IAttributeInstance attraction = ((EntityLivingBase) entity).getEntityAttribute(Attributes.ATTRACTION);
-            double amount = attraction.getBaseValue();
-            amount -= amount % ATTRACTION_STACK; //Take away the buildup to the next stack
-            amount -= ATTRACTION_STACK; //And the stack itself
-            attraction.setBaseValue(amount);
-        }
+        ItemStack elixir = getElixir(stack,player);
+        Color mainColor = getElixirColor(elixir);
+        PacketHandler.INSTANCE.sendToAll(new MessageAlchemyRingFX(visualPos.x,visualPos.y,visualPos.z,mainColor,30,2.0f,true));
     }
 
     public void rotate(ItemStack stack, EntityLivingBase player, EnumHand hand) {
@@ -116,14 +105,18 @@ public class ItemAlchemyGauntlet extends Item {
         return elixirs;
     }
 
-    public int getCombo(ItemStack stack) {
+    public boolean isComboReset(EntityLivingBase entity) {
+        return !(entity instanceof EntityPlayer) || ((EntityPlayer)entity).getCooledAttackStrength(0) >= 1;
+    }
+
+    public int getCombo(ItemStack stack, EntityLivingBase entity) {
         NBTTagCompound compound = stack.getTagCompound();
-        if(compound == null)
+        if(isComboReset(entity) || compound == null)
             return 0;
         return compound.getInteger("combo");
     }
 
-    public void setCombo(ItemStack stack, int combo) {
+    public void setCombo(ItemStack stack, EntityLivingBase entity, int combo) {
         NBTTagCompound compound = getOrCreateTagCompound(stack);
         compound.setInteger("combo", combo);
     }
@@ -172,26 +165,47 @@ public class ItemAlchemyGauntlet extends Item {
     }
 
     @Override
-    public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
+    public void onUpdate(ItemStack stack, World world, Entity entity, int itemSlot, boolean isSelected) {
         escapeCooldown--;
+        if(entity instanceof EntityLivingBase) {
+            EntityLivingBase entityLiving = (EntityLivingBase) entity;
+            if (isComboReset(entityLiving))
+                setCombo(stack, entityLiving, 0);
+        }
     }
 
     @Override
     public boolean hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {
-        increaseAttraction(target,getCombo(stack));
+        int combo = getCombo(stack,attacker);
+        Attributes.increaseAttraction(target,combo);
         return super.hitEntity(stack, target, attacker);
     }
 
     @Override
     public boolean onEntitySwing(EntityLivingBase entityLiving, ItemStack stack) {
-        int combo = getCombo(stack);
+        int combo = getCombo(stack,entityLiving);
         entityLiving.motionX = 0;
         if(entityLiving.onGround)
             entityLiving.motionY = 0;
         else
             entityLiving.motionY = 0.3 / (0.1*combo+1);
         entityLiving.motionZ = 0;
-        setCombo(stack,combo+1);
+        setCombo(stack,entityLiving,combo+1);
+        if(entityLiving.world.isRemote) {
+            /*double yaw = (itemRand.nextDouble() - 0.5) * 2.0 * Math.PI;
+            double pitch = (itemRand.nextDouble() - 0.5) * 2.0 * Math.PI;
+            double yawStart = yaw - Math.toRadians(entityLiving.rotationYaw);
+            double pitchStart = pitch - Math.toRadians(entityLiving.rotationPitch);
+            double yawEnd = -yaw - Math.toRadians(entityLiving.rotationYaw);
+            double pitchEnd = -pitch - Math.toRadians(entityLiving.rotationPitch);
+            ParticleUtilSoot.spawnCrystalStrike(entityLiving, 0, entityLiving.getEyeHeight(), 0,
+                    t -> new Vec3d(0, 0, 1).rotatePitch((float) MathHelper.clampedLerp(pitchStart, pitchEnd, t)).rotateYaw((float) MathHelper.clampedLerp(yawStart, yawEnd, t)),
+                    t -> new Vec3d(MathHelper.clampedLerp(yawStart, yawEnd, t) + (itemRand.nextDouble() - 0.5), MathHelper.clampedLerp(pitchStart, pitchEnd, t) + (itemRand.nextDouble() - 0.5), 0),
+                    t -> new Color(255, 64, 16),
+                    t -> (float)Math.sin(t*Math.PI) * 0.1f,
+                    10);*/
+
+        }
         return super.onEntitySwing(entityLiving, stack);
     }
 
@@ -215,7 +229,8 @@ public class ItemAlchemyGauntlet extends Item {
             double rx = (itemRand.nextDouble() - 0.5) * 2.0 * lightningRadius;
             double ry = (itemRand.nextDouble() - 0.5) * 2.0 * lightningRadius;
             double rz = (itemRand.nextDouble() - 0.5) * 2.0 * lightningRadius;
-            Color mainColor = new Color(16, 255, 64);
+            ItemStack elixir = getElixir(stack,player);
+            Color mainColor = getElixirColor(elixir);
             Vec3d startPos = player.getPositionEyes(1.0f);
             Vec3d endPos = startPos.add(player.getLookVec().scale(6.0));
             RayTraceResult rayTrace = world.rayTraceBlocks(startPos,endPos,!player.isInWater(),true,false);
@@ -223,7 +238,7 @@ public class ItemAlchemyGauntlet extends Item {
                 BlockPos pos = rayTrace.getBlockPos();
                 IBlockState state = world.getBlockState(pos);
                 AxisAlignedBB aabb = state.getSelectedBoundingBox(world,pos);
-                if(chargeCoeff-0.1 > 1.0 && aabb != null && !aabb.hasNaN() && aabb.getAverageEdgeLength() > 0)
+                if(chargeCoeff - 0.1 > 1.0 && !aabb.hasNaN() && aabb.getAverageEdgeLength() > 0)
                 for (int i = 0; i < 12; ++i)
                 {
                     int ax = (i >> 2) & 3;
@@ -244,17 +259,7 @@ public class ItemAlchemyGauntlet extends Item {
                             dx2 == 0 ? aabb.minX : aabb.maxX,
                             dy2 == 0 ? aabb.minY : aabb.maxY,
                             dz2 == 0 ? aabb.minZ : aabb.maxZ, 5, 0.1, mainColor, 0.5, 2);
-                    //System.out.println(String.format("start: %d,%d,%d",dx1,dy1,dz1));
-                    //System.out.println(String.format("end: %d,%d,%d",dx2,dy2,dz2));
                 }
-                /*ParticleUtilSoot.spawnLightning(world, aabb.minX, aabb.minY, aabb.minZ, aabb.maxX, aabb.maxY, aabb.maxZ, 5, 0.1, mainColor, 0.5, 2);
-                ParticleUtilSoot.spawnLightning(world, aabb.minX, aabb.minY, aabb.minZ, aabb.maxX, aabb.maxY, aabb.maxZ, 5, 0.1, mainColor, 0.5, 2);
-                ParticleUtilSoot.spawnLightning(world, aabb.minX, aabb.minY, aabb.minZ, aabb.maxX, aabb.maxY, aabb.maxZ, 5, 0.1, mainColor, 0.5, 2);
-                ParticleUtilSoot.spawnLightning(world, aabb.minX, aabb.minY, aabb.minZ, aabb.maxX, aabb.maxY, aabb.maxZ, 5, 0.1, mainColor, 0.5, 2);
-                ParticleUtilSoot.spawnLightning(world, aabb.minX, aabb.minY, aabb.minZ, aabb.maxX, aabb.maxY, aabb.maxZ, 5, 0.1, mainColor, 0.5, 2);
-                ParticleUtilSoot.spawnLightning(world, aabb.minX, aabb.minY, aabb.minZ, aabb.maxX, aabb.maxY, aabb.maxZ, 5, 0.1, mainColor, 0.5, 2);
-                ParticleUtilSoot.spawnLightning(world, aabb.minX, aabb.minY, aabb.minZ, aabb.maxX, aabb.maxY, aabb.maxZ, 5, 0.1, mainColor, 0.5, 2);
-                ParticleUtilSoot.spawnLightning(world, aabb.minX, aabb.minY, aabb.minZ, aabb.maxX, aabb.maxY, aabb.maxZ, 5, 0.1, mainColor, 0.5, 2);*/
             }
 
             if(chargeCoeff > 0.1) {
@@ -267,13 +272,24 @@ public class ItemAlchemyGauntlet extends Item {
         }
     }
 
+    private Color getElixirColor(ItemStack elixir) {
+        if(!elixir.isEmpty()) {
+            ItemElixir elixirItem = (ItemElixir) elixir.getItem();
+            Color color = elixirItem.getColor(elixir);
+            return color != null ? color : Color.WHITE;
+        } else {
+            return Color.WHITE;
+        }
+    }
+
     @Override
     public void onPlayerStoppedUsing(ItemStack stack, World worldIn, EntityLivingBase player, int timeLeft) {
         World world = player.world;
         double chargeCoeff = (getMaxItemUseDuration(stack) - timeLeft) / 20.0;
         if (world.isRemote) {
             double handmod = player.getActiveHand() == EnumHand.MAIN_HAND ? 1.0 : -1.0;
-            Color mainColor = new Color(16, 255, 64);
+            ItemStack elixir = getElixir(stack,player);
+            Color mainColor = getElixirColor(elixir);
             double posX = player.posX + player.getLookVec().x + handmod * (player.width / 2.0) * Math.sin(Math.toRadians(-player.rotationYaw - 90));
             double posY = player.posY + player.getEyeHeight() - 0.2 + player.getLookVec().y;
             double posZ = player.posZ + player.getLookVec().z + handmod * (player.width / 2.0) * Math.cos(Math.toRadians(-player.rotationYaw - 90));
@@ -295,7 +311,6 @@ public class ItemAlchemyGauntlet extends Item {
                         Vec3d look = player.getLookVec();
                         PacketHandler.INSTANCE.sendToServer(new MessageGauntletActivate(player.getActiveHand(),look.x,look.y,look.z));
                     }
-                    //PacketHandler.INSTANCE.sendToServer(new MessageGauntletActivate());
                 }
             } else if (Minecraft.getMinecraft().gameSettings.keyBindBack.isKeyDown()) {
                 if(escapeCooldown <= 0) {
@@ -308,8 +323,6 @@ public class ItemAlchemyGauntlet extends Item {
                         player.motionY = 0;
                     player.motionZ = -forward.z;
                     PacketHandler.INSTANCE.sendToServer(new MessageGauntletDodge(player.getActiveHand(), new Vec3d(posX, posY, posZ)));
-                    //ParticleUtilSoot.spawnCubeRing(world, posX, posY, posZ, mainColor, 30, 2);
-                    //ParticleUtilSoot.spawnParticleCube(world, posX, posY, posZ, 0, 0, 0, mainColor, 2.0f, 10);
                 }
             } else {
                 PacketHandler.INSTANCE.sendToServer(new MessageGauntletRotate(player.getActiveHand()));
@@ -339,5 +352,17 @@ public class ItemAlchemyGauntlet extends Item {
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
         return slotChanged;
+    }
+
+    @Override
+    public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot equipmentSlot, ItemStack stack)
+    {
+        Multimap<String, AttributeModifier> multimap = super.getAttributeModifiers(equipmentSlot, stack);
+
+        if (equipmentSlot == EntityEquipmentSlot.MAINHAND) {
+            multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Tool modifier", -3.2, 0));
+        }
+
+        return multimap;
     }
 }

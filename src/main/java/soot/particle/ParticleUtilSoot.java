@@ -3,12 +3,14 @@ package soot.particle;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import teamroots.embers.Embers;
 import teamroots.embers.particle.ParticleUtil;
 import teamroots.embers.proxy.ClientProxy;
 
 import java.awt.*;
+import java.util.function.Function;
 
 public class ParticleUtilSoot {
     public static void spawnParticleSolidGlow(World world, float x, float y, float z, float vx, float vy, float vz, float r, float g, float b, float a, float scale, int lifetime) {
@@ -29,11 +31,11 @@ public class ParticleUtilSoot {
         }
     }
 
-    public static void spawnParticleCrystal(Entity anchor, double x, double y, double z, double vx, double vy, double vz, Color color, float scale, int lifetime) {
+    public static void spawnParticleCrystal(Entity anchor, double x, double y, double z, double vx, double vy, double vz, float yaw, float pitch, Color color, float scale, int lifetime) {
         if (Embers.proxy instanceof ClientProxy) {
             ParticleUtil.counter += ParticleUtil.random.nextInt(3);
             if (ParticleUtil.counter % (Minecraft.getMinecraft().gameSettings.particleSetting == 0 ? 1 : 2 * Minecraft.getMinecraft().gameSettings.particleSetting) == 0) {
-                ClientProxy.particleRenderer.addParticle(new ParticleCrystal(anchor, x, y, z, vx, vy, vz, color, scale, lifetime));
+                ClientProxy.particleRenderer.addParticle(new ParticleCrystal(anchor, x, y, z, vx, vy, vz, yaw, pitch, color, scale, lifetime));
             }
         }
     }
@@ -42,6 +44,20 @@ public class ParticleUtilSoot {
     {
         if (Embers.proxy instanceof ClientProxy) {
             ClientProxy.particleRenderer.addParticle(new ParticleAlchemyExplosion(world, x, y, z, mainColor, backColor, cubeColor, scale, lifetime));
+        }
+    }
+
+    public static void spawnFireBlast(World world, double x, double y, double z, Color color, float scale, int lifetime)
+    {
+        if (Embers.proxy instanceof ClientProxy) {
+            ClientProxy.particleRenderer.addParticle(new ParticleFireBlast(world, x, y, z, color, scale, lifetime));
+        }
+    }
+
+    public static void spawnCrystalStrike(Entity anchor, double x, double y, double z, Function<Double, Vec3d> emitPos, Function<Double, Vec3d> emitAngle, Function<Double, Color> emitColor, Function<Double, Float> emitScale, int lifetime)
+    {
+        if (Embers.proxy instanceof ClientProxy) {
+            ClientProxy.particleRenderer.addParticle(new ParticleCrystalStrike(anchor, x, y, z, emitPos, emitAngle, emitColor, emitScale, lifetime));
         }
     }
 

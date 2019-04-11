@@ -19,8 +19,12 @@ public class PacketHandler {
             INSTANCE.registerMessage(MessageMixerFailFX.MessageHolder.class, MessageMixerFailFX.class,id++, Side.CLIENT);
             //INSTANCE.registerMessage(MessageWitchBurnFX.MessageHolder.class, MessageWitchBurnFX.class,id++, Side.CLIENT);
             INSTANCE.registerMessage(MessageMixerBlastFX.MessageHolder.class, MessageMixerBlastFX.class,id++, Side.CLIENT);
+            INSTANCE.registerMessage(MessageAlchemyBlastFX.MessageHolder.class, MessageAlchemyBlastFX.class,id++, Side.CLIENT);
+            INSTANCE.registerMessage(MessageAlchemyRingFX.MessageHolder.class, MessageAlchemyRingFX.class,id++, Side.CLIENT);
+            INSTANCE.registerMessage(MessageFireBlastFX.MessageHolder.class, MessageFireBlastFX.class,id++, Side.CLIENT);
             INSTANCE.registerMessage(MessageGauntletActivate.MessageHolder.class, MessageGauntletActivate.class,id++, Side.SERVER);
             INSTANCE.registerMessage(MessageGauntletRotate.MessageHolder.class, MessageGauntletRotate.class,id++, Side.SERVER);
+            INSTANCE.registerMessage(MessageGauntletDodge.MessageHolder.class, MessageGauntletDodge.class,id++, Side.SERVER);
         }
     }
 

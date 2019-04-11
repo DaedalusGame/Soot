@@ -1,8 +1,6 @@
 package soot.itemmod;
 
 import com.google.common.collect.Lists;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -64,26 +62,4 @@ public class ModifierWitchburn extends ModifierProjectileBase {
         }
     }
 
-    private static class EffectWitchburn implements IProjectileEffect {
-        public int ticks;
-
-        public EffectWitchburn(int ticks) {
-            this.ticks = ticks;
-        }
-
-        public int getTicks() {
-            return ticks;
-        }
-
-        public void setTicks(int ticks) {
-            this.ticks = ticks;
-        }
-
-        @Override
-        public void onEntityImpact(Entity entity, IProjectilePreset projectile) {
-            if(entity instanceof EntityLivingBase) {
-                WitchburnHandler.setWitchburn((EntityLivingBase) entity,ticks);
-            }
-        }
-    }
 }

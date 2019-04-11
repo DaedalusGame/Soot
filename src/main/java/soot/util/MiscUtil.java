@@ -22,6 +22,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import soot.Registry;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -196,5 +197,23 @@ public class MiscUtil {
         while(Minecraft.getMinecraft().fontRenderer.getStringWidth(spaces) < len)
             spaces += " ";
         return spaces;
+    }
+
+    public static Color lerpColor(Color color1, Color color2, double scale) {
+        return new Color(
+                lerp(color1.getRed(),color2.getRed(),scale),
+                lerp(color1.getGreen(),color2.getGreen(),scale),
+                lerp(color1.getBlue(),color2.getBlue(),scale),
+                lerp(color1.getAlpha(),color2.getAlpha(),scale)
+        );
+    }
+
+    public static Color maxColor(Color color) {
+        float multiplier = 1.0f / Math.max(color.getRed(),Math.max(color.getGreen(),color.getBlue()));
+        return new Color(color.getRed()*multiplier,color.getGreen()*multiplier,color.getBlue()*multiplier,color.getAlpha()/255.0f);
+    }
+
+    public static int lerp(int a, int b, double scale) {
+        return (int)(a*(1-scale)+b*(scale));
     }
 }

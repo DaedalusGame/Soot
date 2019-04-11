@@ -1,6 +1,8 @@
 package soot.particle;
 
 import net.minecraft.client.particle.Particle;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 import teamroots.embers.particle.IEmberParticle;
 
@@ -85,6 +87,11 @@ public class ParticleAlchemyExplosion extends Particle implements IEmberParticle
             double dist = 5 * scale;
             ParticleUtilSoot.spawnLightning(world, posX, posY, posZ, posX + dx * dist, posY + dy * dist, posZ + dz * dist, 8, 0.6 * scale, mainColor, 2.0 * scale, 10);
         }
+    }
+
+    @Override
+    public void renderParticle(BufferBuilder buffer, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
+        //NOOP
     }
 
     @Override

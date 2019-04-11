@@ -34,11 +34,12 @@ import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreIngredient;
 import net.minecraftforge.registries.ForgeRegistry;
 import soot.Registry;
+import soot.brewing.deliverytypes.DeliveryBlast;
 import soot.tile.TileEntityStillBase;
-import soot.util.CaskManager;
-import soot.util.FluidModifier;
-import soot.util.FluidModifier.EffectType;
-import soot.util.FluidModifier.EnumType;
+import soot.brewing.CaskManager;
+import soot.brewing.FluidModifier;
+import soot.brewing.FluidModifier.EffectType;
+import soot.brewing.FluidModifier.EnumType;
 import soot.util.FluidUtil;
 import soot.util.MiscUtil;
 import teamroots.embers.ConfigManager;
@@ -268,6 +269,13 @@ public class CraftingRegistry {
             }
         });
 
+        FluidUtil.registerModifier(new FluidModifier("alchemy_blast", 0, EnumType.TERTIARY, EffectType.POSITIVE).setFormatType("name_only"));
+        FluidUtil.registerModifier(new FluidModifier("alchemy_blast_radius", 8, EnumType.TERTIARY, EffectType.POSITIVE));
+        CaskManager.register("alchemy_blast", (gauntlet, elixir, user, fluid) -> {
+            float radius = FluidUtil.getModifier(fluid,"alchemy_blast_radius");
+            return new DeliveryBlast(user,fluid,8.0,radius);
+        });
+
         Fluid boiling_wort = FluidRegistry.getFluid("boiling_wort");
         Fluid boiling_potato_juice = FluidRegistry.getFluid("boiling_potato_juice");
 
@@ -343,6 +351,7 @@ public class CraftingRegistry {
         stillCatalysts.add(new CatalystInfo(new OreIngredient("sugar"), 100));
         stillCatalysts.add(new CatalystInfo(Ingredient.fromItem(Items.SNOWBALL), 250));
         stillCatalysts.add(new CatalystInfo(new OreIngredient("logWood"), 750));
+        stillCatalysts.add(new CatalystInfo(Ingredient.fromItem(Registry.ESSENCE), 1000));
 
         stillRecipes.add(new RecipeStillDoubleDistillation(allAlcohols, Ingredient.EMPTY, 0));
         stillRecipes.add(new RecipeStillModifier(allAlcohols, Ingredient.fromItem(Items.GHAST_TEAR), 1) {
