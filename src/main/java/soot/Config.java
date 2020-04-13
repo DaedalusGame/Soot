@@ -16,6 +16,7 @@ public class Config {
     public static boolean GOLEMS_TYRFING_WEAK;
     public static boolean GOLEMS_POISON_IMMUNE;
     public static boolean ASH_FIRST;
+    public static boolean RENAME_STAMP;
 
     public static boolean OVERRIDE_BORE;
     public static boolean OVERRIDE_DAWNSTONE_ANVIL;
@@ -57,6 +58,7 @@ public class Config {
         TRADING_ANTIMONY = loadPropBool("tradingAntimony","Features","Allows trading signet of antimony with villagers instead of emeralds.",true);
         GOLEMS_TYRFING_WEAK = loadPropBool("golemsTyrfingWeak","Features","Golems take extra damage from the Tyrfing.",true);
         GOLEMS_POISON_IMMUNE = loadPropBool("golemsPoisonImmune","Features","Golems are immune to poison.",true);
+        RENAME_STAMP = loadPropBool("enableRenamingStamp","Features","Enable Renaming Recipe for stamper.",true);
         ASH_FIRST = loadPropBool("ashFirst","Features","Ash is removed before the aspect from pedestals.",true);
         //MELTER_ORE_AMOUNT = loadPropInt("melterOreAmount","Features","How many mb of fluid are obtained per ore output in the melter. This is multiplied by the amount of output a melter would produce, so by default 144mb * 2 ingots.",144);
 
