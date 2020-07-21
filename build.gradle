@@ -7,12 +7,15 @@ buildscript {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
         }
+        maven { url = "https://plugins.gradle.org/m2/" }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'com.wynprice.cursemaven:CurseMaven:1.2.3'
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'com.wynprice.cursemaven'
 
 
 version = "1.6"
@@ -39,9 +42,10 @@ repositories {
 }
 
 dependencies {
-    //compile "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1+"
-    //deobfCompile "mezz.jei:jei_1.12.2:4.8.3.128"
-    deobfCompile "teamroots.embers:EmbersRekindled:1.13"
+    compile "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1.8.476"
+    compile "mezz.jei:jei_1.12.2:4.8.3.128"
+    compile "com.azanor.baubles:Baubles:1.12-1.5.2"
+    deobfCompile curse.resolveUrl("https://www.curseforge.com/minecraft/mc-mods/embers-rekindled/files/3010691")
 	compile files('libs/')
 }
 

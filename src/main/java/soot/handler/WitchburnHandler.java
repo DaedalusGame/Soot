@@ -28,18 +28,19 @@ public class WitchburnHandler {
         EntityLivingBase entity = event.getEntityLiving();
         IAttributeInstance attribute = entity.getEntityAttribute(Attributes.WITCHBURN);
         int witchburn = (int) attribute.getAttributeValue();
-        if(!entity.world.isRemote) {
-            if (witchburn % 20 == 0) {
-                entity.attackEntityFrom(DAMAGE_SOURCE, calculateWitchBurnDamage(entity));
+        if(witchburn > 0) {
+            if (!entity.world.isRemote) {
+                if (witchburn % 20 == 0) {
+                    entity.attackEntityFrom(DAMAGE_SOURCE, calculateWitchBurnDamage(entity));
+                }
+                attribute.setBaseValue(attribute.getBaseValue() - 1);
             }
-            attribute.setBaseValue(attribute.getBaseValue()-1);
+            if (entity.world.isRemote) {
+                Random rand = entity.getRNG();
+                for (int i = 0; i < 10; i++)
+                    ParticleUtil.spawnParticleVapor(entity.world, (float) entity.posX + (rand.nextFloat() - 0.5f) * entity.width, (float) entity.posY + rand.nextFloat() * entity.height, (float) entity.posZ + (rand.nextFloat() - 0.5f) * entity.width, (rand.nextFloat() - 0.5f) * 0.02f, rand.nextFloat() * 0.04f, (rand.nextFloat() - 0.5f) * 0.02f, COLOR.getRed(), COLOR.getGreen(), COLOR.getBlue(), 1.0f, 2.0f, 4.0f, 10 + rand.nextInt(20));
+            }
         }
-        if (entity.world.isRemote) {
-            Random rand = entity.getRNG();
-            for (int i = 0; i < 10; i++)
-                ParticleUtil.spawnParticleVapor(entity.world, (float) entity.posX + (rand.nextFloat() - 0.5f) * entity.width, (float) entity.posY + rand.nextFloat() * entity.height, (float) entity.posZ + (rand.nextFloat() - 0.5f) * entity.width, (rand.nextFloat() - 0.5f) * 0.02f, rand.nextFloat() * 0.04f, (rand.nextFloat() - 0.5f) * 0.02f, COLOR.getRed(), COLOR.getGreen(), COLOR.getBlue(), 1.0f, 2.0f, 4.0f, 10 + rand.nextInt(20));
-        }
-
     }
 
     public static float calculateWitchBurnDamage(EntityLivingBase entity) {
@@ -47,7 +48,7 @@ public class WitchburnHandler {
     }
 
     @SubscribeEvent
-    public void onHeal(LivingHealEvent event) {
+    public static void onHeal(LivingHealEvent event) {
         EntityLivingBase entity = event.getEntityLiving();
         IAttributeInstance attribute = entity.getEntityAttribute(Attributes.WITCHBURN);
 

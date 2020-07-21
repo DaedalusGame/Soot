@@ -342,8 +342,8 @@ public class Registry {
         registerBlock("insulation", insulation, new ItemBlock(insulation));
         BlockDistillationPipe distillationPipe = (BlockDistillationPipe) new BlockDistillationPipe(Material.IRON).setHardness(1.6f).setLightOpacity(1).setCreativeTab(Soot.creativeTab);
         registerBlock("distillation_pipe", distillationPipe, new ItemBlock(distillationPipe));
-        /*BlockDecanter decanter = (BlockDecanter) new BlockDecanter().setHardness(1.6f).setLightOpacity(1).setCreativeTab(Soot.creativeTab);
-        registerBlock("decanter", decanter, new ItemBlock(decanter));*/
+        BlockDecanter decanter = (BlockDecanter) new BlockDecanter().setHardness(1.6f).setLightOpacity(1).setCreativeTab(Soot.creativeTab);
+        registerBlock("decanter", decanter, new ItemBlock(decanter));
 
         BlockAlchemyGauge alchemyGauge = (BlockAlchemyGauge) new BlockAlchemyGauge(Material.IRON).setHardness(1.6f).setLightOpacity(0).setCreativeTab(Soot.creativeTab);
         registerBlock("alchemy_gauge", alchemyGauge, new ItemBlock(alchemyGauge));
@@ -362,7 +362,7 @@ public class Registry {
         registerItem("witch_fire", new Item().setCreativeTab(Soot.creativeTab));
         //registerItem("alchemy_gauntlet", new ItemAlchemyGauntlet().setCreativeTab(Soot.creativeTab));
         //registerItem("elixir", new ItemElixir().setCreativeTab(Soot.creativeTab));
-        //registerItem("essence", new ItemEssence().setCreativeTab(Soot.creativeTab));
+        registerItem("essence", new ItemEssence().setCreativeTab(Soot.creativeTab));
 
         BlockStill still = (BlockStill) new BlockStill().setHardness(1.6f).setLightOpacity(0).setCreativeTab(Soot.creativeTab);
         registerBlock("still", still, new ItemStill(still));
@@ -564,8 +564,8 @@ public class Registry {
         registerTileEntity(TileEntityAlchemyGlobe.class);
         registerTileEntity(TileEntityInsulation.class);
         registerTileEntity(TileEntityDistillationPipe.class);
-        //registerTileEntity(TileEntityDecanterBottom.class);
-        //registerTileEntity(TileEntityDecanterTop.class);
+        registerTileEntity(TileEntityDecanterBottom.class);
+        registerTileEntity(TileEntityDecanterTop.class);
 
     }
 

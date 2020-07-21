@@ -59,6 +59,7 @@ public class Soot
         MinecraftForge.EVENT_BUS.register(FluidStitchHandler.class);
         MinecraftForge.EVENT_BUS.register(AnvilHandler.class);
         MinecraftForge.EVENT_BUS.register(FuelHandler.class);
+        MinecraftForge.EVENT_BUS.register(WitchburnHandler.class);
         MinecraftForge.EVENT_BUS.register(EitrHandler.class);
         if(Config.TRADING_ANTIMONY)
             MinecraftForge.EVENT_BUS.register(VillagerAntimonyHandler.class);
