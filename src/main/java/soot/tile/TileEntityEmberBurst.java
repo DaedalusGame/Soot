@@ -37,7 +37,12 @@ public class TileEntityEmberBurst extends TileEntity implements ITileEntityBase,
         NONE, LEVER
     }
 
-    public IEmberCapability capability = new DefaultEmberCapability();
+    public IEmberCapability capability = new DefaultEmberCapability(){
+        @Override
+        public boolean acceptsVolatile() {
+            return false;
+        }
+    };
     public BlockPos[] targets = new BlockPos[6];
     int targetIndex = 0;
 

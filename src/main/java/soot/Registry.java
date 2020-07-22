@@ -328,7 +328,7 @@ public class Registry {
         BlockSulfurOre sulfurOre = (BlockSulfurOre) new BlockSulfurOre(Material.ROCK).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
         registerBlock("sulfur_ore", sulfurOre, new ItemBlock(sulfurOre));
 
-        BlockEmberBurst emberBurst = (BlockEmberBurst) new BlockEmberBurst(Material.ROCK).setCreativeTab(Soot.creativeTab);
+        BlockEmberBurst emberBurst = (BlockEmberBurst) new BlockEmberBurst(Material.ROCK).setHardness(1.6f).setCreativeTab(Soot.creativeTab);
         registerBlock("ember_burst", emberBurst, new ItemBlock(emberBurst));
 
         BlockRedstoneBin redstoneBin = (BlockRedstoneBin) new BlockRedstoneBin(Material.IRON,"redstone_bin").setIsFullCube(false).setIsOpaqueCube(false).setHarvestProperties("pickaxe",0).setHardness(1f).setCreativeTab(Soot.creativeTab);
@@ -356,7 +356,7 @@ public class Registry {
         registerItem("stamp_nugget_raw", new Item().setCreativeTab(Soot.creativeTab));
         registerItem("stamp_nugget", new Item().setCreativeTab(Soot.creativeTab));
         registerItem("sulfur", new Item().setCreativeTab(Soot.creativeTab));
-        registerItem("sulfur_clump", new ItemSulfurClump().setCreativeTab(Soot.creativeTab));
+        registerItem("sulfur_clump", new ItemSulfurClump().setMaxStackSize(1).setCreativeTab(Soot.creativeTab));
         registerItem("eitr", new ItemEitr(EITR_TOOL_MATERIAL).setCreativeTab(Soot.creativeTab));
         registerItem("mundane_stone", new Item().setCreativeTab(Soot.creativeTab));
         registerItem("witch_fire", new Item().setCreativeTab(Soot.creativeTab));

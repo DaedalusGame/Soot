@@ -43,8 +43,9 @@ public class BlockSulfurOre extends Block {
 
     public void activateVent(World worldIn, BlockPos pos, IBlockState state) {
         if(!state.getValue(ACTIVE)) {
-            worldIn.setBlockState(pos, state.withProperty(ACTIVE, true));
-            worldIn.playSound(null,pos, SoundEvents.SULFUR_VENT, SoundCategory.BLOCKS, 1.0f, 1.0f);
+            TileEntity tile = worldIn.getTileEntity(pos);
+            if(tile instanceof TileEntitySulfurOre)
+                ((TileEntitySulfurOre) tile).activate();
         }
     }
 
