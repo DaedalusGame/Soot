@@ -78,6 +78,10 @@ public class FluidModifier {
         return I18n.format("distilling.modifier."+name+".name");
     }
 
+    public EssenceStack toEssence(float amount) {
+        return EssenceStack.EMPTY;
+    }
+
     public enum EnumType {
         PRIMARY,
         SECONDARY,

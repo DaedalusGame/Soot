@@ -11,6 +11,7 @@ import net.minecraftforge.fluids.FluidStack;
 import soot.tile.TileEntityStillBase;
 import soot.util.FluidUtil;
 
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -58,6 +59,44 @@ public abstract class RecipeStillModifier extends RecipeStill {
         super.modifyTooltip(tooltip);
         tooltip.remove(1);
         tooltip.add(1, TextFormatting.LIGHT_PURPLE+Translator.translateToLocalFormatted("distilling.effect.header"));
+    }
+
+    protected void addModifier(List<String> tooltip, String modifier, boolean positive) {
+        TextFormatting color = positive ? TextFormatting.GREEN : TextFormatting.RED;
+        tooltip.add(tooltip.size() - 1, color + Translator.translateToLocalFormatted("distilling.effect."+modifier));
+    }
+
+    protected void addModifierLinear(List<String> tooltip, String modifier, float amount, boolean positive) {
+        DecimalFormat format = new DecimalFormat("#.####");
+        String key;
+        TextFormatting color;
+        if(amount > 0) {
+            key = "distilling.effect.add";
+            color = positive ? TextFormatting.GREEN : TextFormatting.RED;
+        } else {
+            key = "distilling.effect.sub";
+            color = positive ? TextFormatting.RED : TextFormatting.GREEN;
+        }
+        tooltip.add(tooltip.size() - 1, color + Translator.translateToLocalFormatted(key, Translator.translateToLocal("distilling.modifier."+modifier+".name"), format.format(Math.abs(amount))));
+    }
+
+    protected void addModifierPercent(List<String> tooltip, String modifier, float amount, boolean positive) {
+        DecimalFormat format = new DecimalFormat("#.####");
+        String key;
+        TextFormatting color;
+        if(amount > 0) {
+            key = "distilling.effect.add_percent";
+            color = positive ? TextFormatting.GREEN : TextFormatting.RED;
+        } else {
+            key = "distilling.effect.sub_percent";
+            color = positive ? TextFormatting.RED : TextFormatting.GREEN;
+        }
+        tooltip.add(tooltip.size() - 1, color + Translator.translateToLocalFormatted(key, Translator.translateToLocal("distilling.modifier."+modifier+".name"), format.format(Math.abs(amount))));
+    }
+
+    protected void addModifierLoss(List<String> tooltip, float amount) {
+        DecimalFormat format = new DecimalFormat("#.####");
+        tooltip.add(tooltip.size() - 1, TextFormatting.RED + Translator.translateToLocalFormatted("distilling.effect.loss", format.format(amount)));
     }
 
     public float getModifierOrDefault(String name, NBTTagCompound compound, FluidStack fluid)

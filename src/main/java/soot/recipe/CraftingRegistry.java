@@ -35,7 +35,11 @@ import net.minecraftforge.oredict.OreIngredient;
 import net.minecraftforge.registries.ForgeRegistry;
 import soot.Config;
 import soot.Registry;
+import soot.brewing.EssenceStack;
+import soot.brewing.EssenceType;
 import soot.brewing.deliverytypes.DeliveryBlast;
+import soot.compat.jei.ExtraRecipeInfo;
+import soot.item.ItemEssence;
 import soot.tile.TileEntityStillBase;
 import soot.brewing.CaskManager;
 import soot.brewing.FluidModifier;
@@ -52,6 +56,7 @@ import teamroots.embers.util.IngredientSpecial;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -80,15 +85,21 @@ public class CraftingRegistry {
 
     @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
-        OreIngredient ingotAntimony = new OreIngredient("ingotAntimony");
-        OreIngredient ingotLead = new OreIngredient("ingotLead");
-        OreIngredient ingotNickel = new OreIngredient("ingotNickel");
-        OreIngredient blankGlass = new OreIngredient("blockGlassColorless");
+        Ingredient ingotAntimony = new OreIngredient("ingotAntimony");
+        Ingredient ingotLead = new OreIngredient("ingotLead");
+        Ingredient ingotNickel = new OreIngredient("ingotNickel");
+        Ingredient aspectDawnstone = Ingredient.fromItem(RegistryManager.aspectus_dawnstone);
+        Ingredient blankGlass = new OreIngredient("blockGlassColorless");
+        Ingredient fluidPipe = Ingredient.fromStacks(new ItemStack(RegistryManager.pipe));
+        Ingredient accessor = Ingredient.fromStacks(new ItemStack(RegistryManager.mech_accessor));
+        Ingredient distillationPipe = Ingredient.fromStacks(new ItemStack(Registry.DISTILLATION_PIPE));
         Ingredient leadPickaxe = new IngredientSpecial(stack -> {
             Item item = stack.getItem();
             return item instanceof ItemTool && item.getToolClasses(stack).contains("pickaxe") && ((ItemTool) item).getToolMaterialName().toLowerCase().contains("lead");
         });
+        RecipeRegistry.alchemyRecipes.add(new AlchemyRecipe(new AspectList.AspectRangeList().setRange("dawnstone",8,16),blankGlass, Lists.newArrayList(aspectDawnstone), Registry.ESSENCE.getStack(EssenceType.NULL,32)));
         RecipeRegistry.alchemyRecipes.add(new AlchemyRecipe(new AspectList.AspectRangeList().setRange("copper",16,32).setRange("lead",32,64),blankGlass, Lists.newArrayList(ingotLead, Ingredient.fromItem(RegistryManager.aspectus_lead), ingotLead, Ingredient.fromItem(RegistryManager.archaic_circuit)),new ItemStack(Registry.ALCHEMY_GLOBE)));
+        RecipeRegistry.alchemyRecipes.add(new AlchemyRecipe(new AspectList.AspectRangeList().setRange("silver",24,56).setRange("iron",32,64),distillationPipe, Lists.newArrayList(fluidPipe, blankGlass, fluidPipe, accessor),new ItemStack(Registry.DECANTER)));
         RecipeRegistry.alchemyRecipes.add(new AlchemyRecipe(new AspectList.AspectRangeList().setRange("iron",64,96).setRange("lead",64,96),leadPickaxe, Lists.newArrayList(ingotAntimony, Ingredient.fromItem(Registry.SULFUR_CLUMP), ingotAntimony, Ingredient.fromItem(Registry.SIGNET_ANTIMONY)),new ItemStack(Registry.EITR)));
         RecipeRegistry.alchemyRecipes.add(new AlchemyRecipe(new AspectList.AspectRangeList().setRange("copper",16,32).setRange("iron",32,48).setRange("lead",32,48),Ingredient.fromItem(RegistryManager.jet_augment), Lists.newArrayList(ingotNickel, Ingredient.fromItem(Registry.SULFUR_CLUMP), ingotNickel, ingotNickel),new ItemStack(Registry.WITCH_FIRE)));
 
@@ -150,23 +161,100 @@ public class CraftingRegistry {
 
         OreDictionary.registerOre("ingotAntimony", new ItemStack(Registry.INGOT_ANTIMONY));
         OreDictionary.registerOre("dustSulfur", new ItemStack(Registry.SULFUR));
+        OreDictionary.registerOre("dustSugar", new ItemStack(Items.SUGAR));
 
         initAlcoholRecipes();
     }
 
     private static void initAlcoholRecipes() {
+        //Primary modifiers
         FluidUtil.registerModifier(new FluidModifier("ale", 0, EnumType.PRIMARY, EffectType.POSITIVE) {
             @Override
             public void providePotionEffects(EntityLivingBase target, ArrayList<CaskManager.CaskPotionEffect> effects, NBTTagCompound compound, Fluid fluid) {
                 float value = getOrDefault(compound, fluid);
                 effects.add(new CaskManager.CaskPotionEffect(new PotionEffect(Registry.POTION_ALE, (int) value),4));
             }
+
+            @Override
+            public EssenceStack toEssence(float amount) {
+                if(amount > 0)
+                    return new EssenceStack(EssenceType.GLASS, (int)Math.ceil(amount / 400));
+                return super.toEssence(amount);
+            }
         }.setFormatType("name_only"));
+        FluidUtil.registerModifier(new FluidModifier("stoutness", 0, EnumType.PRIMARY, EffectType.POSITIVE) {
+            @Override
+            public void providePotionEffects(EntityLivingBase target, ArrayList<CaskManager.CaskPotionEffect> effects, NBTTagCompound compound, Fluid fluid) {
+                float value = getOrDefault(compound, fluid);
+                effects.add(new CaskManager.CaskPotionEffect(new PotionEffect(Registry.POTION_STOUTNESS, (int) value),4));
+            }
+
+            @Override
+            public EssenceStack toEssence(float amount) {
+                return super.toEssence(amount);
+            }
+        }.setFormatType("name_only"));
+        FluidUtil.registerModifier(new FluidModifier("inner_fire", 0, EnumType.PRIMARY, EffectType.POSITIVE) {
+            @Override
+            public void providePotionEffects(EntityLivingBase target, ArrayList<CaskManager.CaskPotionEffect> effects, NBTTagCompound compound, Fluid fluid) {
+                float value = getOrDefault(compound, fluid);
+                effects.add(new CaskManager.CaskPotionEffect(new PotionEffect(Registry.POTION_INNER_FIRE, (int) value),2));
+            }
+
+            @Override
+            public EssenceStack toEssence(float amount) {
+                return super.toEssence(amount);
+            }
+        }.setFormatType("name_only"));
+        FluidUtil.registerModifier(new FluidModifier("inspiration", 0, EnumType.PRIMARY, EffectType.POSITIVE) {
+            @Override
+            public void providePotionEffects(EntityLivingBase target, ArrayList<CaskManager.CaskPotionEffect> effects, NBTTagCompound compound, Fluid fluid) {
+                float value = getOrDefault(compound, fluid);
+                effects.add(new CaskManager.CaskPotionEffect(new PotionEffect(Registry.POTION_INSPIRATION, (int) value),3));
+            }
+
+            @Override
+            public EssenceStack toEssence(float amount) {
+                return super.toEssence(amount);
+            }
+        }.setFormatType("name_only"));
+        FluidUtil.registerModifier(new FluidModifier("fire_lung", 0, EnumType.PRIMARY, EffectType.POSITIVE) {
+            @Override
+            public void providePotionEffects(EntityLivingBase target, ArrayList<CaskManager.CaskPotionEffect> effects, NBTTagCompound compound, Fluid fluid) {
+                float value = getOrDefault(compound, fluid);
+                effects.add(new CaskManager.CaskPotionEffect(new PotionEffect(Registry.POTION_FIRE_LUNG, (int) value),2));
+            }
+
+            @Override
+            public EssenceStack toEssence(float amount) {
+                return super.toEssence(amount);
+            }
+        }.setFormatType("name_only"));
+        FluidUtil.registerModifier(new FluidModifier("snowpoff", 0, EnumType.PRIMARY, EffectType.POSITIVE) {
+            @Override
+            public void providePotionEffects(EntityLivingBase target, ArrayList<CaskManager.CaskPotionEffect> effects, NBTTagCompound compound, Fluid fluid) {
+                float value = getOrDefault(compound, fluid);
+                effects.add(new CaskManager.CaskPotionEffect(new PotionEffect(Registry.POTION_SNOWPOFF, (int) value),3));
+            }
+
+            @Override
+            public EssenceStack toEssence(float amount) {
+                return super.toEssence(amount);
+            }
+        }.setFormatType("name_only"));
+        //Secondary modifiers
         FluidUtil.registerModifier(new FluidModifier("lifedrinker", 0, EnumType.SECONDARY, EffectType.POSITIVE) {
             @Override
             public void providePotionEffects(EntityLivingBase target, ArrayList<CaskManager.CaskPotionEffect> effects, NBTTagCompound compound, Fluid fluid) {
                 float value = getOrDefault(compound, fluid);
                 effects.add(new CaskManager.CaskPotionEffect(new PotionEffect(Registry.POTION_LIFEDRINKER, (int) value),0));
+            }
+
+            @Override
+            public EssenceStack toEssence(float amount) {
+                if(amount > 0)
+                    return new EssenceStack(EssenceType.LIFEDRINKER, (int)Math.ceil(amount / 400));
+                return super.toEssence(amount);
             }
         }.setFormatType("name_only"));
         FluidUtil.registerModifier(new FluidModifier("steadfast", 0, EnumType.SECONDARY, EffectType.POSITIVE) {
@@ -175,7 +263,97 @@ public class CraftingRegistry {
                 float value = getOrDefault(compound, fluid);
                 effects.add(new CaskManager.CaskPotionEffect(new PotionEffect(Registry.POTION_STEADFAST, (int) value),0));
             }
+
+            @Override
+            public EssenceStack toEssence(float amount) {
+                if(amount > 0)
+                    return new EssenceStack(EssenceType.SPEED, (int)Math.ceil(amount / 400));
+                return super.toEssence(amount);
+            }
         }.setFormatType("name_only"));
+        FluidUtil.registerModifier(new FluidModifier("experience_boost", 0, EnumType.SECONDARY, EffectType.POSITIVE) {
+            @Override
+            public void providePotionEffects(EntityLivingBase target, ArrayList<CaskManager.CaskPotionEffect> effects, NBTTagCompound compound, Fluid fluid) {
+                float value = getOrDefault(compound, fluid);
+                effects.add(new CaskManager.CaskPotionEffect(new PotionEffect(Registry.POTION_EXPERIENCE_BOOST, (int) value),0));
+            }
+
+            @Override
+            public EssenceStack toEssence(float amount) {
+                if(amount > 0)
+                    return new EssenceStack(EssenceType.EXPERIENCE, (int)Math.ceil(amount / 400));
+                return super.toEssence(amount);
+            }
+        }.setFormatType("name_only"));
+        FluidUtil.registerModifier(new FluidModifier("glass", 0, EnumType.SECONDARY, EffectType.NEGATIVE) {
+            @Override
+            public void providePotionEffects(EntityLivingBase target, ArrayList<CaskManager.CaskPotionEffect> effects, NBTTagCompound compound, Fluid fluid) {
+                float value = getOrDefault(compound, fluid);
+                effects.add(new CaskManager.CaskPotionEffect(new PotionEffect(Registry.POTION_GLASS, (int) value),9));
+            }
+
+            @Override
+            public EssenceStack toEssence(float amount) {
+                if(amount > 0)
+                    return new EssenceStack(EssenceType.GLASS, (int)Math.ceil(amount / 400));
+                return super.toEssence(amount);
+            }
+        }.setFormatType("name_only"));
+        FluidUtil.registerModifier(new FluidModifier("resistance", 0, EnumType.SECONDARY, EffectType.POSITIVE) {
+            @Override
+            public void providePotionEffects(EntityLivingBase target, ArrayList<CaskManager.CaskPotionEffect> effects, NBTTagCompound compound, Fluid fluid) {
+                float value = getOrDefault(compound, fluid);
+                effects.add(new CaskManager.CaskPotionEffect(new PotionEffect(MobEffects.RESISTANCE, (int) value),2));
+            }
+
+            @Override
+            public EssenceStack toEssence(float amount) {
+                return super.toEssence(amount);
+            }
+        }.setFormatType("name_only"));
+        FluidUtil.registerModifier(new FluidModifier("speed", 0, EnumType.SECONDARY, EffectType.POSITIVE) {
+            @Override
+            public void providePotionEffects(EntityLivingBase target, ArrayList<CaskManager.CaskPotionEffect> effects, NBTTagCompound compound, Fluid fluid) {
+                float value = getOrDefault(compound, fluid);
+                effects.add(new CaskManager.CaskPotionEffect(new PotionEffect(MobEffects.SPEED, (int) value),3));
+            }
+
+            @Override
+            public EssenceStack toEssence(float amount) {
+                if(amount > 0)
+                    return new EssenceStack(EssenceType.SPEED, (int)Math.ceil(amount / 400));
+                return super.toEssence(amount);
+            }
+        }.setFormatType("name_only"));
+        FluidUtil.registerModifier(new FluidModifier("slow", 0, EnumType.SECONDARY, EffectType.NEGATIVE) {
+            @Override
+            public void providePotionEffects(EntityLivingBase target, ArrayList<CaskManager.CaskPotionEffect> effects, NBTTagCompound compound, Fluid fluid) {
+                float value = getOrDefault(compound, fluid);
+                effects.add(new CaskManager.CaskPotionEffect(new PotionEffect(MobEffects.SLOWNESS, (int) value),3));
+            }
+
+            @Override
+            public EssenceStack toEssence(float amount) {
+                if(amount > 0)
+                    return new EssenceStack(EssenceType.SLOWNESS, (int)Math.ceil(amount / 400));
+                return super.toEssence(amount);
+            }
+        }.setFormatType("name_only"));
+        FluidUtil.registerModifier(new FluidModifier("regeneration", 0, EnumType.SECONDARY, EffectType.POSITIVE) {
+            @Override
+            public void providePotionEffects(EntityLivingBase target, ArrayList<CaskManager.CaskPotionEffect> effects, NBTTagCompound compound, Fluid fluid) {
+                float value = getOrDefault(compound, fluid);
+                effects.add(new CaskManager.CaskPotionEffect(new PotionEffect(MobEffects.REGENERATION, (int) value),3));
+            }
+
+            @Override
+            public EssenceStack toEssence(float amount) {
+                if(amount > 0)
+                    return new EssenceStack(EssenceType.REGENERATION, (int)Math.ceil(amount / 400));
+                return super.toEssence(amount);
+            }
+        }.setFormatType("name_only"));
+        //Tertiary modifiers
         FluidUtil.registerModifier(new FluidModifier("viscosity", 1000, EnumType.TERTIARY, EffectType.NEGATIVE) {
             @Override
             public String getFormattedText(NBTTagCompound compound, Fluid fluid) {
@@ -184,6 +362,13 @@ public class CraftingRegistry {
                     return I18n.format("distilling.modifier.dial.slower_chugging", value);
                 else
                     return I18n.format("distilling.modifier.dial.faster_chugging", value);
+            }
+
+            @Override
+            public EssenceStack toEssence(float amount) {
+                if(amount > 1000)
+                    return new EssenceStack(EssenceType.SLOWNESS, (int)Math.ceil((amount - 1000) / 200));
+                return super.toEssence(amount);
             }
         });
         FluidUtil.registerModifier(new FluidModifier("light", 0, EnumType.TERTIARY, EffectType.NEUTRAL).setFormatType("name_only"));
@@ -202,6 +387,15 @@ public class CraftingRegistry {
                 int value = (int) Math.ceil(getOrDefault(compound, fluid) / 2);
                 DecimalFormat format = Embers.proxy.getDecimalFormat("embers.decimal_format.distilling.health");
                 return I18n.format("distilling.modifier.dial.health", getLocalizedName(), format.format(value));
+            }
+
+            @Override
+            public EssenceStack toEssence(float amount) {
+                if(amount > 0)
+                    return new EssenceStack(EssenceType.REGENERATION, (int)Math.ceil(amount / 2));
+                if(amount < 0)
+                    return new EssenceStack(EssenceType.DEATH, (int)Math.ceil(amount / 10));
+                return super.toEssence(amount);
             }
         });
         FluidUtil.registerModifier(new FluidModifier("hunger", 0, EnumType.TERTIARY, EffectType.POSITIVE) {
@@ -235,6 +429,32 @@ public class CraftingRegistry {
                 if (value >= 200)
                     target.addPotionEffect(new PotionEffect(MobEffects.WITHER, (int) (value - 150)));
             }
+
+            @Override
+            public EssenceStack toEssence(float amount) {
+                if(amount > 200)
+                    return new EssenceStack(EssenceType.WITHER, (int)Math.ceil((amount - 200) / 20));
+                if(amount > 0)
+                    return new EssenceStack(EssenceType.POISON,(int)Math.ceil(amount / 20));
+                return EssenceStack.EMPTY;
+            }
+        });
+        FluidUtil.registerModifier(new FluidModifier("sweetness", 0, EnumType.TERTIARY, EffectType.POSITIVE) {
+            @Override
+            public void applyEffect(EntityLivingBase target, NBTTagCompound compound, Fluid fluid) {
+                float value = getOrDefault(compound, fluid);
+                if (value >= 50)
+                    target.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, (int) value * 5));
+            }
+
+            @Override
+            public EssenceStack toEssence(float amount) {
+                if(amount >= 50)
+                    return new EssenceStack(EssenceType.REGENERATION,(int)Math.ceil((amount - 50) / 10));
+                if(amount > 0)
+                    return new EssenceStack(EssenceType.SWEET,(int)Math.ceil(amount / 20));
+                return EssenceStack.EMPTY;
+            }
         });
         FluidUtil.registerModifier(new FluidModifier("heat", 300, EnumType.TERTIARY, EffectType.NEUTRAL) {
             @Override
@@ -249,6 +469,15 @@ public class CraftingRegistry {
                 }
                 if (value > 500) //Burning hot
                     target.setFire((int) ((value - 500) / 10));
+            }
+
+            @Override
+            public EssenceStack toEssence(float amount) {
+                if(amount > 500)
+                    return new EssenceStack(EssenceType.FIRE,(int)Math.ceil((amount - 500) / 20));
+                if(amount < 250)
+                    return new EssenceStack(EssenceType.ICE,(int)Math.ceil((250 - amount) / 20));
+                return EssenceStack.EMPTY;
             }
         });
         FluidUtil.registerModifier(new FluidModifier("volume", 0, EnumType.TERTIARY, EffectType.NEGATIVE) {
@@ -290,10 +519,12 @@ public class CraftingRegistry {
         FluidUtil.setDefaultValue(boiling_verdigris, "toxicity", 100);
 
         Fluid ale = FluidRegistry.getFluid("dwarven_ale");
+        FluidUtil.setDefaultValue(ale, "ale", 1200);
         FluidUtil.setDefaultValue(ale, "volume", 20);
         FluidUtil.setDefaultValue(ale, "fuel", 400);
 
         Fluid inner_fire = FluidRegistry.getFluid("inner_fire");
+        FluidUtil.setDefaultValue(inner_fire, "inner_fire", 1000);
         FluidUtil.setDefaultValue(inner_fire, "heat", 600);
         FluidUtil.setDefaultValue(inner_fire, "volume", 10);
         FluidUtil.setDefaultValue(inner_fire, "fuel", 1600);
@@ -301,20 +532,24 @@ public class CraftingRegistry {
         Fluid umber_ale = FluidRegistry.getFluid("umber_ale");
 
         Fluid vodka = FluidRegistry.getFluid("vodka");
+        FluidUtil.setDefaultValue(vodka, "stoutness", 1600);
         FluidUtil.setDefaultValue(vodka, "volume", 30);
         FluidUtil.setDefaultValue(vodka, "fuel", 1200);
 
         Fluid snowpoff = FluidRegistry.getFluid("snowpoff");
+        FluidUtil.setDefaultValue(snowpoff, "snowpoff", 1000);
         FluidUtil.setDefaultValue(snowpoff, "heat", 200);
         FluidUtil.setDefaultValue(snowpoff, "volume", 20);
         FluidUtil.setDefaultValue(snowpoff, "fuel", -2000);
 
         Fluid absinthe = FluidRegistry.getFluid("absinthe");
+        FluidUtil.setDefaultValue(absinthe, "inspiration", 400);
         FluidUtil.setDefaultValue(absinthe, "toxicity", 50);
         FluidUtil.setDefaultValue(absinthe, "volume", 50);
         FluidUtil.setDefaultValue(absinthe, "fuel", 800);
 
         Fluid methanol = FluidRegistry.getFluid("methanol");
+        FluidUtil.setDefaultValue(methanol, "fire_lung", 200);
         FluidUtil.setDefaultValue(methanol, "toxicity", 10);
         FluidUtil.setDefaultValue(methanol, "fuel", 2400);
 
@@ -329,11 +564,20 @@ public class CraftingRegistry {
         RecipeRegistry.mixingRecipes.add(new FluidMixingRecipe(new FluidStack[]{new FluidStack(ale, 4), FluidRegistry.getFluidStack("lava", 1)}, new FluidStack(inner_fire, 4)));
         //TODO: Umber Ale requires clockwork arcana
 
-        stillRecipes.add(new RecipeStill(new FluidStack(boiling_wort, 1), Ingredient.EMPTY, 0, new FluidStack(ale, 1)));
-        stillRecipes.add(new RecipeStill(new FluidStack(boiling_potato_juice, 3), Ingredient.EMPTY, 0, new FluidStack(vodka, 2)));
-        stillRecipes.add(new RecipeStill(new FluidStack(vodka, 1), Ingredient.fromItem(Items.SNOWBALL), 1, new FluidStack(snowpoff, 1)));
-        stillRecipes.add(new RecipeStill(new FluidStack(boiling_verdigris, 1), Ingredient.fromItem(Items.SUGAR), 0, new FluidStack(absinthe, 1)));
-        stillRecipes.add(new RecipeStill(null, new OreIngredient("logWood"), 1, new FluidStack(methanol, 1)));
+        stillRecipes.add(new RecipeStill(new FluidStack(boiling_wort, 1), Ingredient.EMPTY, 0, new FluidStack(ale, 1))
+                .setEssence(Lists.newArrayList(new EssenceStack(EssenceType.GLASS, 1))));
+        stillRecipes.add(new RecipeStill(new FluidStack(boiling_potato_juice, 3), Ingredient.EMPTY, 0, new FluidStack(vodka, 2))
+                .setEssence(Lists.newArrayList(new EssenceStack(EssenceType.VILE, 1))));
+        stillRecipes.add(new RecipeStill(new FluidStack(vodka, 1), Ingredient.fromItem(Items.SNOWBALL), 1, new FluidStack(snowpoff, 1))
+                .setEssence(Lists.newArrayList(new EssenceStack(EssenceType.ICE, 5))));
+        stillRecipes.add(new RecipeStill(new FluidStack(boiling_verdigris, 1), Ingredient.fromItem(Items.SUGAR), 0, new FluidStack(absinthe, 1))
+                .setEssence(Lists.newArrayList(new EssenceStack(EssenceType.POISON, 5), new EssenceStack(EssenceType.EXPERIENCE, 1))));
+        stillRecipes.add(new RecipeStill(null, new OreIngredient("logWood"), 1, new FluidStack(methanol, 1))
+                .setEssence(Lists.newArrayList(new EssenceStack(EssenceType.FIRE, 3), new EssenceStack(EssenceType.POISON, 1))));
+        stillRecipes.add(new RecipeStill(new FluidStack(FluidRegistry.LAVA, 3), Ingredient.EMPTY, 1, new FluidStack(FluidRegistry.LAVA, 1))
+                .setEssence(Lists.newArrayList(new EssenceStack(EssenceType.FIRE, 10))));
+        stillRecipes.add(new RecipeStill(new FluidStack(RegistryManager.fluid_molten_iron, 3), Ingredient.EMPTY, 1, new FluidStack(RegistryManager.fluid_molten_iron, 2))
+                .setEssence(Lists.newArrayList(new EssenceStack(EssenceType.EXTRACT, 15))));
 
         ArrayList<Fluid> allSoups = new ArrayList<>();
         allSoups.add(boiling_beetroot_soup);
@@ -351,10 +595,12 @@ public class CraftingRegistry {
 
         stillCatalysts.add(new CatalystInfo(Ingredient.fromStacks(smallFern), 250));
         stillCatalysts.add(new CatalystInfo(Ingredient.fromStacks(bigFern), 500));
-        stillCatalysts.add(new CatalystInfo(new OreIngredient("sugar"), 100));
+        stillCatalysts.add(new CatalystInfo(new OreIngredient("dustSugar"), 100));
         stillCatalysts.add(new CatalystInfo(Ingredient.fromItem(Items.SNOWBALL), 250));
         stillCatalysts.add(new CatalystInfo(new OreIngredient("logWood"), 750));
-        stillCatalysts.add(new CatalystInfo(Ingredient.fromItem(Registry.ESSENCE), 1000));
+        stillCatalysts.add(new CatalystInfo(Ingredient.fromItem(Registry.ESSENCE), ItemEssence.CAPACITY));
+        stillCatalysts.add(new CatalystInfo(new OreIngredient("dustSulfur"), 100));
+        stillCatalysts.add(new CatalystInfoSulfur());
 
         stillRecipes.add(new RecipeStillDoubleDistillation(allAlcohols, Ingredient.EMPTY, 0));
         stillRecipes.add(new RecipeStillModifier(allAlcohols, Ingredient.fromItem(Items.GHAST_TEAR), 1) {
@@ -371,11 +617,11 @@ public class CraftingRegistry {
             @Override
             public void modifyTooltip(List<String> tooltip) {
                 super.modifyTooltip(tooltip);
-                tooltip.add(tooltip.size() - 1, TextFormatting.GREEN + Translator.translateToLocal("distilling.effect.lifedrinker"));
-                tooltip.add(tooltip.size() - 1, TextFormatting.RED + Translator.translateToLocalFormatted("distilling.effect.add", Translator.translateToLocal("distilling.modifier.toxicity.name"), 10));
+                addModifier(tooltip, "lifedrinker", true);
+                addModifierLinear(tooltip, "toxicity", 10, false);
             }
         });
-        stillRecipes.add(new RecipeStillModifier(allAlcohols, Ingredient.fromItem(Items.GOLDEN_CARROT), 1) {
+        stillRecipes.add(new RecipeStillModifier(allAlcohols, Ingredient.fromItem(Items.RABBIT_FOOT), 1) {
             @Override
             public void modifyOutput(TileEntityStillBase tile, FluidStack output) {
                 NBTTagCompound compound = FluidUtil.createModifiers(output);
@@ -387,7 +633,22 @@ public class CraftingRegistry {
             @Override
             public void modifyTooltip(List<String> tooltip) {
                 super.modifyTooltip(tooltip);
-                tooltip.add(tooltip.size() - 1, TextFormatting.GREEN + Translator.translateToLocal("distilling.effect.steadfast"));
+                addModifier(tooltip, "steadfast", true);
+            }
+        });
+        stillRecipes.add(new RecipeStillModifier(allDrinks, Ingredient.fromItem(Items.EGG), 1) {
+            @Override
+            public void modifyOutput(TileEntityStillBase tile, FluidStack output) {
+                NBTTagCompound compound = FluidUtil.createModifiers(output);
+                float experience_boost = getModifierOrDefault("experience_boost", compound, output);
+                if (experience_boost < 18000)
+                    compound.setFloat("experience_boost", Math.min((experience_boost + 600) * 1.6f, 18000));
+            }
+
+            @Override
+            public void modifyTooltip(List<String> tooltip) {
+                super.modifyTooltip(tooltip);
+                addModifier(tooltip, "experience_boost", true);
             }
         });
         stillRecipes.add(new RecipeStillModifier(allAlcohols, new OreIngredient("dustRedstone"), 1) {
@@ -404,19 +665,25 @@ public class CraftingRegistry {
             @Override
             public void modifyTooltip(List<String> tooltip) {
                 super.modifyTooltip(tooltip);
-                tooltip.add(tooltip.size() - 1, TextFormatting.BLUE + Translator.translateToLocalFormatted("distilling.effect.add_percent", Translator.translateToLocal("distilling.modifier.duration.name"), 50));
-                tooltip.add(tooltip.size() - 1, TextFormatting.RED + Translator.translateToLocalFormatted("distilling.effect.add", Translator.translateToLocal("distilling.modifier.toxicity.name"), 5));
+                addModifierPercent(tooltip, "duration", 50, true);
+                addModifierLinear(tooltip, "toxicity", 5, false);
             }
         });
-        /*stillRecipes.add(new RecipeStillModifier(allDrinks, new OreIngredient("sugar"), 1) {
+        stillRecipes.add(new RecipeStillModifier(allDrinks, new OreIngredient("dustSugar"), 1) {
             @Override
-            public void modifyOutput(World world, TileEntityStillBase tile, FluidStack output) {
+            public void modifyOutput(TileEntityStillBase tile, FluidStack output) {
                 NBTTagCompound compound = FluidUtil.createModifiers(output);
                 float sweetness = getModifierOrDefault("sweetness",compound,output);
                 if(sweetness < 80)
                     compound.setFloat("sweetness",Math.min(sweetness+15,80));
             }
-        });*/ //TODO: Use for sweetness
+
+            @Override
+            public void modifyTooltip(List<String> tooltip) {
+                super.modifyTooltip(tooltip);
+                addModifierLinear(tooltip, "sweetness", 15, true);
+            }
+        });
         stillRecipes.add(new RecipeStillModifier(allDrinks, new OreIngredient("dustPrismarine"), 1) {
             @Override
             public void modifyOutput(TileEntityStillBase tile, FluidStack output) {
@@ -429,21 +696,30 @@ public class CraftingRegistry {
             @Override
             public void modifyTooltip(List<String> tooltip) {
                 super.modifyTooltip(tooltip);
-                tooltip.add(tooltip.size() - 1, TextFormatting.BLUE + Translator.translateToLocalFormatted("distilling.effect.sub_percent", Translator.translateToLocal("distilling.modifier.toxicity.name"), 20));
-                tooltip.add(tooltip.size() - 1, TextFormatting.BLUE + Translator.translateToLocalFormatted("distilling.effect.sub", Translator.translateToLocal("distilling.modifier.toxicity.name"), 20));
+                addModifierPercent(tooltip, "toxicity", -20, false);
+                addModifierLinear(tooltip, "toxicity", -20, false);
             }
         });
         stillRecipes.add(new RecipeStillModifier(allDrinks, Ingredient.fromItem(Items.FERMENTED_SPIDER_EYE), 1) {
             @Override
             public void modifyOutput(TileEntityStillBase tile, FluidStack output) {
                 NBTTagCompound compound = FluidUtil.createModifiers(output);
-
+                for(String modifier : FluidUtil.SORTED_MODIFIER_KEYS) {
+                    EffectType effectType = FluidUtil.getEffectType(modifier);
+                    if(effectType == EffectType.NEUTRAL)
+                        continue;
+                    float defaultValue = FluidUtil.getDefault(modifier);
+                    float value = getModifierOrDefault(modifier, compound, output);
+                    if ((value > defaultValue && effectType == EffectType.POSITIVE) || (value < defaultValue && effectType == EffectType.NEGATIVE)) {
+                        compound.setFloat(modifier, defaultValue);
+                    }
+                }
             }
 
             @Override
             public void modifyTooltip(List<String> tooltip) {
                 super.modifyTooltip(tooltip);
-                tooltip.add(tooltip.size() - 1, TextFormatting.RED + Translator.translateToLocalFormatted("distilling.effect.sub_percent", Translator.translateToLocal("distilling.modifier.toxicity.name"), 20));
+                addModifier(tooltip, "erase_positive", false);
             }
         });
         stillRecipes.add(new RecipeStillModifier(allDrinks, new OreIngredient("cropNetherWart"), 1) {
@@ -459,8 +735,8 @@ public class CraftingRegistry {
             @Override
             public void modifyTooltip(List<String> tooltip) {
                 super.modifyTooltip(tooltip);
-                tooltip.add(tooltip.size() - 1, TextFormatting.BLUE + Translator.translateToLocalFormatted("distilling.effect.add", Translator.translateToLocal("distilling.modifier.health.name"), 4));
-                tooltip.add(tooltip.size() - 1, TextFormatting.BLUE + Translator.translateToLocalFormatted("distilling.effect.sub", Translator.translateToLocal("distilling.modifier.hunger.name"), 3));
+                addModifierLinear(tooltip, "health", 4, true);
+                addModifierLinear(tooltip, "hunger", -3, true);
             }
         });
         stillRecipes.add(new RecipeStillModifier(allDrinks, Ingredient.fromStacks(new ItemStack(Blocks.ICE)), 1) {
@@ -475,7 +751,7 @@ public class CraftingRegistry {
             @Override
             public void modifyTooltip(List<String> tooltip) {
                 super.modifyTooltip(tooltip);
-                tooltip.add(tooltip.size() - 1, TextFormatting.GREEN + Translator.translateToLocalFormatted("distilling.effect.sub_percent", Translator.translateToLocal("distilling.modifier.heat.name"), 50));
+                addModifierPercent(tooltip, "heat", -50, false);
             }
         });
         stillRecipes.add(new RecipeStillModifierFood(allSoups, new OreIngredient("cropPotato"), 1, 2, 0.3f));
@@ -492,7 +768,252 @@ public class CraftingRegistry {
             @Override
             public void modifyTooltip(List<String> tooltip) {
                 super.modifyTooltip(tooltip);
-                tooltip.add(tooltip.size() - 1, TextFormatting.GREEN + Translator.translateToLocal("distilling.effect.thick_soup"));
+                addModifier(tooltip, "thick_soup", true);
+            }
+        });
+        stillRecipes.add(new RecipeStillModifier(allDrinks, Ingredient.fromStacks(Registry.ESSENCE.getStack(EssenceType.SWEET)), 1) {
+            @Override
+            public void modifyOutput(TileEntityStillBase tile, FluidStack output) {
+                NBTTagCompound compound = FluidUtil.createModifiers(output);
+                float heat = getModifierOrDefault("sweetness", compound, output);
+                compound.setFloat("sweetness", heat + 20);
+            }
+
+            @Override
+            public void modifyTooltip(List<String> tooltip) {
+                super.modifyTooltip(tooltip);
+                addModifierLinear(tooltip, "sweetness", 20, true);
+            }
+        });
+        stillRecipes.add(new RecipeStillModifier(allDrinks, Ingredient.fromStacks(Registry.ESSENCE.getStack(EssenceType.POISON)), 1) {
+            @Override
+            public void modifyOutput(TileEntityStillBase tile, FluidStack output) {
+                NBTTagCompound compound = FluidUtil.createModifiers(output);
+                float toxicity = getModifierOrDefault("toxicity", compound, output);
+                compound.setFloat("toxicity", toxicity + 20);
+            }
+
+            @Override
+            public void modifyTooltip(List<String> tooltip) {
+                super.modifyTooltip(tooltip);
+                addModifierLinear(tooltip, "toxicity", 20, false);
+            }
+        });
+        stillRecipes.add(new RecipeStillModifier(allDrinks, Ingredient.fromStacks(Registry.ESSENCE.getStack(EssenceType.WITHER)), 1) {
+            @Override
+            public void modifyOutput(TileEntityStillBase tile, FluidStack output) {
+                NBTTagCompound compound = FluidUtil.createModifiers(output);
+                float toxicity = getModifierOrDefault("toxicity", compound, output);
+                compound.setFloat("toxicity", Math.max(200,toxicity + 50));
+            }
+
+            @Override
+            public void modifyTooltip(List<String> tooltip) {
+                super.modifyTooltip(tooltip);
+                addModifier(tooltip, "wither", false);
+                addModifierLinear(tooltip, "toxicity", 50, false);
+            }
+        });
+        stillRecipes.add(new RecipeStillModifier(allDrinks, Ingredient.fromStacks(Registry.ESSENCE.getStack(EssenceType.DEATH)), 1) {
+            @Override
+            public void modifyOutput(TileEntityStillBase tile, FluidStack output) {
+                NBTTagCompound compound = FluidUtil.createModifiers(output);
+                float health = getModifierOrDefault("health", compound, output);
+                compound.setFloat("health", Math.min(-20,health - 10));
+            }
+
+            @Override
+            public void modifyTooltip(List<String> tooltip) {
+                super.modifyTooltip(tooltip);
+                addModifier(tooltip, "death", false);
+                addModifierLinear(tooltip, "health", -10, true);
+            }
+        });
+        stillRecipes.add(new RecipeStillModifier(allDrinks, Ingredient.fromStacks(Registry.ESSENCE.getStack(EssenceType.VILE)), 1) {
+            @Override
+            public void modifyOutput(TileEntityStillBase tile, FluidStack output) {
+                NBTTagCompound compound = FluidUtil.createModifiers(output);
+                float health = getModifierOrDefault("health", compound, output);
+                float toxicity = getModifierOrDefault("toxicity", compound, output);
+                float toConvert = Math.max(0,Math.min(toxicity,20));
+                compound.setFloat("health", health - toConvert / 2);
+                compound.setFloat("toxicity", toxicity - toConvert);
+            }
+
+            @Override
+            public void modifyTooltip(List<String> tooltip) {
+                super.modifyTooltip(tooltip);
+                addModifier(tooltip, "vile", false);
+            }
+        });
+        stillRecipes.add(new RecipeStillModifier(allDrinks, Ingredient.fromStacks(Registry.ESSENCE.getStack(EssenceType.FIRE)), 1) {
+            @Override
+            public void modifyOutput(TileEntityStillBase tile, FluidStack output) {
+                NBTTagCompound compound = FluidUtil.createModifiers(output);
+                float heat = getModifierOrDefault("heat", compound, output);
+                float fuel = getModifierOrDefault("fuel", compound, output);
+                compound.setFloat("heat", heat + 40);
+                compound.setFloat("fuel", fuel + 500);
+            }
+
+            @Override
+            public void modifyTooltip(List<String> tooltip) {
+                super.modifyTooltip(tooltip);
+                addModifierLinear(tooltip, "heat", 40, false);
+                addModifierLinear(tooltip, "fuel", 500, false);
+            }
+        });
+        stillRecipes.add(new RecipeStillModifier(allDrinks, Ingredient.fromStacks(Registry.ESSENCE.getStack(EssenceType.ICE)), 1) {
+            @Override
+            public void modifyOutput(TileEntityStillBase tile, FluidStack output) {
+                NBTTagCompound compound = FluidUtil.createModifiers(output);
+                float heat = getModifierOrDefault("heat", compound, output);
+                compound.setFloat("heat", heat - 20);
+            }
+
+            @Override
+            public void modifyTooltip(List<String> tooltip) {
+                super.modifyTooltip(tooltip);
+                addModifierLinear(tooltip, "heat", -20, false);
+            }
+        });
+        stillRecipes.add(new RecipeStillModifier(allDrinks, Ingredient.fromStacks(Registry.ESSENCE.getStack(EssenceType.LIFEDRINKER)), 1) {
+            @Override
+            public void modifyOutput(TileEntityStillBase tile, FluidStack output) {
+                NBTTagCompound compound = FluidUtil.createModifiers(output);
+                float lifedrinker = getModifierOrDefault("lifedrinker", compound, output);
+                compound.setFloat("lifedrinker", lifedrinker + 800);
+            }
+
+            @Override
+            public void modifyTooltip(List<String> tooltip) {
+                super.modifyTooltip(tooltip);
+                addModifier(tooltip, "lifedrinker", true);
+            }
+        });
+        stillRecipes.add(new RecipeStillModifier(allDrinks, Ingredient.fromStacks(Registry.ESSENCE.getStack(EssenceType.GLASS)), 1) {
+            @Override
+            public void modifyOutput(TileEntityStillBase tile, FluidStack output) {
+                NBTTagCompound compound = FluidUtil.createModifiers(output);
+                float glass = getModifierOrDefault("glass", compound, output);
+                compound.setFloat("glass", glass + 800);
+            }
+
+            @Override
+            public void modifyTooltip(List<String> tooltip) {
+                super.modifyTooltip(tooltip);
+                addModifier(tooltip, "glass", false);
+            }
+        });
+        stillRecipes.add(new RecipeStillModifier(allDrinks, Ingredient.fromStacks(Registry.ESSENCE.getStack(EssenceType.SPEED)), 1) {
+            @Override
+            public void modifyOutput(TileEntityStillBase tile, FluidStack output) {
+                NBTTagCompound compound = FluidUtil.createModifiers(output);
+                float speed = getModifierOrDefault("speed", compound, output);
+                compound.setFloat("speed", speed + 800);
+            }
+
+            @Override
+            public void modifyTooltip(List<String> tooltip) {
+                super.modifyTooltip(tooltip);
+                addModifier(tooltip, "speed", true);
+            }
+        });
+        stillRecipes.add(new RecipeStillModifier(allDrinks, Ingredient.fromStacks(Registry.ESSENCE.getStack(EssenceType.SLOWNESS)), 1) {
+            @Override
+            public void modifyOutput(TileEntityStillBase tile, FluidStack output) {
+                NBTTagCompound compound = FluidUtil.createModifiers(output);
+                float slow = getModifierOrDefault("slow", compound, output);
+                compound.setFloat("slow", slow + 800);
+            }
+
+            @Override
+            public void modifyTooltip(List<String> tooltip) {
+                super.modifyTooltip(tooltip);
+                addModifier(tooltip, "slow", false);
+            }
+        });
+        stillRecipes.add(new RecipeStillModifier(allDrinks, Ingredient.fromStacks(Registry.ESSENCE.getStack(EssenceType.REGENERATION)), 1) {
+            @Override
+            public void modifyOutput(TileEntityStillBase tile, FluidStack output) {
+                NBTTagCompound compound = FluidUtil.createModifiers(output);
+                float regeneration = getModifierOrDefault("regeneration", compound, output);
+                compound.setFloat("regeneration", regeneration + 800);
+            }
+
+            @Override
+            public void modifyTooltip(List<String> tooltip) {
+                super.modifyTooltip(tooltip);
+                addModifier(tooltip, "regeneration", true);
+            }
+        });
+        stillRecipes.add(new RecipeStillModifier(allDrinks, Ingredient.fromStacks(Registry.ESSENCE.getStack(EssenceType.EXPERIENCE)), 1) {
+            @Override
+            public void modifyOutput(TileEntityStillBase tile, FluidStack output) {
+                NBTTagCompound compound = FluidUtil.createModifiers(output);
+                float experience_boost = getModifierOrDefault("experience_boost", compound, output);
+                compound.setFloat("experience_boost", experience_boost + 800);
+            }
+
+            @Override
+            public void modifyTooltip(List<String> tooltip) {
+                super.modifyTooltip(tooltip);
+                addModifier(tooltip, "experience_boost", true);
+            }
+        });
+        stillRecipes.add(new RecipeStillModifier(allDrinks, Ingredient.fromStacks(Registry.ESSENCE.getStack(EssenceType.EXTRACT)), 1) {
+            @Override
+            public void modifyOutput(TileEntityStillBase tile, FluidStack output) {
+                NBTTagCompound compound = FluidUtil.createModifiers(output);
+                String minModifier = getSmallestModifier(output, compound);
+                if(minModifier != null)
+                    compound.setFloat(minModifier, FluidUtil.getDefault(minModifier));
+            }
+
+            @Override
+            public List<EssenceStack> getEssenceOutput(TileEntityStillBase tile, FluidStack input, ItemStack catalyst) {
+                NBTTagCompound compound = FluidUtil.createModifiers(input);
+                String minModifier = getSmallestModifier(input, compound);
+                if(minModifier != null) {
+                    float value = getModifierOrDefault(minModifier, compound, input);
+                    return Lists.newArrayList(FluidUtil.modifierToEssence(minModifier, value));
+                }
+                return Lists.newArrayList();
+            }
+
+            @Override
+            public List<ExtraRecipeInfo> getExtraInfo() {
+                return Lists.newArrayList(new ExtraRecipeInfo(Lists.newArrayList(Registry.ESSENCE.getStack(EssenceType.CHAOS))) {
+                    @Override
+                    public void modifyTooltip(List<String> strings) {
+                        strings.clear();
+                        strings.add(Translator.translateToLocalFormatted("distilling.effect.decanter"));
+                        strings.add(Translator.translateToLocalFormatted("distilling.effect.decanter.desc"));
+                        strings.add(Translator.translateToLocalFormatted("distilling.effect.decanter.extract"));
+                    }
+                });
+            }
+
+            @Override
+            public void modifyTooltip(List<String> tooltip) {
+                super.modifyTooltip(tooltip);
+                addModifier(tooltip, "extract", true);
+            }
+
+            private String getSmallestModifier(FluidStack output, NBTTagCompound compound) {
+                float minValue = Float.POSITIVE_INFINITY;
+                String minModifier = null;
+                for(String modifier : FluidUtil.SORTED_MODIFIER_KEYS) {
+                    if(FluidUtil.getType(modifier) == EnumType.PRIMARY)
+                        continue;
+                    float value = getModifierOrDefault(modifier, compound, output) - FluidUtil.getDefault(modifier);
+                    EssenceStack essence = FluidUtil.modifierToEssence(modifier, value);
+                    if(!essence.isEmpty() && value != 0 && Math.abs(value) < minValue) {
+                        minModifier = modifier;
+                        minValue = Math.abs(value);
+                    }
+                }
+                return minModifier;
             }
         });
     }

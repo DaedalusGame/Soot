@@ -71,6 +71,7 @@ public class EssenceType implements Comparable<EssenceType> {
     };
     public static final EssenceType PROJECTILE = new EssenceType("projectile",new Color(255,255,255,255),new Color(0,0,0,255));
     public static final EssenceType GLASS = new EssenceType("glass",new Color(255,255,255,255),new Color(0,0,0,0));
+    public static final EssenceType EXTRACT = new EssenceType("extract",new Color(192,192,64,255),new Color(192,128,128,255));
 
     @SideOnly(Side.CLIENT)
     private static float getTicks() {

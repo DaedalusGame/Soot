@@ -28,7 +28,8 @@ public class StillWrapper implements IRecipeWrapper {
         outputFluids.add(recipe.getOutputs());
         ingredients.setInputLists(FluidStack.class,inputFluids);
         ingredients.setOutputLists(FluidStack.class,outputFluids);
-        ingredients.setInputs(ItemStack.class, Lists.newArrayList(recipe.catalystInput.getMatchingStacks()));
+        ingredients.setInputs(ItemStack.class, recipe.getCatalysts());
+        ingredients.setOutputs(ItemStack.class, recipe.getEssenceItems());
     }
 
     public void modifyTooltip(List<String> tooltip) {

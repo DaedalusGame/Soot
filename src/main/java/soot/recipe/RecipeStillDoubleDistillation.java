@@ -14,6 +14,7 @@ import soot.tile.TileEntityStillBase;
 import soot.util.FluidUtil;
 import teamroots.embers.api.upgrades.UpgradeUtil;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -50,15 +51,16 @@ public class RecipeStillDoubleDistillation extends RecipeStillModifier {
     public void modifyTooltip(List<String> tooltip) {
         super.modifyTooltip(tooltip);
         //tooltip.add(tooltip.size() - 1, TextFormatting.BOLD + Translator.translateToLocalFormatted("distilling.effect.double_distillation"));
-        tooltip.add(tooltip.size() - 1, TextFormatting.BLUE + Translator.translateToLocalFormatted("distilling.effect.add", Translator.translateToLocal("distilling.modifier.concentration.name"), 10));
-        tooltip.add(tooltip.size() - 1, TextFormatting.BLUE + Translator.translateToLocalFormatted("distilling.effect.add_percent", Translator.translateToLocal("distilling.modifier.concentration.name"), 80));
-        tooltip.add(tooltip.size() - 1, TextFormatting.RED + Translator.translateToLocalFormatted("distilling.effect.add_percent", Translator.translateToLocal("distilling.modifier.volume.name"), 10));
-        tooltip.add(tooltip.size() - 1, TextFormatting.RED + Translator.translateToLocalFormatted("distilling.effect.loss", 33));
+        addModifierLinear(tooltip, "concentration", 10, true);
+        addModifierPercent(tooltip, "concentration", 80, true);
+        addModifierPercent(tooltip, "volume", 10, false);
+        addModifierLoss(tooltip, 33);
     }
 
     @Override
     public List<ExtraRecipeInfo> getExtraInfo() {
-        return Lists.newArrayList(new ExtraRecipeInfo(Lists.newArrayList(new ItemStack(Registry.DISTILLATION_PIPE))) {
+        List<ExtraRecipeInfo> extraInfo = super.getExtraInfo();
+        extraInfo.add(0, new ExtraRecipeInfo(Lists.newArrayList(new ItemStack(Registry.DISTILLATION_PIPE))) {
             @Override
             public void modifyTooltip(List<String> strings) {
                 strings.clear();
@@ -66,5 +68,6 @@ public class RecipeStillDoubleDistillation extends RecipeStillModifier {
                 strings.add(Translator.translateToLocalFormatted("distilling.effect.double_distillation.desc"));
             }
         });
+        return extraInfo;
     }
 }

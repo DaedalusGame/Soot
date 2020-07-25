@@ -20,14 +20,16 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import soot.recipe.CraftingRegistry;
 import teamroots.embers.EventManager;
+import teamroots.embers.tileentity.IItemPipeConnectable;
 import teamroots.embers.tileentity.ITileEntityBase;
+import teamroots.embers.util.EnumPipeConnection;
 import teamroots.embers.util.Misc;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Random;
 
-public class TileEntityStillTip extends TileEntity implements ITileEntityBase, ITickable {
+public class TileEntityStillTip extends TileEntity implements ITileEntityBase, ITickable, IItemPipeConnectable {
     public FluidTank tank = new FluidTank(1000);
     public ItemStackHandler inventory = new ItemStackHandler(1){
         @Override
@@ -187,5 +189,10 @@ public class TileEntityStillTip extends TileEntity implements ITileEntityBase, I
                 }
             }
         }
+    }
+
+    @Override
+    public EnumPipeConnection getConnection(EnumFacing enumFacing) {
+        return EnumPipeConnection.PIPE;
     }
 }

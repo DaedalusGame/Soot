@@ -36,6 +36,6 @@ public class RecipeStillModifierFood extends RecipeStillModifier {
     @Override
     public void modifyTooltip(List<String> tooltip) {
         super.modifyTooltip(tooltip);
-        tooltip.add(tooltip.size()-1,TextFormatting.BLUE+Translator.translateToLocalFormatted("distilling.effect.add",Translator.translateToLocal("distilling.modifier.hunger.name"),hungerAdded));
+        addModifierLinear(tooltip,"hunger", hungerAdded, true);
     }
 }

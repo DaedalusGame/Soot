@@ -4,6 +4,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import soot.brewing.EssenceStack;
 import soot.brewing.FluidModifier;
 
 import java.util.HashMap;
@@ -67,6 +68,38 @@ public class FluidUtil {
         NBTTagCompound brew_modifiers = stack.tag != null ? stack.tag.getCompoundTag(BREW_MODIFIERS_TAG) : new NBTTagCompound();
         long seed = world.getSeed() ^ brew_modifiers.hashCode() + seedoffset;
         return new Random(seed);
+    }
+
+    public static FluidModifier.EnumType getType(String name) {
+        FluidModifier modifier = MODIFIERS.get(name);
+        if(modifier != null)
+            return modifier.type;
+        else
+            return FluidModifier.EnumType.TERTIARY;
+    }
+
+    public static FluidModifier.EffectType getEffectType(String name) {
+        FluidModifier modifier = MODIFIERS.get(name);
+        if(modifier != null)
+            return modifier.effectType;
+        else
+            return FluidModifier.EffectType.NEUTRAL;
+    }
+
+    public static EssenceStack modifierToEssence(String name, float amount) {
+        FluidModifier modifier = MODIFIERS.get(name);
+        if(modifier != null)
+            return modifier.toEssence(amount);
+        else
+            return EssenceStack.EMPTY;
+    }
+
+    public static float getDefault(String name) {
+        FluidModifier modifier = MODIFIERS.get(name);
+        if(modifier != null)
+            return modifier.defaultValue;
+        else
+            return 0;
     }
 
     public static float getModifier(FluidStack stack, String name)

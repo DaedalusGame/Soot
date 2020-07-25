@@ -18,10 +18,14 @@ public class EssenceStack {
     }
 
     public EssenceType getEssence() {
+        if(isEmpty())
+            return EssenceType.NULL;
         return essence;
     }
 
     public int getAmount() {
+        if(isEmpty())
+            return 0;
         return amount;
     }
 
@@ -29,16 +33,42 @@ public class EssenceStack {
         this.amount = amount;
     }
 
-    public void add(EssenceStack other) {
-        amount += other.amount;
+    public void shrink(int amount) {
+        this.amount = Math.max(this.amount - amount, 0);
     }
 
-    public void remove(EssenceStack other) {
-        amount = Math.max(0,amount-other.amount);
+    public void grow(int amount) {
+        this.amount += amount;
+    }
+
+    /**
+     *
+     * @param other
+     * @param max how large this stack can get at max
+     * @return the remainder of the other stack
+     */
+    public EssenceStack merge(EssenceStack other, int max) {
+        int amount = Math.min(other.amount, max - this.amount);
+        grow(amount);
+        EssenceStack copy = other.copy();
+        copy.shrink(amount);
+        return copy;
+    }
+
+    /**
+     *
+     * @param amount
+     * @return the newly split off stack
+     */
+    public EssenceStack split(int amount) {
+        amount = Math.min(amount, this.amount);
+        EssenceStack copy = withSize(amount);
+        shrink(amount);
+        return copy;
     }
 
     public boolean isEmpty() {
-        return essence == null || amount <= 0;
+        return essence == null || essence == EssenceType.NULL || amount <= 0;
     }
 
     private void readFromNBT(NBTTagCompound nbt) {
@@ -47,8 +77,18 @@ public class EssenceStack {
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-        nbt.setString("type",essence.getName());
-        nbt.setInteger("amount",amount);
+        nbt.setString("type",getEssence().getName());
+        nbt.setInteger("amount",getAmount());
         return nbt;
+    }
+
+    public EssenceStack copy() {
+        return new EssenceStack(essence, amount);
+    }
+
+    public EssenceStack withSize(int amount) {
+        EssenceStack copy = copy();
+        copy.setAmount(amount);
+        return copy;
     }
 }

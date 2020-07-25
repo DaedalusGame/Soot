@@ -71,6 +71,10 @@ embers.research.page.distillation_pipe=Auxiliary Filter
 embers.research.page.distillation_pipe.title=Double Distilled
 embers.research.page.distillation_pipe.desc=As opposed to Hedge Alchemy, glowstone will not increase the power of booze effects. Instead, you found that adding an Auxiliary Filter upgrade enables the still to distill alcohol again and again, concentrating it. Concentration will remove particles from the effect, and can also increase the magnitude of the effect by 1. The downside is that after concentrating, the drink will be more alcoholic and more likely to make you tipsy...
 
+embers.research.page.decanter=Essence Decanter
+embers.research.page.decanter.title=Effect Extraction
+embers.research.page.decanter.desc=All fluids contain some manner of alchemical aspect. Applying the Essence Decanter to a Still allows you to extract some of these aspects. The aspects will be collected in the top half of the Decanter, and can be bottled in flasks by hand or by an item pipe.
+
 embers.research.page.alchemy_dial=Alchemy Dial
 embers.research.page.alchemy_dial.title=In-depth Analysis
 embers.research.page.alchemy_dial.desc=Experienced brewers may analyse brewing outputs by instinct, but rookies are often left in the dust. This Alchemy Dial will help with that. Attaching it to a fluid tank containing a brew will identify all properties thereof. Considering the steep cost of this measurement device, more uses must surely exist... Perhaps they will reveal themselves soon.
@@ -123,6 +127,14 @@ embers.research.page.steadfast=Steadfast
 embers.research.page.steadfast.title=Speeding like a Hare
 embers.research.page.steadfast.desc=Steadfast is a modifier applicable to any alcohol. When a brew with Steadfast is consumed, your speed will increase a bit. This stacks with regular speed, but comes at a drawback of making you more susceptible to knockback. The effect can be lengthened by applying the modifier more often.
 
+embers.research.page.experience_boost=Experience Boost
+embers.research.page.experience_boost.title=Probably kind of overpowered.
+embers.research.page.experience_boost.desc=Experience Boost is a modifier applicable to any drink. When a brew with Experience Boost is consumed, it will make monster kills drop extra experience. The effect can be lengthened by applying the modifier more often.
+
+embers.research.page.glass=Glass
+embers.research.page.glass.title=Fragile, not §ofragile
+embers.research.page.glass.desc=Glass is a rather rare modifier, and applicable to any drink. When a brew with Glass is consumed, you will suffer the negative effects of Ale, but none of the positive effects. This means that you will take a lot more damage from attacks. The effect can be lengthened by applying the modifier more often.
+
 embers.research.page.duration=Duration
 embers.research.page.duration.title=Prolonging the Inevitable
 embers.research.page.duration.desc=Just like in Hedge Alchemy, redstone has a prolonging effect on alcoholic brews. Applying this modifier increases the duration of all effects granted by the brew. The duration can further increase by applying this modifier several times. Be warned that redstone is a mercury or arsenic compound and will add a small amount of toxicity to your drink.
@@ -130,6 +142,14 @@ embers.research.page.duration.desc=Just like in Hedge Alchemy, redstone has a pr
 embers.research.page.purification=Purification
 embers.research.page.purification.title=Curing Foolishness
 embers.research.page.purification.desc=When adding some modifiers, due to the materials that are mixed into your brew, it may add a small amount of toxicity to it. Toxicity comes with unpleasant effects like nausea and vomiting. By adding prismarine crystals, some of the toxins are purged from the drink, making it safer to consume.
+
+embers.research.page.tainting=Tainting
+embers.research.page.tainting.title=Wine for a Lord
+embers.research.page.tainting.desc=Adding Fermented Spider Eye to a drink will remove all positive effects the drink had, turning it into an inert soup at best and a horrid poison at worst.
+
+embers.research.page.sweetening=Sweetening
+embers.research.page.sweetening.title=Frostschutzwein
+embers.research.page.sweetening.desc=Adding sugar is a safe alternative to other chemical poisons to make a drink sweeter. The sweetest drinks can even bestow a regenerating effect on you. At the cost of cavities.
 
 embers.research.page.healing=Healing
 embers.research.page.healing.title=Greedy
@@ -142,6 +162,10 @@ embers.research.page.cooling.desc=Some brews are quite hot and when drunk can ca
 embers.research.page.stew=Stewing
 embers.research.page.stew.title=Boil em, Mash em, ...
 embers.research.page.stew.desc=Beetroot Soup is good, but it's a little bland. Adding potatoes, carrots or other foods can make the soup more tasty and filling. Just beware that adding wheat, while filling, will drastically increase the time it takes to drink the soup.
+
+embers.research.page.essence=Essence
+embers.research.page.essence.title=Effect Injection
+embers.research.page.essence.desc=Essences collected in suitable containers can be used as catalysts in brewing and imbue their alchemical aspects on the drink. This method of effect addition is much more efficient and allows you to ignore certain limits and even gain exotic modifiers you couldn't get any other way.
 
 embers.research.page.alchemical_mixer_category=Alchemical Mixing
 embers.research.page.primary_effects_category=Primary Effects
@@ -158,6 +182,7 @@ tile.still.name=Brewing Still
 tile.alchemy_globe.name=Alchemical Recombulator
 tile.insulation.name=Heat Insulation
 tile.distillation_pipe.name=Auxiliary Filter
+tile.decanter.name=Essence Decanter
 
 tile.scale.name=Scales
 tile.redstone_bin.name=Trapdoor Bin
@@ -201,27 +226,7 @@ item.sulfur_clump.name=Liver of Sulfur
 item.eitr.name=Eitr
 item.mundane_stone.name=Mundane Stone
 item.witch_fire.name=Beltaine Brazier
-item.essence.chaos=Chaos Essence
-item.essence.cloud=Cloudy Essence
-item.essence.death=Death Essence
-item.essence.experience=Intelligent Essence
-item.essence.fire=Fiery Essence
-item.essence.glass=Glassy Essence
-item.essence.haste=Hasty Essence
-item.essence.ice=Icy Essence
-item.essence.inversion=Inverting Essence
-item.essence.lifedrinker=Vampiric Essence
-item.essence.null=Empty Essence
-item.essence.poison=Fetid Essence
-item.essence.projectile=Projectile Essence
-item.essence.regeneration=Regenerative Essence
-item.essence.slowness=Lazy Essence
-item.essence.sour=Sour Essence
-item.essence.speed=Speedy Essence
-item.essence.sweet=Sweet Essence
-item.essence.toxin=Toxifying Essence
-item.essence.vile=Vile Essence
-item.essence.wither=Withering Essence
+item.essence.name=%s
 
 fluid.sugar=Molten Sugar
 fluid.antimony=Molten Antimony
@@ -241,6 +246,11 @@ fluid.snowpoff=Snowpoff Vodka
 potion.potency.2=III
 potion.potency.3=IV
 potion.potency.4=V
+potion.potency.5=VI
+potion.potency.6=VII
+potion.potency.7=VIII
+potion.potency.8=IX
+potion.potency.9=X
 
 effect.ale=Ale
 effect.stoutness=Stoutness
@@ -252,6 +262,8 @@ effect.fire_lung=Fire Lung
 effect.snowpoff=Snowpoff
 effect.steadfast=Steadfast
 effect.witchburn=Witchburn
+effect.glass=Glassified
+effect.experience_boost=Experience Boost
 
 embers.tooltip.modifier.mundane=Mundane %s
 embers.tooltip.modifier.witchburn=Witchburn %s
@@ -267,20 +279,66 @@ death.attack.acid=%1$s dissolved
 
 message.scalding=§cOuch! Hot...!
 
+distilling.essence.chaos.name=Chaos Essence
+distilling.essence.cloud.name=Cloudy Essence
+distilling.essence.death.name=Death Essence
+distilling.essence.experience.name=Intelligent Essence
+distilling.essence.fire.name=Fiery Essence
+distilling.essence.glass.name=Glassy Essence
+distilling.essence.haste.name=Hasty Essence
+distilling.essence.ice.name=Icy Essence
+distilling.essence.inversion.name=Inverting Essence
+distilling.essence.lifedrinker.name=Vampiric Essence
+distilling.essence.null.name=Empty Essence
+distilling.essence.poison.name=Fetid Essence
+distilling.essence.projectile.name=Projectile Essence
+distilling.essence.regeneration.name=Regenerative Essence
+distilling.essence.slowness.name=Lazy Essence
+distilling.essence.sour.name=Sour Essence
+distilling.essence.speed.name=Speedy Essence
+distilling.essence.sweet.name=Sweet Essence
+distilling.essence.toxin.name=Toxifying Essence
+distilling.essence.vile.name=Vile Essence
+distilling.essence.wither.name=Withering Essence
+distilling.essence.extract.name=Extracting Essence
+
 distilling.effect.header=Distilling Effects:
 distilling.effect.add=%s +%d
 distilling.effect.add_percent=%s +%d%%
 distilling.effect.sub=%s -%d
 distilling.effect.sub_percent=%s -%d%%
 distilling.effect.loss=%d%% lost in Distillation
+
+distilling.effect.ale=Ale
+distilling.effect.stoutness=Stoutness
+distilling.effect.inner_fire=Inner Fire
+distilling.effect.snowpoff=Snowpoff
+distilling.effect.inspiration=Inspiration
+distilling.effect.fire_lung=Fire Lung
 distilling.effect.lifedrinker=Lifedrinker
 distilling.effect.steadfast=Steadfast
+distilling.effect.experience_boost=Experience Boost
 distilling.effect.enlightened=Enlightened
+distilling.effect.speed=Speed
+distilling.effect.slow=Slowness
+distilling.effect.resistance=Resistance
+distilling.effect.glass=Glass
+distilling.effect.regeneration=Regeneration
+distilling.effect.wither=Wither
+distilling.effect.death=Death
+
 distilling.effect.thick_soup=Thickened
-distilling.effect.double_distillation=Double Distillation
-distilling.effect.double_distillation.desc=Requires Auxiliary Filter Upgrade
-distilling.effect.decanter=Essence Extraction
-distilling.effect.decanter.desc=Requires Essence Decanter Upgrade
+distilling.effect.extract=Extracts weakest modifier
+distilling.effect.erase_positive=Removes all positive modifiers
+distilling.effect.vile=Converts toxicity into health damage
+
+distilling.effect.double_distillation=§dDouble Distillation
+distilling.effect.double_distillation.desc=§dRequires Auxiliary Filter Upgrade
+distilling.effect.decanter=§dEssence Extraction
+distilling.effect.decanter.desc=§dRequires Essence Decanter Upgrade
+distilling.effect.decanter.essence=Produces %2$s %1$s
+distilling.effect.decanter.extract=Produces essence from removed modifier
+
 distilling.modifier.toxicity.name=Toxicity
 distilling.modifier.concentration.name=Concentration
 distilling.modifier.duration.name=Duration
@@ -290,15 +348,25 @@ distilling.modifier.light.name=Luminescence
 distilling.modifier.health.name=Health Restored
 distilling.modifier.hunger.name=Hunger Restored
 distilling.modifier.saturation.name=Saturation Restored
-distilling.modifier.ale.name=Glass
+distilling.modifier.sweetness.name=Sweetness
+
+distilling.modifier.ale.name=Ale
 distilling.modifier.stoutness.name=Stout
 distilling.modifier.inner_fire.name=Inner Fire
 distilling.modifier.inspiration.name=Inspiration
 distilling.modifier.fire_lung.name=Fire Lung
 distilling.modifier.snowpoff.name=Snowpoff
+
 distilling.modifier.lifedrinker.name=Lifedrinker
 distilling.modifier.steadfast.name=Steadfast
 distilling.modifier.enlightened.name=Enlightened
+distilling.modifier.speed.name=Speed
+distilling.modifier.slow.name=Slowness
+distilling.modifier.resistance.name=Resistance
+distilling.modifier.glass.name=Glass
+distilling.modifier.regeneration.name=Regeneration
+distilling.modifier.experience_boost.name=Experience Boost
+
 distilling.modifier.volume.name=Volume
 distilling.modifier.fuel.name=Flammability
 

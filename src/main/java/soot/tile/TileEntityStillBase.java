@@ -3,6 +3,7 @@ package soot.tile;
 import net.minecraft.block.BlockWallSign;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -28,6 +29,7 @@ import soot.util.FluidUtil;
 import soot.util.HeatManager;
 import teamroots.embers.Embers;
 import teamroots.embers.EventManager;
+import teamroots.embers.api.event.MachineRecipeEvent;
 import teamroots.embers.api.upgrades.IUpgradeProvider;
 import teamroots.embers.api.upgrades.UpgradeUtil;
 import teamroots.embers.tileentity.ITileEntityBase;
@@ -39,9 +41,11 @@ import java.util.HashSet;
 import java.util.List;
 
 public class TileEntityStillBase extends TileEntity implements ITileEntityBase, ITickable, ISoundController {
+    public static final int PROCESS_TIME = 40;
     public FluidTank tank = new FluidTank(5000);
     public List<IUpgradeProvider> upgrades;
     private int ticksExisted;
+    double progress;
 
     public static final int SOUND_NONE = 0;
     public static final int SOUND_HOT = 1;
@@ -165,14 +169,23 @@ public class TileEntityStillBase extends TileEntity implements ITileEntityBase, 
             upgrades = UpgradeUtil.getUpgrades(world, pos, EnumFacing.HORIZONTALS); //TODO: Cache both of these calls
             UpgradeUtil.verifyUpgrades(this, upgrades);
 
-            int cookTime = (int) Math.ceil(MathHelper.clampedLerp(1, 40, 1.0 - (heat / 200)) * (1.0 / UpgradeUtil.getTotalSpeedModifier(this, upgrades)));
-            if (ticksExisted % cookTime == 0) {
+            double speedMod = UpgradeUtil.getTotalSpeedModifier(this, upgrades);
+            double heatSpeed = 1;
+            if(heat > 200)
+                heatSpeed = 1 + (heat - 200) / 100;
+            progress += speedMod * heatSpeed;
+            int cookTime = (int) Math.ceil(MathHelper.clampedLerp(1, 40, 1.0 - (heat / 200)) * (1.0 / speedMod));
+            if (progress >= cookTime) {
                 FluidTank output = tip.tank;
                 FluidStack inputStack = tank.getFluid();
-                RecipeStill recipe = CraftingRegistry.getStillRecipe(this, inputStack, tip.getCurrentCatalyst());
-                if (recipe != null) {
+                RecipeStill recipe = getRecipe(inputStack, tip.getCurrentCatalyst());
+                if(recipe == null) {
+                    setIdleSound(heat);
+                    progress = 0;
+                }
+                while (recipe != null && progress >= cookTime && heat > 0) {
                     boolean cancel = UpgradeUtil.doWork(this, upgrades);
-                    if(!cancel) {
+                    if (!cancel) {
                         currentSound = cookTime > 1 ? SOUND_WORK_SLOW : SOUND_WORK_FAST;
                         inputStack = tank.drain(recipe.getInputConsumed(), false);
                         FluidStack outputStack = UpgradeUtil.transformOutput(this, recipe.getOutput(this, inputStack), upgrades);
@@ -185,6 +198,7 @@ public class TileEntityStillBase extends TileEntity implements ITileEntityBase, 
                                 compound.removeTag("custom_name");
                         }
                         if (output.fill(outputStack, false) == outputStack.amount) {
+                            UpgradeUtil.throwEvent(this, new MachineRecipeEvent.Success<>(this, recipe), upgrades);
                             if (inputStack != null)
                                 tank.drain(inputStack.amount, true);
                             output.fill(outputStack, true);
@@ -193,17 +207,25 @@ public class TileEntityStillBase extends TileEntity implements ITileEntityBase, 
                             tip.markDirty();
                         }
                     }
-                }
-                else
-                {
-                    setIdleSound(heat);
+                    if(world.isRemote)
+                        progress = 0;
+                    else
+                        progress -= cookTime;
+                    inputStack = tank.getFluid();
+                    if(!recipe.matches(this, inputStack, tip.getCurrentCatalyst()))
+                        recipe = null;
                 }
             }
-        }
-        else
-        {
+        } else {
             setIdleSound(heat);
         }
+    }
+
+    private RecipeStill getRecipe(FluidStack fluid, ItemStack catalyst) {
+        RecipeStill recipe = CraftingRegistry.getStillRecipe(this, fluid, catalyst);
+        MachineRecipeEvent<RecipeStill> event = new MachineRecipeEvent<>(this, recipe);
+        UpgradeUtil.throwEvent(this, event, upgrades);
+        return event.getRecipe();
     }
 
     public void setIdleSound(double heat) {

@@ -6,30 +6,52 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.text.translation.I18n;
+import soot.brewing.EssenceStack;
 import soot.brewing.EssenceType;
 import soot.util.IItemColored;
 
 import java.awt.*;
 
-public class ItemEssence extends Item implements IItemColored {
+public class ItemEssence extends Item implements IItemColored, IEssenceContainer {
+    public static final int CAPACITY = 1000;
+
     public ItemStack getStack(EssenceType type)
     {
         return getStack(type,1);
     }
 
-    public ItemStack getStack(EssenceType type, int n)
-    {
+    public ItemStack getStack(EssenceType type, int n) {
         ItemStack stack = new ItemStack(this, n);
         stack.setTagInfo("type",new NBTTagString(type.getName()));
         return stack;
     }
 
-    public static EssenceType getType(ItemStack stack)
-    {
+    public static EssenceType getType(ItemStack stack) {
         NBTTagCompound compound = stack.getTagCompound();
         if(compound != null)
             return EssenceType.getType(compound.getString("type"));
         return EssenceType.NULL;
+    }
+
+    @Override
+    public EssenceStack getEssence(ItemStack stack) {
+        return new EssenceStack(getType(stack), CAPACITY);
+    }
+
+    @Override
+    public int getCapacity(ItemStack stack) {
+        return CAPACITY;
+    }
+
+    @Override
+    public ItemStack addEssence(ItemStack stack, EssenceStack essence) {
+        return getStack(essence.getEssence());
+    }
+
+    @Override
+    public ItemStack removeEssence(ItemStack stack, EssenceStack essence) {
+        return getStack(EssenceType.NULL);
     }
 
     public ItemEssence() {
@@ -37,9 +59,10 @@ public class ItemEssence extends Item implements IItemColored {
     }
 
     @Override
-    public String getUnlocalizedName(ItemStack stack) {
+    public String getItemStackDisplayName(ItemStack stack) {
         EssenceType type = getType(stack);
-        return super.getUnlocalizedName(stack) + "." + type.getName();
+        String essenceName = I18n.translateToLocal("distilling.essence."+type.getName()+".name");
+        return I18n.translateToLocalFormatted(this.getUnlocalizedNameInefficiently(stack) + ".name", essenceName).trim();
     }
 
     @Override

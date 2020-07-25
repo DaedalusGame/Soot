@@ -3,6 +3,7 @@ package soot;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
@@ -15,7 +16,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.EnumHelper;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -26,6 +29,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import soot.block.*;
 import soot.block.overrides.*;
+import soot.brewing.EssenceType;
 import soot.entity.EntityCustomCloud;
 import soot.entity.EntityFireCloud;
 import soot.entity.EntityMuse;
@@ -44,6 +48,7 @@ import soot.util.HeatManager;
 import soot.util.Nope;
 import teamroots.embers.RegistryManager;
 import teamroots.embers.api.EmbersAPI;
+import teamroots.embers.api.capabilities.EmbersCapabilities;
 import teamroots.embers.api.itemmod.ModifierBase;
 import teamroots.embers.recipe.RecipeRegistry;
 import teamroots.embers.research.ResearchBase;
@@ -58,6 +63,7 @@ import teamroots.embers.util.WeightedItemStack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Registry {
     public static ArrayList<Block> MODELLED_BLOCKS = new ArrayList<>();
@@ -81,6 +87,8 @@ public class Registry {
     public static BlockDistillationPipe DISTILLATION_PIPE;
     @GameRegistry.ObjectHolder("soot:insulation")
     public static BlockInsulation INSULATION;
+    @GameRegistry.ObjectHolder("soot:decanter")
+    public static BlockDecanter DECANTER;
 
     @GameRegistry.ObjectHolder("soot:redstone_bin")
     public static BlockRedstoneBin REDSTONE_BIN;
@@ -144,8 +152,10 @@ public class Registry {
     public static Potion POTION_SNOWPOFF;
     @GameRegistry.ObjectHolder("soot:inspiration")
     public static Potion POTION_INSPIRATION;
-    //@GameRegistry.ObjectHolder("soot:witchburn")
-    //public static Potion POTION_WITCHBURN;
+    @GameRegistry.ObjectHolder("soot:glass")
+    public static Potion POTION_GLASS;
+    @GameRegistry.ObjectHolder("soot:experience_boost")
+    public static Potion POTION_EXPERIENCE_BOOST;
 
     public static Fluid BOILING_WORT;
     public static Fluid BOILING_POTATO_JUICE;
@@ -253,6 +263,7 @@ public class Registry {
         ResearchBase still = new ResearchBase("still", new ItemStack(STILL), 6.0D, 4.0D);
         categoryBrewing.addResearch(still);
         categoryBrewing.addResearch(new ResearchBase("distillation_pipe",new ItemStack(DISTILLATION_PIPE), 8.0D, 7.0D).addAncestor(still));
+        categoryBrewing.addResearch(new ResearchBase("decanter",new ItemStack(DECANTER), 10.0D, 7.0D).addAncestor(still));
         categoryBrewing.addResearch(new ResearchBase("still_fuel",new ItemStack(RegistryManager.archaic_light), 6.0D, 7.0D).addAncestor(still));
         ResearchBase alchemy_dial = new ResearchBase("alchemy_dial", new ItemStack(ALCHEMY_GAUGE), 3.5D, 6.0D).addAncestor(still);
         categoryBrewing.addResearch(alchemy_dial);
@@ -274,11 +285,16 @@ public class Registry {
         subCategoryPrimaryEffects.addResearch(new ResearchBase("beetroot_soup",MUG.getFilled(CaskManager.getFromFluid(BOILING_BEETROOT_SOUP)), subCategoryPrimaryEffects.popGoodLocation()));
         subCategorySecondaryEffects.addResearch(new ResearchBase("lifedrinker",new ItemStack(Items.GHAST_TEAR), subCategorySecondaryEffects.popGoodLocation()));
         subCategorySecondaryEffects.addResearch(new ResearchBase("steadfast",new ItemStack(Items.GOLDEN_CARROT), subCategorySecondaryEffects.popGoodLocation()));
+        subCategorySecondaryEffects.addResearch(new ResearchBase("experience_boost",new ItemStack(Items.EGG), subCategorySecondaryEffects.popGoodLocation()));
+        subCategorySecondaryEffects.addResearch(new ResearchBase("glass",new ItemStack(Blocks.GLASS), subCategorySecondaryEffects.popGoodLocation()));
         subCategoryTertiaryEffects.addResearch(new ResearchBase("duration",new ItemStack(Items.REDSTONE), subCategoryTertiaryEffects.popGoodLocation()));
+        subCategoryTertiaryEffects.addResearch(new ResearchBase("sweetening",new ItemStack(Items.SUGAR), subCategoryTertiaryEffects.popGoodLocation()));
         subCategoryTertiaryEffects.addResearch(new ResearchBase("purification",new ItemStack(Items.PRISMARINE_CRYSTALS), subCategoryTertiaryEffects.popGoodLocation()));
+        subCategoryTertiaryEffects.addResearch(new ResearchBase("tainting",new ItemStack(Items.FERMENTED_SPIDER_EYE), subCategoryTertiaryEffects.popGoodLocation()));
         subCategoryTertiaryEffects.addResearch(new ResearchBase("healing",new ItemStack(Items.NETHER_WART), subCategoryTertiaryEffects.popGoodLocation()));
         subCategoryTertiaryEffects.addResearch(new ResearchBase("cooling",new ItemStack(Blocks.ICE), subCategoryTertiaryEffects.popGoodLocation()));
         subCategoryTertiaryEffects.addResearch(new ResearchBase("stew",new ItemStack(Items.POTATO), subCategoryTertiaryEffects.popGoodLocation()));
+        subCategoryTertiaryEffects.addResearch(new ResearchBase("essence",Registry.ESSENCE.getStack(EssenceType.CHAOS), subCategoryTertiaryEffects.popGoodLocation()));
 
         categoryAlchemy.addResearch(makeCategorySwitch(subCategoryAlchemyMixing,5, 0,new ItemStack(ALCHEMY_GLOBE),0,1).addAncestor(ResearchManager.waste));
         categoryBrewing.addResearch(makeCategorySwitch(subCategoryPrimaryEffects,2, 4,ItemStack.EMPTY,1,1).addAncestor(still));
@@ -306,16 +322,16 @@ public class Registry {
 
         CaskManager.register(new CaskLiquid(BOILING_WORT, 1, 0xFF898516));
         CaskManager.register(new CaskLiquid(BOILING_POTATO_JUICE, 1, 0xFFECEAA7));
-        CaskManager.register(new CaskLiquid(BOILING_WORMWOOD, 1, 0xFFAFFF8D).addEffect(new PotionEffect(MobEffects.POISON, 1200, 0), 2).addEffect(new PotionEffect(MobEffects.BLINDNESS, 1200, 0), 0));
+        CaskManager.register(new CaskLiquid(BOILING_WORMWOOD, 1, 0xFFAFFF8D));
         CaskManager.register(new CaskLiquid(BOILING_BEETROOT_SOUP, 1, 0xFFC62E00));
 
-        CaskManager.register(new CaskLiquid(ALE, 2, 0xFFE1862C).addEffect(new PotionEffect(POTION_ALE, 1200, 0), 4));
-        CaskManager.register(new CaskLiquid(VODKA, 1, 0xFFC8EFEF).addEffect(new PotionEffect(POTION_STOUTNESS, 1600, 0), 4));
-        CaskManager.register(new CaskLiquid(INNER_FIRE, 2, 0xFFFF4D00).addEffect(new PotionEffect(POTION_INNER_FIRE, 1000, 0), 2));
+        CaskManager.register(new CaskLiquid(ALE, 2, 0xFFE1862C));
+        CaskManager.register(new CaskLiquid(VODKA, 1, 0xFFC8EFEF));
+        CaskManager.register(new CaskLiquid(INNER_FIRE, 2, 0xFFFF4D00));
         CaskManager.register(new CaskLiquid(UMBER_ALE, 2, 0xFF473216));
-        CaskManager.register(new CaskLiquid(ABSINTHE, 1, 0xFF58FF2E).addEffect(new PotionEffect(POTION_INSPIRATION, 400, 0),3));
-        CaskManager.register(new CaskLiquid(METHANOL, 1, 0xFF666633).addEffect(new PotionEffect(POTION_FIRE_LUNG, 200, 0), 2));
-        CaskManager.register(new CaskLiquid(SNOWPOFF_VODKA, 2, 0xFFC3E6F7).addEffect(new PotionEffect(POTION_SNOWPOFF, 1000, 0), 3));
+        CaskManager.register(new CaskLiquid(ABSINTHE, 1, 0xFF58FF2E));
+        CaskManager.register(new CaskLiquid(METHANOL, 1, 0xFF666633));
+        CaskManager.register(new CaskLiquid(SNOWPOFF_VODKA, 2, 0xFFC3E6F7));
     }
 
     public static void registerAccessorTiles() {
@@ -614,13 +630,17 @@ public class Registry {
         event.getRegistry().register(new PotionSnowpoff().setRegistryName(Soot.MODID, "snowpoff"));
         event.getRegistry().register(new PotionInspiration().setRegistryName(Soot.MODID, "inspiration"));
         //event.getRegistry().register(new PotionWitchBurn().setRegistryName(Soot.MODID, "witchburn"));
+        event.getRegistry().register(new PotionGlass().setRegistryName(Soot.MODID, "glass"));
+        event.getRegistry().register(new PotionExperienceBoost().setRegistryName(Soot.MODID, "experience_boost"));
     }
 
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public static void onTextureStitch(TextureStitchEvent event) {
-        ResourceLocation particleDawnstone = new ResourceLocation(Soot.MODID,"entity/particle_dawnstone");
-        event.getMap().registerSprite(particleDawnstone);
+        TextureMap map = event.getMap();
+        map.registerSprite(new ResourceLocation(Soot.MODID,"entity/particle_dawnstone"));
+        map.registerSprite(TileEntityDecanterTopRenderer.ESSENCE_STILL);
+        map.registerSprite(TileEntityDecanterTopRenderer.ESSENCE_FLOWING);
     }
 
     private static void registerTileEntity(Class<? extends TileEntity> tile) {

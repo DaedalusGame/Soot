@@ -5,10 +5,10 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.event.entity.EntityEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import soot.particle.ParticleUtilSoot;
 
@@ -18,6 +18,7 @@ import java.util.Random;
 
 public class Attributes {
     public static final IAttribute PHYSICAL_DAMAGE_RATE = new RangedAttribute(null, "generic.physicalDamageRate", 1.0D, 0.0D, 2048.0D);
+    public static final IAttribute EXPERIENCE_RATE = new RangedAttribute(null, "generic.experienceRate", 1.0D, 0.0D, 2048.0D);
     public static final IAttribute FIRE_DAMAGE_RATE = new RangedAttribute(null, "generic.fireDamageRate", 1.0D, 0.0D, 2048.0D);
     public static final IAttribute FIRE_ASPECT = new RangedAttribute(null, "generic.fireAspect", 0.0D, 0.0D, 72000.0D);
     public static final IAttribute BAREHANDED_POWER = new RangedAttribute(null, "generic.barehandedPower", 1.0D, 0.0D, 2048.0D);
@@ -34,6 +35,7 @@ public class Attributes {
         Entity entity = event.getEntity();
         if(entity instanceof EntityLivingBase) {
             ((EntityLivingBase) entity).getAttributeMap().registerAttribute(PHYSICAL_DAMAGE_RATE);
+            ((EntityLivingBase) entity).getAttributeMap().registerAttribute(EXPERIENCE_RATE);
             ((EntityLivingBase) entity).getAttributeMap().registerAttribute(FIRE_DAMAGE_RATE);
             ((EntityLivingBase) entity).getAttributeMap().registerAttribute(FIRE_ASPECT);
             ((EntityLivingBase) entity).getAttributeMap().registerAttribute(BAREHANDED_POWER);
@@ -41,6 +43,13 @@ public class Attributes {
             ((EntityLivingBase) entity).getAttributeMap().registerAttribute(ATTRACTION);
             ((EntityLivingBase) entity).getAttributeMap().registerAttribute(ATTRACTION_GENERATION);
         }
+    }
+
+    @SubscribeEvent
+    public static void onExperienceDrop(LivingExperienceDropEvent event) {
+       EntityPlayer player = event.getAttackingPlayer();
+       IAttributeInstance experienceMod = player.getEntityAttribute(EXPERIENCE_RATE);
+       event.setDroppedExperience((int) (event.getDroppedExperience() * experienceMod.getAttributeValue()));
     }
 
     @SubscribeEvent
