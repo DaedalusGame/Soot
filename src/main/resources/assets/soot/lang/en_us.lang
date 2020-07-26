@@ -129,7 +129,7 @@ embers.research.page.steadfast.desc=Steadfast is a modifier applicable to any al
 
 embers.research.page.experience_boost=Experience Boost
 embers.research.page.experience_boost.title=Probably kind of overpowered.
-embers.research.page.experience_boost.desc=Experience Boost is a modifier applicable to any drink. When a brew with Experience Boost is consumed, it will make monster kills drop extra experience. The effect can be lengthened by applying the modifier more often.
+embers.research.page.experience_boost.desc=Experience Boost is a modifier applicable to any drink. When a brew with Experience Boost is consumed, it will make monster kills and broken ores drop extra experience. The effect can be lengthened by applying the modifier more often.
 
 embers.research.page.glass=Glass
 embers.research.page.glass.title=Fragile, not §ofragile

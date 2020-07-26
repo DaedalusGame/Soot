@@ -9,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.living.*;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import soot.particle.ParticleUtilSoot;
 
@@ -48,8 +49,19 @@ public class Attributes {
     @SubscribeEvent
     public static void onExperienceDrop(LivingExperienceDropEvent event) {
        EntityPlayer player = event.getAttackingPlayer();
-       IAttributeInstance experienceMod = player.getEntityAttribute(EXPERIENCE_RATE);
-       event.setDroppedExperience((int) (event.getDroppedExperience() * experienceMod.getAttributeValue()));
+       if(player != null) {
+           IAttributeInstance experienceMod = player.getEntityAttribute(EXPERIENCE_RATE);
+           event.setDroppedExperience((int) (event.getDroppedExperience() * experienceMod.getAttributeValue()));
+       }
+    }
+
+    @SubscribeEvent
+    public static void onBreakBlock(BlockEvent.BreakEvent event) {
+        EntityPlayer player = event.getPlayer();
+        if(player != null) {
+            IAttributeInstance experienceMod = player.getEntityAttribute(EXPERIENCE_RATE);
+            event.setExpToDrop((int) (event.getExpToDrop() * experienceMod.getAttributeValue()));
+        }
     }
 
     @SubscribeEvent
