@@ -38,7 +38,7 @@ public class CaskManager {
         public Fluid fluid;
         public int model;
         public int color;
-        public ArrayList<CaskPotionEffect> effects = new ArrayList<>();
+        //public ArrayList<CaskPotionEffect> effects = new ArrayList<>();
 
         public CaskLiquid(Fluid fluid, int model, int color)
         {
@@ -47,7 +47,7 @@ public class CaskManager {
             this.color = color;
         }
 
-        public CaskLiquid addEffect(PotionEffect effect, int maxstack)
+        /*public CaskLiquid addEffect(PotionEffect effect, int maxstack)
         {
             effects.add(new CaskPotionEffect(effect,maxstack));
             return this;
@@ -56,17 +56,17 @@ public class CaskManager {
         public List<PotionEffect> getEffects()
         {
             return effects.stream().map(x -> x.potionEffect).collect(Collectors.toCollection(ArrayList::new));
-        }
+        }*/
 
         public void applyEffects(World world, BlockPos pos, EnumFacing side, Entity source, Entity indirectsource, FluidStack fluid) {
 
         }
 
         public void applyEffects(EntityLivingBase target, Entity source, Entity indirectsource, FluidStack fluid) {
-            ArrayList<CaskPotionEffect> effects = new ArrayList<>(this.effects);
+            ArrayList<CaskPotionEffect> effects = new ArrayList<>();
             Fluid internal = fluid != null ? fluid.getFluid() : null;
             NBTTagCompound compound = FluidUtil.getModifiers(fluid);
-            for (String key : compound.getKeySet()) {
+            for (String key : FluidUtil.getModifierKeys(fluid)) {
                 FluidModifier modifier = FluidUtil.MODIFIERS.get(key);
                 if(modifier != null) {
                     modifier.applyEffect(target, compound, internal);

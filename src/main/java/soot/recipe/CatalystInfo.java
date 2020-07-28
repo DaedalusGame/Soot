@@ -21,4 +21,9 @@ public class CatalystInfo {
     {
         return amt;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s (%s)",matcher,amt);
+    }
 }

@@ -3,6 +3,7 @@ package soot.brewing;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.fluids.Fluid;
 import soot.brewing.CaskManager.CaskPotionEffect;
 import teamroots.embers.Embers;
@@ -10,6 +11,7 @@ import teamroots.embers.Embers;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class FluidModifier {
     public String name;
@@ -41,12 +43,24 @@ public class FluidModifier {
         //NOOP
     }
 
+    public void providePotionEffects(List<PotionEffect> effects, NBTTagCompound compound, Fluid fluid) {
+        //NOOP
+    }
+
     public void providePotionEffects(EntityLivingBase target, ArrayList<CaskPotionEffect> effects, NBTTagCompound compound, Fluid fluid) {
         //NOOP
     }
 
     public boolean isDefault(NBTTagCompound compound, Fluid fluid) {
         return getOrDefault(compound,fluid) == defaultValue;
+    }
+
+    public boolean hasDefault(Fluid fluid) {
+        return defaultValues.containsKey(fluid);
+    }
+
+    public boolean has(NBTTagCompound compound, Fluid fluid) {
+        return compound.hasKey(name,99) || defaultValues.containsKey(fluid);
     }
 
     public float getOrDefault(NBTTagCompound compound, Fluid fluid)

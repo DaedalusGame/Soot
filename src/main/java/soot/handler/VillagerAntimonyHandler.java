@@ -24,9 +24,9 @@ import net.minecraftforge.client.event.GuiContainerEvent;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import soot.Registry;
 
@@ -175,7 +175,7 @@ public class VillagerAntimonyHandler {
 
     public static IMerchant getContainerMerchant(ContainerMerchant container) {
         if (containerMerchant == null)
-            containerMerchant = ReflectionHelper.findField(ContainerMerchant.class, "merchant", "field_75178_e");
+            containerMerchant = ObfuscationReflectionHelper.findField(ContainerMerchant.class, "field_75178_e");
         IMerchant merchant = null;
         try {
             merchant = (IMerchant) containerMerchant.get(container);
@@ -187,7 +187,7 @@ public class VillagerAntimonyHandler {
 
     public static void replaceTradeList(EntityVillager villager, MerchantRecipeList newlist) {
         if (buyingList == null)
-            buyingList = ReflectionHelper.findField(EntityVillager.class, "buyingList", "field_70963_i");
+            buyingList = ObfuscationReflectionHelper.findField(EntityVillager.class, "field_70963_i");
 
         if (villager != null) {
             try {

@@ -32,6 +32,13 @@ public class StillWrapper implements IRecipeWrapper {
         ingredients.setOutputs(ItemStack.class, recipe.getEssenceItems());
     }
 
+    @Override
+    public List<String> getTooltipStrings(int mouseX, int mouseY) {
+        if(mouseX >= 8 && mouseY >= 47 && mouseX < 8 + 16 && mouseY < 47 + 16)
+            return Lists.newArrayList(recipe.id.toString());
+        return IRecipeWrapper.super.getTooltipStrings(mouseX,mouseY);
+    }
+
     public void modifyTooltip(List<String> tooltip) {
         recipe.modifyTooltip(tooltip);
     }

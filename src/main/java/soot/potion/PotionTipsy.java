@@ -9,10 +9,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import soot.util.Attributes;
 import teamroots.embers.EventManager;
 
@@ -64,7 +62,7 @@ public class PotionTipsy extends PotionBase {
 
         if(effect != null && effect.getDuration() % 10 == 0) { //Every half second, have a % chance to drop item from hand
             if (handDropChances == null)
-                handDropChances = ReflectionHelper.findField(EntityLiving.class, "field_82174_bp", "inventoryHandsDropChances");
+                handDropChances = ObfuscationReflectionHelper.findField(EntityLiving.class, "field_82174_bp");
 
             if (random.nextInt(100) < amplifier) {
                 boolean canDropMain = true;

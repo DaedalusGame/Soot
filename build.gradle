@@ -18,7 +18,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'com.wynprice.cursemaven'
 
 
-version = "1.8"
+version = "1.9"
 group= "soot" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Soot"
 
@@ -26,7 +26,7 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 minecraft {
-    version = "1.12.2-14.23.3.2655"
+    version = "1.12.2-14.23.5.2838"
     //version = "1.12.2-14.23.0.2512"
     runDir = "run"
     mappings = "snapshot_20171003"
@@ -42,8 +42,8 @@ repositories {
 }
 
 dependencies {
-    compile "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1.8.476"
-    compile "mezz.jei:jei_1.12.2:4.8.3.128"
+    compile "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1.20.582"
+    compile "mezz.jei:jei_1.12.2:4.14.4.267"
     compile "com.azanor.baubles:Baubles:1.12-1.5.2"
     deobfCompile curse.resolveUrl("https://www.curseforge.com/minecraft/mc-mods/embers-rekindled/files/3010691")
 	compile files('libs/')

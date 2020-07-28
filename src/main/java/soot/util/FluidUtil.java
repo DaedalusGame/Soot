@@ -1,16 +1,16 @@
 package soot.util;
 
+import com.google.common.collect.Lists;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import soot.brewing.CaskManager;
 import soot.brewing.EssenceStack;
 import soot.brewing.FluidModifier;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.TreeSet;
+import java.util.*;
 
 public class FluidUtil {
     public static final String BREW_MODIFIERS_TAG = "brew_modifiers";
@@ -50,6 +50,30 @@ public class FluidUtil {
     public static NBTTagCompound getModifiers(FluidStack stack)
     {
         return (stack == null || stack.tag == null) ? new NBTTagCompound() : stack.tag.getCompoundTag(BREW_MODIFIERS_TAG);
+    }
+
+    public static List<String> getModifierKeys(FluidStack stack) {
+        List<String> rList = new ArrayList<>();
+        NBTTagCompound compound = getModifiers(stack);
+        for (String key : SORTED_MODIFIER_KEYS) {
+            FluidModifier modifier = FluidUtil.MODIFIERS.get(key);
+            if(modifier.has(compound, stack.getFluid())){
+                rList.add(key);
+            }
+        }
+        return rList;
+    }
+
+    public static List<PotionEffect> getPrimaryEffects(FluidStack stack) {
+        List<PotionEffect> rList = new ArrayList<>();
+        NBTTagCompound compound = getModifiers(stack);
+        for (String key : SORTED_MODIFIER_KEYS) {
+            FluidModifier modifier = FluidUtil.MODIFIERS.get(key);
+            if(modifier.type == FluidModifier.EnumType.PRIMARY && modifier.has(compound, stack.getFluid())){
+                modifier.providePotionEffects(rList, compound, stack.getFluid());
+            }
+        }
+        return rList;
     }
 
     public static void garbageCollect(FluidStack stack)
@@ -100,6 +124,14 @@ public class FluidUtil {
             return modifier.defaultValue;
         else
             return 0;
+    }
+
+    public static String getFormatType(String name) {
+        FluidModifier modifier = MODIFIERS.get(name);
+        if(modifier != null)
+            return modifier.formatType;
+        else
+            return null;
     }
 
     public static float getModifier(FluidStack stack, String name)

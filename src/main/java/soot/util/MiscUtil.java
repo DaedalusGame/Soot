@@ -17,7 +17,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import soot.Registry;
@@ -169,16 +169,16 @@ public class MiscUtil {
 
     public static Item.ToolMaterial getToolMaterial(Item item) {
         if(item instanceof ItemTool) {
-            return ReflectionHelper.getPrivateValue(ItemTool.class, (ItemTool)item, "field_77862_b", "toolMaterial");
+            return ObfuscationReflectionHelper.getPrivateValue(ItemTool.class, (ItemTool)item, "field_77862_b");
         }
         if(item instanceof ItemHoe) {
-            return ReflectionHelper.getPrivateValue(ItemHoe.class, (ItemHoe)item, "field_77843_a", "toolMaterial");
+            return ObfuscationReflectionHelper.getPrivateValue(ItemHoe.class, (ItemHoe)item, "field_77843_a");
         }
         if(item instanceof ItemSword) {
-            return ReflectionHelper.getPrivateValue(ItemSword.class, (ItemSword)item, "field_150933_b", "material");
+            return ObfuscationReflectionHelper.getPrivateValue(ItemSword.class, (ItemSword)item, "field_150933_b");
         }
         if(item instanceof ItemArmor) {
-            return ReflectionHelper.getPrivateValue(ItemArmor.class, (ItemArmor)item, "field_77878_bZ", "material");
+            return ObfuscationReflectionHelper.getPrivateValue(ItemArmor.class, (ItemArmor)item, "field_77878_bZ");
         }
         return null;
     }
@@ -197,6 +197,13 @@ public class MiscUtil {
         while(Minecraft.getMinecraft().fontRenderer.getStringWidth(spaces) < len)
             spaces += " ";
         return spaces;
+    }
+
+    public static Color parseColor(int[] rgb) {
+        Color color = Color.WHITE;
+        if (rgb != null && rgb.length >= 3 && rgb.length <= 4)
+            color = new Color(rgb[0], rgb[1], rgb[2], rgb.length == 4 ? rgb[3] : 255);
+        return color;
     }
 
     public static Color lerpColor(Color color1, Color color2, double scale) {

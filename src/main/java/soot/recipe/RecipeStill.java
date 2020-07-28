@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import mezz.jei.util.Translator;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 import soot.Registry;
 import soot.brewing.EssenceStack;
@@ -16,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RecipeStill {
+    public ResourceLocation id;
+
     public FluidStack input;
     public Ingredient catalystInput;
     public int catalystConsumed;
@@ -23,7 +26,8 @@ public class RecipeStill {
     public List<EssenceStack> essence = new ArrayList<>();
     boolean exactMatch = false;
 
-    public RecipeStill(FluidStack input, Ingredient catalystInput, int catalystConsumed, FluidStack output) {
+    public RecipeStill(ResourceLocation id, FluidStack input, Ingredient catalystInput, int catalystConsumed, FluidStack output) {
+        this.id = id;
         this.input = input;
         this.catalystInput = catalystInput;
         this.output = output;
@@ -112,5 +116,10 @@ public class RecipeStill {
                 }
             });
         }
+    }
+
+    @Override
+    public String toString() {
+        return id.toString();
     }
 }

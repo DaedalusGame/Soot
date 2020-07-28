@@ -153,11 +153,11 @@ public class ItemMug extends ItemFluidContainer implements IItemColored {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn)
-    {
-        CaskLiquid liquid = getCaskLiquid(stack);
-        if(liquid != null)
-            MiscUtil.addPotionEffectTooltip(liquid.getEffects(), tooltip, 1.0F);
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+        FluidStack fluid = FluidUtil.getFluidContained(stack);
+        if(fluid != null) {
+            MiscUtil.addPotionEffectTooltip(soot.util.FluidUtil.getPrimaryEffects(fluid), tooltip, 1.0F);
+        }
     }
 
     @Override

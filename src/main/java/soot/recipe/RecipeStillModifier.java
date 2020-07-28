@@ -4,10 +4,12 @@ import mezz.jei.util.Translator;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import soot.recipe.breweffects.IBrewEffect;
 import soot.tile.TileEntityStillBase;
 import soot.util.FluidUtil;
 
@@ -15,12 +17,18 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public abstract class RecipeStillModifier extends RecipeStill {
+public class RecipeStillModifier extends RecipeStill {
     public HashSet<Fluid> validFluids = new HashSet<>();
+    public List<IBrewEffect> effects = new ArrayList<>();
 
-    public RecipeStillModifier(Collection<Fluid> validFluids, Ingredient catalystInput, int catalystConsumed) {
-        super(null, catalystInput, catalystConsumed, null);
+    public RecipeStillModifier(ResourceLocation id, Collection<Fluid> validFluids, Ingredient catalystInput, int catalystConsumed) {
+        super(id,null, catalystInput, catalystConsumed, null);
         this.validFluids = new HashSet<>(validFluids);
+    }
+
+    public RecipeStillModifier addEffect(IBrewEffect effect) {
+        effects.add(effect);
+        return this;
     }
 
     @Override
@@ -52,13 +60,21 @@ public abstract class RecipeStillModifier extends RecipeStill {
         return outputStack;
     }
 
-    public abstract void modifyOutput(TileEntityStillBase tile, FluidStack output);
+    public void modifyOutput(TileEntityStillBase tile, FluidStack output) {
+        NBTTagCompound compound = FluidUtil.createModifiers(output);
+        for (IBrewEffect effect : effects) {
+            effect.modify(output, compound);
+        }
+    }
 
     @Override
     public void modifyTooltip(List<String> tooltip) {
         super.modifyTooltip(tooltip);
         tooltip.remove(1);
         tooltip.add(1, TextFormatting.LIGHT_PURPLE+Translator.translateToLocalFormatted("distilling.effect.header"));
+        for (IBrewEffect effect : effects) {
+            effect.modifyTooltip(tooltip);
+        }
     }
 
     protected void addModifier(List<String> tooltip, String modifier, boolean positive) {
