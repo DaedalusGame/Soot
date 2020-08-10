@@ -180,7 +180,7 @@ tile.ember_burst.name=Эмбер-распространитель
 tile.still.name=Пивоваренная стойка
 
 tile.alchemy_globe.name=Алхимический Преобразователь
-tile.insulation.name=Сохранение тепла
+tile.insulation.name=Теплоизолятор
 tile.distillation_pipe.name=Добавочный фильтр
 tile.decanter.name=Графин Эссенции
 
