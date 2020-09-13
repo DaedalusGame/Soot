@@ -98,7 +98,7 @@ public class BlockSulfurOre extends Block {
 
     @Override
     public boolean hasTileEntity(IBlockState state) {
-        return state.getValue(ACTIVE);
+        return true;
     }
 
     @Nullable

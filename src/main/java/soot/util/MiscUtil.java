@@ -177,6 +177,11 @@ public class MiscUtil {
         if(item instanceof ItemSword) {
             return ObfuscationReflectionHelper.getPrivateValue(ItemSword.class, (ItemSword)item, "field_150933_b");
         }
+        return null;
+    }
+
+    public static ItemArmor.ArmorMaterial getArmorMaterial(Item item)
+    {
         if(item instanceof ItemArmor) {
             return ObfuscationReflectionHelper.getPrivateValue(ItemArmor.class, (ItemArmor)item, "field_77878_bZ");
         }

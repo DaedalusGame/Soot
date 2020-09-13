@@ -18,7 +18,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'com.wynprice.cursemaven'
 
 
-version = "1.9"
+version = "1.10"
 group= "soot" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Soot"
 
